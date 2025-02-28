@@ -10,8 +10,6 @@ import { Link } from 'react-router-dom';
 export function LoginPage() {
   return (
     <div className="h-screen flex items-center justify-center w-screen">
-
-    
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}

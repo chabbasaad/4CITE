@@ -1,5 +1,4 @@
-
- import { getAccessToken } from '@/store/auth-store';
+import { getAccessToken } from '@/store/auth-store';
 import axios, { InternalAxiosRequestConfig } from 'axios';
 
  export const instance = axios.create({
@@ -17,5 +16,5 @@ import axios, { InternalAxiosRequestConfig } from 'axios';
     },
     (error: unknown) => {
       return Promise.reject(error);
-    }
+   }
   );

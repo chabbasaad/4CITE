@@ -36,5 +36,5 @@ export function catchError(err: unknown) {
     return toast.error(err.message);
   } else {
     return toast.error("Something went wrong, please try again later.");
-  }
+}
 }
