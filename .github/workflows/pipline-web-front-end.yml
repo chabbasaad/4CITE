@@ -15,6 +15,18 @@ on:
   workflow_dispatch:
 
 jobs:
+  read-and-display-informations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Display commit information
+        run: |
+          echo "Commit SHA: $GITHUB_SHA"
+          echo "Autore: $GITHUB_ACTOR"
+          echo "Timestamp: $(date)"
+          
   build:
     runs-on: ubuntu-latest
     steps:
