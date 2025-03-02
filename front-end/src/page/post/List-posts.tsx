@@ -1,3 +1,6 @@
+import {useEffect, useState} from "react";
+import usePostStore from "../../service/stores/postStore.tsx";
+
 const products = [
     {
         id: 1,
@@ -17,6 +20,21 @@ const products = [
 ]
 
 export default function ListPosts() {
+
+    const { posts, fetchPosts, addPost, deletePost } = usePostStore();
+    const [newTitle, setNewTitle] = useState("");
+
+    useEffect(() => {
+        fetchPosts(); // Charger les posts au démarrage
+    }, []);
+
+    const handleAddPost = () => {
+        if (newTitle.trim() !== "") {
+            addPost({ title: newTitle, body: "Texte du post", userId: 1 });
+            setNewTitle("");
+        }
+    };
+
     return (
         <div className="bg-white">
             <div className="py-16 sm:py-24 lg:mx-auto lg:max-w-7xl lg:px-8">
