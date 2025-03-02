@@ -1,86 +1,81 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\HotelController;
+use App\Http\Controllers\Api\BookingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\LikeController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\MediaController;
-use App\Http\Controllers\FollowController;
-use App\Http\Controllers\CommentController;
-
-/*
-|--------------------------------------------------------------------------
-| Authentication Routes
-|--------------------------------------------------------------------------
-*/
-
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
-    ->middleware('signed')
-    ->name('verification.verify');
-Route::post('/email/resend', [AuthController::class, 'resendVerificationEmail']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| Admin Routes
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-    // User Management
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/trashed', [UserController::class, 'trashed']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::patch('/users/{id}/restore', [UserController::class, 'restore']);
-    Route::delete('/users/{id}', [UserController::class, 'destroy']);
-
-
-});
-
-/*
-|--------------------------------------------------------------------------
-| Protected Routes
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth:sanctum')->group(function () {
-    // Posts
-    Route::apiResource('posts', PostController::class);
-    Route::get('posts/trashed', [PostController::class, 'trashed']);
-    Route::patch('posts/{id}/restore', [PostController::class, 'restore']);
-    Route::get('/media/download/{fileName}', [MediaController::class, 'download']);
-
-
-    // Comments
-    Route::apiResource('comments', CommentController::class);
-    Route::get('comments/trashed', [CommentController::class, 'trashed']);
-    Route::patch('comments/{id}/restore', [CommentController::class, 'restore']);
-    Route::get('/comments/post/{postId}', [CommentController::class, 'getCommentsByPost']);
-
-    // User Profile & Settings
-    Route::get('/users/{id}', [UserController::class, 'show']);
-    Route::put('/users/{id}', [UserController::class, 'update']);
-    Route::post('/users/profile-type', [UserController::class, 'toggleProfileType']);
-    Route::get('/users/{id}/public-profile', [UserController::class, 'showPublicProfile']);
-
-    // Follow System
-    Route::post('/users/{id}/follow', [FollowController::class, 'follow']);
-    Route::post('/users/{id}/unfollow', [FollowController::class, 'unfollow']);
-    Route::get('/users/{id}/followers', [FollowController::class, 'followers']);
-    Route::get('/users/{id}/following', [FollowController::class, 'following']);
-
-    // Likes
-    Route::post('/posts/{id}/toggle-like', [LikeController::class, 'toggle']);
-});
 
 /*
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
+|
+| These routes are accessible without authentication
+|
 */
-Route::get('/users/{userId}/posts', [PostController::class, 'getUserPosts']);
+
+// Authentication routes
+Route::prefix('auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+});
+
+// Public hotel routes
+Route::get('hotels', [HotelController::class, 'index']);
+Route::get('hotels/{hotel}', [HotelController::class, 'show']);
+
+/*
+|--------------------------------------------------------------------------
+| Protected Routes
+|--------------------------------------------------------------------------
+|
+| These routes require authentication (Bearer token)
+|
+*/
+Route::middleware('auth:sanctum')->group(function () {
+    // Auth routes
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Management Routes
+    |--------------------------------------------------------------------------
+    |
+    | POST   /api/users          - Create user (admin: any role, employee: user role only)
+    | GET    /api/users          - List users (admin/employee only)
+    | GET    /api/users/{id}     - Show user (own profile or admin/employee)
+    | PUT    /api/users/{id}     - Update user (own profile or admin)
+    | DELETE /api/users/{id}     - Delete user (own profile or admin)
+    |
+    */
+    Route::apiResource('users', UserController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Hotel Management Routes (Protected)
+    |--------------------------------------------------------------------------
+    |
+    | POST   /api/hotels          - Create hotel (admin only)
+    | PUT    /api/hotels/{id}     - Update hotel (admin only)
+    | DELETE /api/hotels/{id}     - Delete hotel (admin only)
+    |
+    */
+    Route::apiResource('hotels', HotelController::class)->except(['index', 'show']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Booking Management Routes
+    |--------------------------------------------------------------------------
+    |
+    | GET    /api/bookings          - List bookings (user: own bookings, admin: all bookings with search)
+    | POST   /api/bookings          - Create booking (any authenticated user)
+    | GET    /api/bookings/{id}     - Show booking details (own booking or admin)
+    | PUT    /api/bookings/{id}     - Update booking (own booking or admin)
+    | DELETE /api/bookings/{id}     - Cancel booking (own booking or admin)
+    |
+    */
+    Route::apiResource('bookings', BookingController::class);
+});

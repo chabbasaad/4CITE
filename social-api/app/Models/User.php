@@ -2,28 +2,35 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Notifications\VerifyEmailNotification;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasApiTokens,SoftDeletes,HasRoles;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    /**
+     * Available user roles
+     */
+    const ROLE_USER = 'user';
+    const ROLE_EMPLOYEE = 'employee';
+    const ROLE_ADMIN = 'admin';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = ['name', 'email', 'password', 'profile_type', 'role'];
-
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'pseudo',
+        'role'
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -36,53 +43,73 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'password' => 'hashed',
+    ];
+
+    /**
+     * Get all available roles.
+     *
+     * @return array
+     */
+    public static function getAvailableRoles(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            self::ROLE_USER,
+            self::ROLE_EMPLOYEE,
+            self::ROLE_ADMIN
         ];
     }
 
-    public function posts()
+    /**
+     * Get the bookings for the user.
+     */
+    public function bookings()
     {
-        return $this->hasMany(Post::class);
+        return $this->hasMany(Booking::class);
     }
 
-    public function comments()
+    /**
+     * Check if the user is an admin.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
     {
-        return $this->hasMany(Comment::class);
+        return $this->role === self::ROLE_ADMIN;
     }
 
-    public function sendEmailVerificationNotification()
+    /**
+     * Check if the user is an employee.
+     *
+     * @return bool
+     */
+    public function isEmployee(): bool
     {
-        $this->notify(new VerifyEmailNotification());
+        return $this->role === self::ROLE_EMPLOYEE;
     }
 
-     // Users that this user follows
-     public function following()
-     {
-         return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id');
-     }
-
-     // Users that follow this user
-     public function followers()
-     {
-         return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id');
-     }
-
-        // Add the isFollowing method
-    public function isFollowing($userId): bool
+    /**
+     * Check if the user is a regular user.
+     *
+     * @return bool
+     */
+    public function isUser(): bool
     {
-        return $this->following()->where('following_id', $userId)->exists();
+        return $this->role === self::ROLE_USER;
     }
 
-     public function likedPosts()
+    /**
+     * Check if user has staff privileges (admin or employee).
+     *
+     * @return bool
+     */
+    public function isStaff(): bool
     {
-        return $this->belongsToMany(Post::class, 'likes', 'user_id', 'post_id');
+        return $this->isAdmin() || $this->isEmployee();
     }
 }

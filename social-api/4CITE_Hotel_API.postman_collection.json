@@ -1,0 +1,887 @@
+{
+    "info": {
+        "name": "4CITE Hotel API",
+        "description": "API endpoints for the 4CITE Hotel Management System",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/api",
+            "type": "string"
+        },
+        {
+            "key": "admin_token",
+            "value": "your_admin_token_here",
+            "type": "string"
+        },
+        {
+            "key": "employee_token",
+            "value": "your_employee_token_here",
+            "type": "string"
+        },
+        {
+            "key": "user_token",
+            "value": "your_user_token_here",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Public Endpoints",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{base_url}}/register",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"pseudo\": \"johndoe\"\n}"
+                        },
+                        "description": "Register a new user account"
+                    }
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "url": "{{base_url}}/login",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+                        },
+                        "description": "Login to get authentication token"
+                    }
+                },
+                {
+                    "name": "List Hotels (Public)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/hotels",
+                        "query": [
+                            {
+                                "key": "search",
+                                "value": "",
+                                "description": "Search by name, location, or description"
+                            },
+                            {
+                                "key": "sort_by",
+                                "value": "name",
+                                "description": "Sort by: name, location, created_at, price_per_night"
+                            },
+                            {
+                                "key": "direction",
+                                "value": "asc",
+                                "description": "Sort direction: asc or desc"
+                            },
+                            {
+                                "key": "per_page",
+                                "value": "10",
+                                "description": "Results per page (1-100)"
+                            }
+                        ],
+                        "description": "List all hotels with optional filters and sorting"
+                    }
+                },
+                {
+                    "name": "View Hotel Details (Public)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/hotels/:id",
+                        "description": "View details of a specific hotel"
+                    }
+                },
+                {
+                    "name": "List Hotels (Public) - With Filters",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{base_url}}/hotels",
+                        "query": [
+                            {
+                                "key": "search",
+                                "value": "beach resort",
+                                "description": "Search by name, location, or description"
+                            },
+                            {
+                                "key": "min_price",
+                                "value": "100",
+                                "description": "Minimum price per night"
+                            },
+                            {
+                                "key": "max_price",
+                                "value": "300",
+                                "description": "Maximum price per night"
+                            },
+                            {
+                                "key": "location",
+                                "value": "city center",
+                                "description": "Filter by location"
+                            },
+                            {
+                                "key": "available_only",
+                                "value": "true",
+                                "description": "Show only available hotels"
+                            },
+                            {
+                                "key": "sort_by",
+                                "value": "price_per_night",
+                                "description": "Sort by: name, location, created_at, price_per_night"
+                            },
+                            {
+                                "key": "direction",
+                                "value": "asc",
+                                "description": "Sort direction: asc or desc"
+                            }
+                        ],
+                        "description": "List hotels with comprehensive filters"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Normal User",
+            "item": [
+                {
+                    "name": "User Profile",
+                    "item": [
+                        {
+                            "name": "View Own Profile",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/user",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    }
+                                ],
+                                "description": "View own user profile"
+                            }
+                        },
+                        {
+                            "name": "Update Own Profile",
+                            "request": {
+                                "method": "PUT",
+                                "url": "{{base_url}}/users/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"name\": \"John Updated\",\n    \"email\": \"john@example.com\",\n    \"pseudo\": \"johnupdated\"\n}"
+                                },
+                                "description": "Update own profile information"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Bookings",
+                    "item": [
+                        {
+                            "name": "List Own Bookings",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/bookings",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    }
+                                ],
+                                "query": [
+                                    {
+                                        "key": "from_date",
+                                        "value": "",
+                                        "description": "Filter by check-in date"
+                                    },
+                                    {
+                                        "key": "to_date",
+                                        "value": "",
+                                        "description": "Filter by check-out date"
+                                    }
+                                ],
+                                "description": "List all bookings for the authenticated user"
+                            }
+                        },
+                        {
+                            "name": "List Own Bookings - With Filters",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/bookings",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    }
+                                ],
+                                "query": [
+                                    {
+                                        "key": "status",
+                                        "value": "upcoming",
+                                        "description": "Filter by status: upcoming, past, cancelled"
+                                    },
+                                    {
+                                        "key": "from_date",
+                                        "value": "2024-04-01",
+                                        "description": "Filter by check-in date"
+                                    },
+                                    {
+                                        "key": "to_date",
+                                        "value": "2024-04-30",
+                                        "description": "Filter by check-out date"
+                                    },
+                                    {
+                                        "key": "hotel_id",
+                                        "value": "1",
+                                        "description": "Filter by specific hotel"
+                                    },
+                                    {
+                                        "key": "sort_by",
+                                        "value": "check_in_date",
+                                        "description": "Sort by: check_in_date, created_at"
+                                    }
+                                ],
+                                "description": "List bookings with comprehensive filters"
+                            }
+                        },
+                        {
+                            "name": "Create Booking",
+                            "request": {
+                                "method": "POST",
+                                "url": "{{base_url}}/bookings",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"hotel_id\": 1,\n    \"check_in_date\": \"2024-04-01\",\n    \"check_out_date\": \"2024-04-05\",\n    \"guests_count\": 2,\n    \"special_requests\": \"Room with a view\"\n}"
+                                },
+                                "description": "Create a new booking"
+                            }
+                        },
+                        {
+                            "name": "Create Booking - With Special Requests",
+                            "request": {
+                                "method": "POST",
+                                "url": "{{base_url}}/bookings",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"hotel_id\": 1,\n    \"check_in_date\": \"2024-04-01\",\n    \"check_out_date\": \"2024-04-05\",\n    \"guests_count\": 2,\n    \"special_requests\": \"Room with sea view, early check-in if possible, extra pillows\",\n    \"guest_names\": [\"John Doe\", \"Jane Doe\"],\n    \"contact_phone\": \"+1234567890\",\n    \"dietary_requirements\": \"Vegetarian meals\"\n}"
+                                },
+                                "description": "Create booking with detailed guest information"
+                            }
+                        },
+                        {
+                            "name": "View Own Booking",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/bookings/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    }
+                                ],
+                                "description": "View details of own booking"
+                            }
+                        },
+                        {
+                            "name": "Update Own Booking",
+                            "request": {
+                                "method": "PUT",
+                                "url": "{{base_url}}/bookings/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"check_in_date\": \"2024-04-02\",\n    \"check_out_date\": \"2024-04-06\",\n    \"guests_count\": 3,\n    \"special_requests\": \"Updated request\"\n}"
+                                },
+                                "description": "Update own booking details"
+                            }
+                        },
+                        {
+                            "name": "Cancel Own Booking",
+                            "request": {
+                                "method": "DELETE",
+                                "url": "{{base_url}}/bookings/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{user_token}}"
+                                    }
+                                ],
+                                "description": "Cancel own booking (must be at least 2 days before check-in)"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Employee",
+            "item": [
+                {
+                    "name": "User Management",
+                    "item": [
+                        {
+                            "name": "List Users",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/users",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{employee_token}}"
+                                    }
+                                ],
+                                "description": "List all users (employee can view)"
+                            }
+                        },
+                        {
+                            "name": "View User Details",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/users/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{employee_token}}"
+                                    }
+                                ],
+                                "description": "View details of any user"
+                            }
+                        },
+                        {
+                            "name": "Create User (User Role Only)",
+                            "request": {
+                                "method": "POST",
+                                "url": "{{base_url}}/users",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{employee_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"name\": \"New User\",\n    \"email\": \"newuser@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"pseudo\": \"newuser\",\n    \"role\": \"user\"\n}"
+                                },
+                                "description": "Create a new user (only with 'user' role)"
+                            }
+                        },
+                        {
+                            "name": "List Users - With Filters",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/users",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{employee_token}}"
+                                    }
+                                ],
+                                "query": [
+                                    {
+                                        "key": "search",
+                                        "value": "john",
+                                        "description": "Search by name, email, or pseudo"
+                                    },
+                                    {
+                                        "key": "role",
+                                        "value": "user",
+                                        "description": "Filter by role: user, employee, admin"
+                                    },
+                                    {
+                                        "key": "sort_by",
+                                        "value": "created_at",
+                                        "description": "Sort by: name, email, created_at"
+                                    },
+                                    {
+                                        "key": "direction",
+                                        "value": "desc",
+                                        "description": "Sort direction: asc or desc"
+                                    }
+                                ],
+                                "description": "List users with comprehensive filters"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Hotel Management",
+                    "item": [
+                        {
+                            "name": "List Hotels (With Bookings)",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/hotels",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{employee_token}}"
+                                    }
+                                ],
+                                "query": [
+                                    {
+                                        "key": "search",
+                                        "value": "",
+                                        "description": "Search hotels"
+                                    },
+                                    {
+                                        "key": "sort_by",
+                                        "value": "name",
+                                        "description": "Sort by field"
+                                    },
+                                    {
+                                        "key": "direction",
+                                        "value": "asc",
+                                        "description": "Sort direction"
+                                    }
+                                ],
+                                "description": "List all hotels with booking information"
+                            }
+                        },
+                        {
+                            "name": "View Hotel Details (With Bookings)",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/hotels/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{employee_token}}"
+                                    }
+                                ],
+                                "description": "View hotel details including booking information"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Booking Management",
+                    "item": [
+                        {
+                            "name": "List All Bookings",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/bookings",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{employee_token}}"
+                                    }
+                                ],
+                                "query": [
+                                    {
+                                        "key": "search",
+                                        "value": "",
+                                        "description": "Search by user or hotel"
+                                    },
+                                    {
+                                        "key": "from_date",
+                                        "value": "",
+                                        "description": "Filter by check-in date"
+                                    },
+                                    {
+                                        "key": "to_date",
+                                        "value": "",
+                                        "description": "Filter by check-out date"
+                                    }
+                                ],
+                                "description": "List all bookings with search and filters"
+                            }
+                        },
+                        {
+                            "name": "View Any Booking",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/bookings/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{employee_token}}"
+                                    }
+                                ],
+                                "description": "View details of any booking"
+                            }
+                        },
+                        {
+                            "name": "List All Bookings - Advanced Search",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/bookings",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{employee_token}}"
+                                    }
+                                ],
+                                "query": [
+                                    {
+                                        "key": "search",
+                                        "value": "john@example.com",
+                                        "description": "Search by user email or name"
+                                    },
+                                    {
+                                        "key": "hotel_id",
+                                        "value": "1",
+                                        "description": "Filter by hotel"
+                                    },
+                                    {
+                                        "key": "status",
+                                        "value": "active",
+                                        "description": "Filter by status: active, cancelled"
+                                    },
+                                    {
+                                        "key": "from_date",
+                                        "value": "2024-04-01",
+                                        "description": "Filter by check-in date"
+                                    },
+                                    {
+                                        "key": "to_date",
+                                        "value": "2024-04-30",
+                                        "description": "Filter by check-out date"
+                                    },
+                                    {
+                                        "key": "min_guests",
+                                        "value": "2",
+                                        "description": "Minimum number of guests"
+                                    },
+                                    {
+                                        "key": "sort_by",
+                                        "value": "check_in_date",
+                                        "description": "Sort by: check_in_date, created_at, guests_count"
+                                    }
+                                ],
+                                "description": "List bookings with advanced search capabilities"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Admin",
+            "item": [
+                {
+                    "name": "User Management",
+                    "item": [
+                        {
+                            "name": "List Users",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/users",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    }
+                                ],
+                                "description": "List all users"
+                            }
+                        },
+                        {
+                            "name": "Create User (Any Role)",
+                            "request": {
+                                "method": "POST",
+                                "url": "{{base_url}}/users",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"name\": \"New Admin\",\n    \"email\": \"admin@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"pseudo\": \"newadmin\",\n    \"role\": \"admin\"\n}"
+                                },
+                                "description": "Create a new user with any role"
+                            }
+                        },
+                        {
+                            "name": "Update Any User",
+                            "request": {
+                                "method": "PUT",
+                                "url": "{{base_url}}/users/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"name\": \"Updated Name\",\n    \"email\": \"updated@example.com\",\n    \"pseudo\": \"updated\",\n    \"role\": \"employee\"\n}"
+                                },
+                                "description": "Update any user's information including role"
+                            }
+                        },
+                        {
+                            "name": "Delete User",
+                            "request": {
+                                "method": "DELETE",
+                                "url": "{{base_url}}/users/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    }
+                                ],
+                                "description": "Delete any user (except last admin)"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Hotel Management",
+                    "item": [
+                        {
+                            "name": "Create Hotel",
+                            "request": {
+                                "method": "POST",
+                                "url": "{{base_url}}/hotels",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"name\": \"New Hotel\",\n    \"location\": \"City Center\",\n    \"description\": \"Luxury hotel in the heart of the city\",\n    \"picture_list\": [\"url1.jpg\", \"url2.jpg\"],\n    \"price_per_night\": 199.99,\n    \"is_available\": true\n}"
+                                },
+                                "description": "Create a new hotel"
+                            }
+                        },
+                        {
+                            "name": "Update Hotel",
+                            "request": {
+                                "method": "PUT",
+                                "url": "{{base_url}}/hotels/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"name\": \"Updated Hotel\",\n    \"price_per_night\": 249.99,\n    \"is_available\": false\n}"
+                                },
+                                "description": "Update hotel information"
+                            }
+                        },
+                        {
+                            "name": "Delete Hotel",
+                            "request": {
+                                "method": "DELETE",
+                                "url": "{{base_url}}/hotels/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    }
+                                ],
+                                "description": "Delete a hotel (if no bookings exist)"
+                            }
+                        },
+                        {
+                            "name": "Create Hotel - Full Details",
+                            "request": {
+                                "method": "POST",
+                                "url": "{{base_url}}/hotels",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"name\": \"Luxury Beach Resort\",\n    \"location\": \"Coastal Boulevard, Beach City\",\n    \"description\": \"5-star luxury resort with private beach access\",\n    \"picture_list\": [\n        \"https://example.com/photos/main.jpg\",\n        \"https://example.com/photos/pool.jpg\",\n        \"https://example.com/photos/restaurant.jpg\",\n        \"https://example.com/photos/room.jpg\"\n    ],\n    \"price_per_night\": 299.99,\n    \"is_available\": true,\n    \"amenities\": [\"Swimming Pool\", \"Spa\", \"Restaurant\", \"Room Service\", \"Beach Access\"],\n    \"check_in_time\": \"15:00\",\n    \"check_out_time\": \"11:00\",\n    \"total_rooms\": 50,\n    \"room_types\": [\n        {\n            \"name\": \"Standard Room\",\n            \"price_modifier\": 1.0,\n            \"capacity\": 2\n        },\n        {\n            \"name\": \"Deluxe Suite\",\n            \"price_modifier\": 1.5,\n            \"capacity\": 4\n        }\n    ],\n    \"policies\": {\n        \"cancellation_deadline_hours\": 48,\n        \"requires_deposit\": true,\n        \"deposit_percentage\": 20\n    }\n}"
+                                },
+                                "description": "Create hotel with comprehensive details"
+                            }
+                        },
+                        {
+                            "name": "Update Hotel - Partial Update",
+                            "request": {
+                                "method": "PATCH",
+                                "url": "{{base_url}}/hotels/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"price_per_night\": 279.99,\n    \"is_available\": true,\n    \"amenities\": [\"Swimming Pool\", \"Spa\", \"Restaurant\", \"Room Service\", \"Beach Access\", \"Gym\"]\n}"
+                                },
+                                "description": "Partial update of hotel information"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Booking Management",
+                    "item": [
+                        {
+                            "name": "List All Bookings",
+                            "request": {
+                                "method": "GET",
+                                "url": "{{base_url}}/bookings",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    }
+                                ],
+                                "query": [
+                                    {
+                                        "key": "search",
+                                        "value": "",
+                                        "description": "Search by user, hotel, or booking ID"
+                                    }
+                                ],
+                                "description": "List all bookings with full search capabilities"
+                            }
+                        },
+                        {
+                            "name": "Update Any Booking",
+                            "request": {
+                                "method": "PUT",
+                                "url": "{{base_url}}/bookings/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"check_in_date\": \"2024-04-01\",\n    \"check_out_date\": \"2024-04-05\",\n    \"guests_count\": 2\n}"
+                                },
+                                "description": "Update any booking without restrictions"
+                            }
+                        },
+                        {
+                            "name": "Cancel Any Booking",
+                            "request": {
+                                "method": "DELETE",
+                                "url": "{{base_url}}/bookings/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    }
+                                ],
+                                "description": "Cancel any booking without time restrictions"
+                            }
+                        },
+                        {
+                            "name": "Update Any Booking - Admin Override",
+                            "request": {
+                                "method": "PUT",
+                                "url": "{{base_url}}/bookings/:id",
+                                "header": [
+                                    {
+                                        "key": "Authorization",
+                                        "value": "Bearer {{admin_token}}"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n    \"check_in_date\": \"2024-04-01\",\n    \"check_out_date\": \"2024-04-05\",\n    \"guests_count\": 2,\n    \"status\": \"confirmed\",\n    \"admin_notes\": \"Changed dates as per customer request\",\n    \"room_upgrade\": true,\n    \"price_adjustment\": -50.00,\n    \"price_adjustment_reason\": \"Compensation for inconvenience\",\n    \"special_arrangements\": \"VIP welcome package\"\n}"
+                                },
+                                "description": "Update booking with admin privileges"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

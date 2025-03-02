@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -11,9 +14,31 @@
 |
 */
 
-pest()->extend(Tests\TestCase::class)
- // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
+uses(TestCase::class, RefreshDatabase::class)->in('Feature', 'Unit');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Helpers
+|--------------------------------------------------------------------------
+*/
+
+function actingAsAdmin()
+{
+    $admin = \App\Models\User::factory()->create(['role' => 'admin']);
+    return test()->actingAs($admin);
+}
+
+function actingAsEmployee()
+{
+    $employee = \App\Models\User::factory()->create(['role' => 'employee']);
+    return test()->actingAs($employee);
+}
+
+function actingAsUser()
+{
+    $user = \App\Models\User::factory()->create(['role' => 'user']);
+    return test()->actingAs($user);
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -26,8 +51,20 @@ pest()->extend(Tests\TestCase::class)
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
+expect()->extend('toBeValidationError', function () {
+    return $this->toBe(422);
+});
+
+expect()->extend('toBeUnauthorized', function () {
+    return $this->toBe(403);
+});
+
+expect()->extend('toBeNotFound', function () {
+    return $this->toBe(404);
+});
+
+expect()->extend('toBeSuccess', function () {
+    return $this->toBe(200);
 });
 
 /*

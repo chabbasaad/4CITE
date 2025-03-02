@@ -1,0 +1,95 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Hotel;
+use Illuminate\Database\Seeder;
+
+class HotelSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $hotels = [
+            [
+                'name' => 'Luxury Beach Resort',
+                'location' => 'Coastal Boulevard, Beach City',
+                'description' => '5-star luxury resort with private beach access and world-class amenities',
+                'picture_list' => [
+                    'https://example.com/hotels/beach-resort/main.jpg',
+                    'https://example.com/hotels/beach-resort/pool.jpg',
+                    'https://example.com/hotels/beach-resort/beach.jpg',
+                ],
+                'price_per_night' => 299.99,
+                'is_available' => true,
+                'amenities' => ['Swimming Pool', 'Spa', 'Private Beach', 'Restaurant', '24/7 Room Service'],
+                'total_rooms' => 50,
+            ],
+            [
+                'name' => 'City Center Hotel',
+                'location' => 'Downtown, Metropolitan City',
+                'description' => 'Modern business hotel in the heart of the city',
+                'picture_list' => [
+                    'https://example.com/hotels/city-center/main.jpg',
+                    'https://example.com/hotels/city-center/lobby.jpg',
+                ],
+                'price_per_night' => 199.99,
+                'is_available' => true,
+                'amenities' => ['Business Center', 'Gym', 'Restaurant', 'Conference Rooms'],
+                'total_rooms' => 100,
+            ],
+            [
+                'name' => 'Mountain View Lodge',
+                'location' => 'Alpine Heights, Mountain Town',
+                'description' => 'Cozy mountain retreat with breathtaking views',
+                'picture_list' => [
+                    'https://example.com/hotels/mountain-lodge/main.jpg',
+                    'https://example.com/hotels/mountain-lodge/view.jpg',
+                ],
+                'price_per_night' => 249.99,
+                'is_available' => true,
+                'amenities' => ['Fireplace', 'Hiking Trails', 'Restaurant', 'Spa'],
+                'total_rooms' => 30,
+            ],
+            [
+                'name' => 'Historic Boutique Hotel',
+                'location' => 'Old Town, Heritage City',
+                'description' => 'Charming boutique hotel in a restored historic building',
+                'picture_list' => [
+                    'https://example.com/hotels/historic/main.jpg',
+                    'https://example.com/hotels/historic/interior.jpg',
+                ],
+                'price_per_night' => 179.99,
+                'is_available' => true,
+                'amenities' => ['Antique Furnishings', 'Garden', 'Tea Room', 'Library'],
+                'total_rooms' => 20,
+            ],
+            [
+                'name' => 'Resort & Spa Retreat',
+                'location' => 'Wellness Valley, Tranquil City',
+                'description' => 'Luxury wellness resort focused on relaxation and rejuvenation',
+                'picture_list' => [
+                    'https://example.com/hotels/spa-retreat/main.jpg',
+                    'https://example.com/hotels/spa-retreat/spa.jpg',
+                    'https://example.com/hotels/spa-retreat/pool.jpg',
+                ],
+                'price_per_night' => 399.99,
+                'is_available' => true,
+                'amenities' => ['Luxury Spa', 'Yoga Studio', 'Meditation Garden', 'Organic Restaurant', 'Pool'],
+                'total_rooms' => 40,
+            ],
+        ];
+
+        foreach ($hotels as $hotel) {
+            Hotel::create([
+                'name' => $hotel['name'],
+                'location' => $hotel['location'],
+                'description' => $hotel['description'],
+                'picture_list' => json_encode($hotel['picture_list']),
+                'price_per_night' => $hotel['price_per_night'],
+                'is_available' => $hotel['is_available'],
+                'amenities' => json_encode($hotel['amenities']),
+                'total_rooms' => $hotel['total_rooms'],
+            ]);
+        }
+    }
+}

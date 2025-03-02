@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,19 +11,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // First seed users since they're needed for bookings
+        $this->call(UserSeeder::class);
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Then seed hotels since they're needed for bookings
+        $this->call(HotelSeeder::class);
 
-        $this->call([
-            RolesAndPermissionsSeeder::class,
-            UserSeeder::class,
-            PostSeeder::class,
-            CommentSeeder::class,
-            LikesTableSeeder::class,
-        ]);
+        // Finally seed bookings since they depend on both users and hotels
+        $this->call(BookingSeeder::class);
     }
 }

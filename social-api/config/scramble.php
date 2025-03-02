@@ -29,7 +29,7 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => 'SAV  is a scalable and flexible headless social media platform designed for content creators, developed using Laravel PHP for the backend and React for the front-end interface. The platform leverages RESTful APIs to ensure seamless integration and an efficient content management experience. Core features include secure user authentication, CRUD operations for posts, media upload and management, and privacy controls for user profiles. Optional features like comment moderation, post search, and notifications enhance functionality. Link Up empowers creators with a customizable and modern social media solution tailored to their needs.',
+        'description' => 'Akkor Hotel API provides a comprehensive set of endpoints to power the Akkor Hotel booking platform, allowing users to find, book, and manage hotel reservations globally. This RESTful API supports all operations needed for a complete hotel booking experience, including user management, hotel browsing, and reservation services.',
     ],
 
     /*
@@ -76,10 +76,7 @@ return [
      * ],
      * ```
      */
-    'servers' => [
-    'Local' => 'http://127.0.0.1:8000/api',
-    'Production' => 'https://backendsocialmedia-gwc5agamazghf3f7.canadacentral-01.azurewebsites.net/api',
-    ],
+    'servers' => null,
 
     'middleware' => [
         'web',

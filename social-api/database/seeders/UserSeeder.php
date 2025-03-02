@@ -4,35 +4,49 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-          // Create sample users
-        $adminUser = User::create([
+        // Create admin users
+        User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
-            'password' => bcrypt('password'),
-        ]);
-        $contentCreatorUser = User::create([
-            'name' => 'Content Creator',
-            'email' => 'creator@example.com',
-            'password' => bcrypt('password'),
-        ]);
-        $regularUser = User::create([
-            'name' => 'Regular User',
-            'email' => 'user@example.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password123'),
+            'pseudo' => 'admin1',
+            'role' => 'admin',
         ]);
 
-        // Assign roles to users
-        $adminUser->assignRole('admin');
-        $contentCreatorUser->assignRole('content_creator');
-        $regularUser->assignRole('user');
+        User::create([
+            'name' => 'Second Admin',
+            'email' => 'admin2@example.com',
+            'password' => Hash::make('password123'),
+            'pseudo' => 'admin2',
+            'role' => 'admin',
+        ]);
+
+        // Create employee users
+        for ($i = 1; $i <= 3; $i++) {
+            User::create([
+                'name' => "Employee $i",
+                'email' => "employee$i@example.com",
+                'password' => Hash::make('password123'),
+                'pseudo' => "employee$i",
+                'role' => 'employee',
+            ]);
+        }
+
+        // Create regular users
+        for ($i = 1; $i <= 10; $i++) {
+            User::create([
+                'name' => "User $i",
+                'email' => "user$i@example.com",
+                'password' => Hash::make('password123'),
+                'pseudo' => "user$i",
+                'role' => 'user',
+            ]);
+        }
     }
 }
