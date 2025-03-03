@@ -60,7 +60,6 @@ Scenario: Registration with a missing required field
 
 Scenario: Registration with an email containing leading/trailing spaces
     Given a visitor is on the registration page
-
     When they submit registration details with an email containing leading/trailing spaces
     Then the system should trim the spaces and register the email as "saad.chabba@example.com"
     And they should have a new account created
@@ -69,7 +68,6 @@ Scenario: Registration with an email containing leading/trailing spaces
 
 Scenario: Registration with a duplicate pseudo (username)
     Given a visitor is on the registration page
-
     And a user with pseudo "johndoe" already exists in the system
     When they submit registration details with pseudo "saadchabba"
     Then they should see an error message indicating the pseudo is already taken
@@ -81,10 +79,8 @@ Scenario: Registration with a very long name or email
     Then they should see an error message indicating the name or email exceeds the maximum allowed length
     And they should remain on the registration page
 
-
 Scenario: Registration with special characters in the name
     Given a visitor is on the registration page
-
     When they submit registration details with special characters in the name
     Then they should have a new account created
     And they should be logged into the system
@@ -92,14 +88,9 @@ Scenario: Registration with special characters in the name
 
 Scenario: Registration with a password containing spaces
     Given a visitor is on the registration page
-    When they submit registration details with a password containing spaces:
-    | name | John Doe |
-    | email | john.doe@example.com |
-    | password | Password 123! | (contains spaces)
-    | pseudo | johndoe |
+    When they submit registration details with a password containing spaces
     Then they should see an error message indicating that passwords cannot contain spaces
     And they should remain on the registration page
-
 
 Scenario: Registration with a password that matches the email or name
     Given a visitor is on the registration page
