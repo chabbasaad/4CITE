@@ -22,6 +22,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Définir le répertoire de travail
 WORKDIR /var/www
 
+
 # Copier l'application dans le conteneur
 COPY . /var/www
 
