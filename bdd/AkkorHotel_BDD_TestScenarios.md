@@ -154,6 +154,82 @@ Scenario: Failed login with non-existent email
   When they attempt to login with email "nonexistent@example.com"
   Then they should see an error message indicating invalid credentials
   And they should remain on the login page
+
+Scenario: Login with leading/trailing spaces in email
+  Given a registered user with email "user@example.com" and password "password123"
+  When they submit login credentials with leading/trailing spaces in the email:
+    | email | user@example.com | spaces before and after
+    | password | password123 |
+  Then the system should trim the spaces and log them in successfully
+  And they should be redirected to their dashboard
+
+Scenario: Login with incorrect email format
+  Given no user exists with email "invalid-email-format"
+  When they attempt to login with an invalid email format:
+    | email | invalid-email-format |
+    | password | password123 |
+  Then they should see an error message indicating the email format is invalid
+  And they should remain on the login page
+
+Scenario: Login with a case-sensitive email
+  Given a registered user with email "user@example.com" and password "password123"
+  When they submit login credentials with a different case in the email
+  Then they should be successfully logged into the system
+  And they should be redirected to their dashboard
+
+Scenario: Login with a case-sensitive password
+  Given a registered user with email "user@example.com" and password "Password123"
+  When they submit login credentials with a different case in the password:
+  | email | user@example.com |
+  | password | password123 | 
+  Then they should see an error message indicating invalid credentials
+  And they should remain on the login page
+
+Scenario: Login with a locked account after multiple failed attempts
+  Given a registered user with email "user@example.com" and password "password123"
+  And the account is set to lock after 3 failed login attempts
+  When they submit incorrect login credentials 3 times
+  Then their account should be locked
+  And they should see an error message indicating their account is locked
+  And they should be prompted to reset their password or contact support
+
+Scenario: Login with a deactivated account
+  Given a deactivated user with email "user@example.com" and password "password123"
+  When they attempt to login
+  Then they should see an error message indicating their account is deactivated
+  And they should remain on the login page
+
+Scenario: Login with a password containing spaces
+  Given a registered user with email "user@example.com" and password "password 123"
+  When they submit login credentials with a password containing spaces:
+  | email | user@example.com |
+  | password | password 123 | (contains spaces)
+  Then they should see an error message indicating invalid credentials
+  And they should remain on the login page
+
+Scenario: Login with a very long password
+  Given a registered user with email "user@example.com" and password "AVeryLongPasswordThatExceedsTheMaximumAllowedLength123!"
+  When they submit login credentials with a very long password:
+    | email | user@example.com |
+    | password | AVeryLongPasswordThatExceedsTheMaximumAllowedLength123! |
+  Then they should see an error message indicating invalid credentials
+  And they should remain on the login page
+
+Scenario: Login with a blank email or password
+  Given a registered user with email "user@example.com" and password "password123"
+  When they submit login credentials with a blank email or password:
+    | email | | (blank)
+    | password | password123 |
+  Then they should see an error message indicating the email is required
+  And they should remain on the login page
+
+Scenario: Login with a blank password
+  Given a registered user with email "user@example.com" and password "password123"
+  When they submit login credentials with a blank password:
+    | email | user@example.com |
+    | password | | blank
+  Then they should see an error message indicating the password is required
+  And they should remain on the login page
 ```
 
 ### Feature: User Logout
