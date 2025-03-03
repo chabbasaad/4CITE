@@ -19,6 +19,9 @@ return new class extends Migration
             $table->json('picture_list')->nullable();
             $table->decimal('price_per_night', 10, 2);
             $table->boolean('is_available')->default(true);
+            $table->integer('total_rooms');
+            $table->integer('available_rooms');
+            $table->json('amenities')->nullable();
             $table->timestamps();
 
             // Add indexes for sorting and filtering

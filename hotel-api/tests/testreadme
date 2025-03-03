@@ -1,7 +1,0 @@
-Feature: User Registration
-
-php artisan test tests/Unit/UserRegistrationTest.php
-
-php artisan test tests/Feature/Auth/UserRegistrationTest.php
-
-Feature: User Login

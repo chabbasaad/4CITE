@@ -8,50 +8,84 @@ use App\Http\Requests\Hotel\UpdateHotelRequest;
 use App\Models\Hotel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class HotelController extends Controller
 {
     /**
-     * List all hotels with pagination and sorting.
+     * List all hotels with pagination, sorting, and filtering.
      *
      * @param Request $request
      * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
+        // Validate request parameters
+        $validator = Validator::make($request->all(), [
+            'min_price' => 'nullable|numeric|min:0',
+            'max_price' => 'nullable|numeric|min:0|gte:min_price',
+            'available' => 'nullable|boolean',
+            'search' => 'nullable|string|max:255',
+            'sort_by' => 'nullable|string|in:name,location,price_per_night,created_at',
+            'direction' => 'nullable|string|in:asc,desc',
+            'per_page' => 'nullable|integer|min:1|max:100'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Invalid parameters',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
         $query = Hotel::query();
 
-        // Apply search filters if provided
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                    ->orWhere('location', 'like', "%{$request->search}%")
-                    ->orWhere('description', 'like', "%{$request->search}%");
+        // Apply search filter
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                    ->orWhere('location', 'like', "%{$searchTerm}%")
+                    ->orWhere('description', 'like', "%{$searchTerm}%");
             });
         }
 
-        // Apply availability filter
-        if ($request->boolean('available')) {
-            $query->available();
+        // Apply price range filter
+        if ($request->filled('min_price')) {
+            $query->where('price_per_night', '>=', $request->min_price);
+        }
+        if ($request->filled('max_price')) {
+            $query->where('price_per_night', '<=', $request->max_price);
         }
 
-        // Apply sorting with validation
-        $allowedSortFields = ['name', 'location', 'created_at', 'price_per_night'];
-        $sortBy = in_array($request->sort_by, $allowedSortFields) ? $request->sort_by : 'created_at';
-        $direction = in_array(strtolower($request->direction), ['asc', 'desc']) ? strtolower($request->direction) : 'desc';
+        // Apply availability filter
+        if ($request->has('available')) {
+            $query->where('is_available', filter_var($request->available, FILTER_VALIDATE_BOOLEAN));
+        }
 
+        // Apply sorting
+        $sortBy = $request->get('sort_by', 'created_at');
+        $direction = strtolower($request->get('direction', 'desc'));
         $query->orderBy($sortBy, $direction);
 
-        // Get paginated results
-        $perPage = min(max((int)$request->get('per_page', 10), 1), 100); // Limit between 1 and 100
-        $hotels = $query->paginate($perPage);
+        // Get paginated results with relationships if user is staff
+        $perPage = $request->get('per_page', 10);
 
-        // If user is logged in and is staff, include additional information
         if ($request->user() && $request->user()->isStaff()) {
-            $hotels->load('bookings.user');
+            $query->with('bookings.user');
         }
 
-        return response()->json(['data' => $hotels->items()]);
+        $hotels = $query->paginate($perPage);
+
+        return response()->json([
+            'data' => $hotels->items(),
+            'meta' => [
+                'current_page' => $hotels->currentPage(),
+                'per_page' => $hotels->perPage(),
+                'total' => $hotels->total(),
+                'last_page' => $hotels->lastPage()
+            ]
+        ]);
     }
 
     /**

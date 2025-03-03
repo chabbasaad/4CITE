@@ -29,7 +29,11 @@ class CreateHotelRequest extends FormRequest
             'picture_list' => ['nullable', 'array'],
             'picture_list.*' => ['string', 'url'],
             'price_per_night' => ['required', 'numeric', 'min:0'],
-            'is_available' => ['boolean']
+            'is_available' => ['boolean'],
+            'total_rooms' => ['required', 'integer', 'min:1'],
+            'amenities' => ['nullable', 'array'],
+            'amenities.*' => ['string'],
+            'available_rooms' => ['required', 'integer', 'min:0', 'lte:total_rooms']
         ];
     }
 
@@ -47,6 +51,12 @@ class CreateHotelRequest extends FormRequest
             'picture_list.*.url' => 'Each picture must be a valid URL',
             'price_per_night.required' => 'The price per night is required',
             'price_per_night.min' => 'The price per night must be greater than 0',
+            'total_rooms.required' => 'The total number of rooms is required',
+            'total_rooms.min' => 'The total number of rooms must be at least 1',
+            'available_rooms.required' => 'The number of available rooms is required',
+            'available_rooms.lte' => 'The number of available rooms cannot exceed the total number of rooms',
+            'amenities.array' => 'Amenities must be a list of strings',
+            'amenities.*.string' => 'Each amenity must be a string'
         ];
     }
 }

@@ -27,7 +27,6 @@ class BookingFactory extends Factory
             'hotel_id' => Hotel::factory(),
             'check_in_date' => $checkInDate,
             'check_out_date' => $checkOutDate,
-            'guests_count' => $guests_count,
             'guest_names' => $guest_names,
             'status' => fake()->randomElement(['pending', 'confirmed', 'cancelled', 'completed']),
             'special_requests' => fake()->boolean(30) ? fake()->sentence() : null,

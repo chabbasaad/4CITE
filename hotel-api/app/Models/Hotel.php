@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Hotel extends Model
 {
@@ -16,12 +17,14 @@ class Hotel extends Model
      */
     protected $fillable = [
         'name',
-        'description',
         'location',
+        'description',
         'price_per_night',
+        'available_rooms',
         'is_available',
+        'total_rooms',
         'amenities',
-        'total_rooms'
+        'picture_list'
     ];
 
     /**
@@ -30,15 +33,18 @@ class Hotel extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'amenities' => 'array',
+        'price_per_night' => 'float',
+        'available_rooms' => 'integer',
+        'total_rooms' => 'integer',
         'is_available' => 'boolean',
-        'price_per_night' => 'decimal:2'
+        'amenities' => 'array',
+        'picture_list' => 'array'
     ];
 
     /**
      * Get the bookings for the hotel.
      */
-    public function bookings()
+    public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class);
     }
@@ -46,22 +52,37 @@ class Hotel extends Model
     /**
      * Scope a query to only include available hotels.
      */
-    public function scopeAvailable($query)
+    public function scopeAvailable($query, bool $available = true)
     {
-        return $query->where('is_available', true);
+        return $query->where('is_available', $available);
     }
 
     /**
-     * Scope a query to sort hotels by various criteria.
+     * Scope a query to filter by price range.
      */
-    public function scopeSort($query, $sortBy = 'created_at', $direction = 'desc')
+    public function scopePriceRange($query, ?float $min = null, ?float $max = null)
     {
-        $allowedSortFields = ['name', 'location', 'price_per_night', 'created_at'];
-
-        if (in_array($sortBy, $allowedSortFields)) {
-            return $query->orderBy($sortBy, $direction === 'asc' ? 'asc' : 'desc');
+        if ($min !== null) {
+            $query->where('price_per_night', '>=', $min);
         }
+        if ($max !== null) {
+            $query->where('price_per_night', '<=', $max);
+        }
+        return $query;
+    }
 
-        return $query->orderBy('created_at', 'desc');
+    /**
+     * Scope a query to search hotels.
+     */
+    public function scopeSearch($query, ?string $search)
+    {
+        if ($search) {
+            return $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+        return $query;
     }
 }

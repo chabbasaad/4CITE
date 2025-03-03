@@ -69,6 +69,11 @@ class BookingController extends Controller
             $query->where('check_out_date', '<=', $request->to_date);
         }
 
+        // Filter by status if provided
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
         // Sort by check-in date by default
         $query->orderBy($request->get('sort_by', 'check_in_date'), $request->get('direction', 'asc'));
 

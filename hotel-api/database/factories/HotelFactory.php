@@ -2,39 +2,75 @@
 
 namespace Database\Factories;
 
+use App\Models\Hotel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class HotelFactory extends Factory
 {
-    public function definition(): array
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Hotel::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
     {
+        $total_rooms = $this->faker->numberBetween(10, 100);
         return [
-            'name' => fake()->company() . ' Hotel',
-            'description' => fake()->paragraph(),
-            'location' => fake()->city(),
-            'price_per_night' => fake()->numberBetween(50, 500),
-            'is_available' => fake()->boolean(80), // 80% chance of being available
-            'amenities' => [
-                'wifi' => fake()->boolean(90),
-                'parking' => fake()->boolean(70),
-                'pool' => fake()->boolean(50),
-                'spa' => fake()->boolean(30),
-                'restaurant' => fake()->boolean(60),
-                'room_service' => fake()->boolean(80),
-                'fitness_center' => fake()->boolean(40),
-                'conference_room' => fake()->boolean(30),
-            ],
-            'total_rooms' => fake()->numberBetween(10, 200),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'name' => $this->faker->company() . ' Hotel',
+            'location' => $this->faker->city(),
+            'description' => $this->faker->paragraph(),
+            'price_per_night' => $this->faker->numberBetween(100, 1000),
+            'total_rooms' => $total_rooms,
+            'available_rooms' => $this->faker->numberBetween(0, $total_rooms),
+            'is_available' => $this->faker->boolean(80), // 80% chance of being available
+            'amenities' => json_encode([
+                'wifi' => true,
+                'parking' => true,
+                'breakfast' => $this->faker->boolean(),
+                'pool' => $this->faker->boolean(),
+                'spa' => $this->faker->boolean(),
+            ]),
         ];
     }
 
-    public function unavailable(): self
+    /**
+     * Indicate that the hotel is available.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function available()
     {
-        return $this->state(fn (array $attributes) => [
-            'is_available' => false,
-        ]);
+        return $this->state(function (array $attributes) {
+            $total_rooms = $attributes['total_rooms'] ?? $this->faker->numberBetween(10, 100);
+            return [
+                'is_available' => true,
+                'total_rooms' => $total_rooms,
+                'available_rooms' => $this->faker->numberBetween(1, $total_rooms),
+            ];
+        });
+    }
+
+    /**
+     * Indicate that the hotel is unavailable.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function unavailable()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_available' => false,
+                'total_rooms' => $this->faker->numberBetween(10, 100),
+                'available_rooms' => 0,
+            ];
+        });
     }
 
     public function luxury(): self

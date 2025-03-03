@@ -28,7 +28,27 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-// Public hotel routes
+/*
+|--------------------------------------------------------------------------
+| Hotel Routes (Public)
+|--------------------------------------------------------------------------
+|
+| GET /api/hotels
+|   - List and search hotels
+|   - Query Parameters:
+|     * search: Search in name, location, description
+|     * min_price: Minimum price per night
+|     * max_price: Maximum price per night
+|     * available: Filter by availability (true/false)
+|     * sort_by: Sort field (name, location, price_per_night, created_at)
+|     * direction: Sort direction (asc, desc)
+|     * per_page: Results per page (1-100)
+|
+| GET /api/hotels/{id}
+|   - View hotel details
+|   - Staff users see additional booking information
+|
+*/
 Route::get('hotels', [HotelController::class, 'index']);
 Route::get('hotels/{hotel}', [HotelController::class, 'show']);
 
@@ -72,7 +92,19 @@ Route::middleware('auth:sanctum')->group(function () {
     | Booking Management Routes
     |--------------------------------------------------------------------------
     |
-    | GET    /api/bookings          - List bookings (user: own bookings, admin: all bookings with search)
+    | GET    /api/bookings
+    |   - List and search bookings
+    |   - Query Parameters:
+    |     * search: Search by user email/name or hotel name
+    |     * status: Filter by status (pending, confirmed, cancelled)
+    |     * from_date: Filter by check-in date range start
+    |     * to_date: Filter by check-in date range end
+    |     * sort_by: Sort field (check_in_date, created_at, status)
+    |     * direction: Sort direction (asc, desc)
+    |     * per_page: Results per page (1-100)
+    |   - Regular users see only their bookings
+    |   - Staff users can see and search all bookings
+    |
     | POST   /api/bookings          - Create booking (any authenticated user)
     | GET    /api/bookings/{id}     - Show booking details (own booking or admin)
     | PUT    /api/bookings/{id}     - Update booking (own booking or admin)

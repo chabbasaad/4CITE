@@ -29,7 +29,11 @@ class UpdateHotelRequest extends FormRequest
             'picture_list' => ['sometimes', 'nullable', 'array'],
             'picture_list.*' => ['string', 'url'],
             'price_per_night' => ['sometimes', 'numeric', 'min:0'],
-            'is_available' => ['sometimes', 'boolean']
+            'is_available' => ['sometimes', 'boolean'],
+            'total_rooms' => ['sometimes', 'integer', 'min:1'],
+            'amenities' => ['sometimes', 'nullable', 'array'],
+            'amenities.*' => ['string'],
+            'available_rooms' => ['sometimes', 'integer', 'min:0', 'lte:total_rooms']
         ];
     }
 
@@ -47,6 +51,13 @@ class UpdateHotelRequest extends FormRequest
             'picture_list.*.url' => 'Each picture must be a valid URL',
             'price_per_night.numeric' => 'The price per night must be a number',
             'price_per_night.min' => 'The price per night must be greater than 0',
+            'total_rooms.integer' => 'The total number of rooms must be an integer',
+            'total_rooms.min' => 'The total number of rooms must be at least 1',
+            'available_rooms.integer' => 'The number of available rooms must be an integer',
+            'available_rooms.min' => 'The number of available rooms cannot be negative',
+            'available_rooms.lte' => 'The number of available rooms cannot exceed the total number of rooms',
+            'amenities.array' => 'Amenities must be a list of strings',
+            'amenities.*.string' => 'Each amenity must be a string'
         ];
     }
 }

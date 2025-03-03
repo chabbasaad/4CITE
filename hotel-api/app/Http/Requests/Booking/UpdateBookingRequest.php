@@ -65,7 +65,8 @@ class UpdateBookingRequest extends FormRequest
             'guest_names' => ['sometimes', 'array', 'min:1'],
             'guest_names.*' => ['required', 'string', 'max:255'],
             'contact_phone' => ['sometimes', 'string', 'max:20'],
-            'special_requests' => ['nullable', 'string', 'max:1000']
+            'special_requests' => ['nullable', 'string', 'max:1000'],
+            'status' => ['sometimes', 'string', 'in:pending,confirmed,cancelled']
         ];
     }
 

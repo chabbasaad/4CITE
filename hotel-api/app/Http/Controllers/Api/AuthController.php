@@ -84,7 +84,6 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        // Get the current user
         $user = $request->user();
 
         if ($user) {
@@ -92,13 +91,10 @@ class AuthController extends Controller
             $currentToken = $user->currentAccessToken();
 
             if ($currentToken) {
-                // Delete the current token first
+                // Delete the current token first to ensure it can't be reused
                 $currentToken->delete();
 
-                // Then delete all other tokens
-                $user->tokens()->where('id', '!=', $currentToken->id)->delete();
-            } else {
-                // If no current token found, delete all tokens
+                // Then delete all other tokens for this user
                 $user->tokens()->delete();
             }
         }
@@ -117,8 +113,11 @@ class AuthController extends Controller
     public function user(Request $request): JsonResponse
     {
         $user = $request->user();
+        $bearerToken = $request->bearerToken();
 
-        if (!$user || !$request->bearerToken()) {
+        // Check if user exists and has a valid token
+        if (!$user || !$bearerToken ||
+            !$user->tokens()->where('token', hash('sha256', explode('|', $bearerToken)[1] ?? ''))->exists()) {
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 

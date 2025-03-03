@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Exception;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * Available user roles
@@ -56,6 +58,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'is_active' => 'boolean',
         'locked_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -66,7 +69,16 @@ class User extends Authenticatable
         parent::boot();
 
         static::deleting(function ($user) {
+            // Delete associated tokens
             $user->tokens()->delete();
+
+            // Check if this is the last admin
+            if ($user->isAdmin()) {
+                $adminCount = self::where('role', self::ROLE_ADMIN)->count();
+                if ($adminCount <= 1) {
+                    throw new Exception('Cannot delete the last admin user');
+                }
+            }
         });
     }
 
