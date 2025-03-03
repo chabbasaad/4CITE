@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -52,7 +54,11 @@ class AuthController extends Controller
     {
         $validated = $request->validated();
 
-        $user = User::where('email', $validated['email'])->first();
+        // Normalize the email (trim and lowercase)
+        $email = strtolower(trim($validated['email']));
+
+        // Find user by normalized email
+        $user = User::whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
 
         if (!$user || !Hash::check($validated['password'], $user->password)) {
             throw ValidationException::withMessages([
@@ -73,13 +79,29 @@ class AuthController extends Controller
     /**
      * Logout user (revoke token).
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @return JsonResponse
      */
-    public function logout(\Illuminate\Http\Request $request): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
-        // Revoke all tokens
-        $request->user()->tokens()->delete();
+        // Get the current user
+        $user = $request->user();
+
+        if ($user) {
+            // Get the current token
+            $currentToken = $user->currentAccessToken();
+
+            if ($currentToken) {
+                // Delete the current token first
+                $currentToken->delete();
+
+                // Then delete all other tokens
+                $user->tokens()->where('id', '!=', $currentToken->id)->delete();
+            } else {
+                // If no current token found, delete all tokens
+                $user->tokens()->delete();
+            }
+        }
 
         return response()->json([
             'message' => 'Successfully logged out'
@@ -89,11 +111,17 @@ class AuthController extends Controller
     /**
      * Get authenticated user.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @return JsonResponse
      */
-    public function user(\Illuminate\Http\Request $request): JsonResponse
+    public function user(Request $request): JsonResponse
     {
-        return response()->json($request->user());
+        $user = $request->user();
+
+        if (!$user || !$request->bearerToken()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        return response()->json($user);
     }
 }

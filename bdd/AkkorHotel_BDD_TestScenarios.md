@@ -65,7 +65,7 @@ Scenario: Registration with an email containing leading/trailing spaces
 
 Scenario: Registration with a duplicate pseudo (username)
     Given a visitor is on the registration page
-    And a user with pseudo "johndoe" already exists in the system
+    And a user with pseudo "saadchabba" already exists in the system
     When they submit registration details with pseudo "saadchabba"
     Then they should see an error message indicating the pseudo is already taken
     And they should remain on the registration page

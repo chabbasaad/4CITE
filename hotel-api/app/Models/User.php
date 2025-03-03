@@ -19,6 +19,8 @@ class User extends Authenticatable
     const ROLE_EMPLOYEE = 'employee';
     const ROLE_ADMIN = 'admin';
 
+    const MAX_LOGIN_ATTEMPTS = 3;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -29,7 +31,10 @@ class User extends Authenticatable
         'email',
         'password',
         'pseudo',
-        'role'
+        'role',
+        'login_attempts',
+        'locked_at',
+        'is_active'
     ];
 
     /**
@@ -49,7 +54,21 @@ class User extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
+        'is_active' => 'boolean',
+        'locked_at' => 'datetime',
     ];
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            $user->tokens()->delete();
+        });
+    }
 
     /**
      * Get all available roles.
@@ -111,5 +130,47 @@ class User extends Authenticatable
     public function isStaff(): bool
     {
         return $this->isAdmin() || $this->isEmployee();
+    }
+
+    /**
+     * Check if the account is locked.
+     */
+    public function isLocked(): bool
+    {
+        return $this->locked_at !== null;
+    }
+
+    /**
+     * Increment login attempts and lock account if necessary.
+     */
+    public function incrementLoginAttempts(): void
+    {
+        $this->increment('login_attempts');
+
+        if ($this->login_attempts >= self::MAX_LOGIN_ATTEMPTS) {
+            $this->locked_at = now();
+            $this->save();
+        }
+    }
+
+    /**
+     * Reset login attempts.
+     */
+    public function resetLoginAttempts(): void
+    {
+        $this->login_attempts = 0;
+        $this->locked_at = null;
+        $this->save();
+    }
+
+    /**
+     * Set the user's email, automatically trimming whitespace.
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setEmailAttribute($value)
+    {
+        $this->attributes['email'] = strtolower(trim($value));
     }
 }

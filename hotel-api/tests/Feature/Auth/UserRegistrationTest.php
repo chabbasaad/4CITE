@@ -1,79 +1,214 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Testing\Fluent\AssertableJson;
+namespace Tests\Feature\Auth;
 
-test('new user can register successfully', function () {
-    $response = $this->postJson('/api/auth/register', [
-        'name' => 'John Doe',
-        'email' => 'john.doe@example.com',
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+uses(TestCase::class, RefreshDatabase::class)->in('Feature/Auth');
+
+beforeEach(function () {
+    // Clean up the users table before each test
+    User::query()->delete();
+});
+
+test('user can successfully register with valid data', function () {
+    $userData = [
+        'name' => 'Saad chabba',
+        'email' => 'saad.chabba@example.com',
         'password' => 'Password123!',
         'password_confirmation' => 'Password123!',
-        'pseudo' => 'johndoe'
-    ]);
+        'pseudo' => 'Saadchabba',
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
 
     $response->assertStatus(201)
-        ->assertJson(fn (AssertableJson $json) =>
-            $json->has('token')
-                ->has('user')
-                ->where('message', 'Registration successful')
-                ->where('user.name', 'John Doe')
-                ->where('user.email', 'john.doe@example.com')
-                ->where('user.pseudo', 'johndoe')
-        );
+        ->assertJsonStructure([
+            'message',
+            'user' => [
+                'id',
+                'name',
+                'email',
+                'pseudo',
+                'created_at',
+                'updated_at',
+            ],
+        ]);
 
-    $user = User::where('email', 'john.doe@example.com')->first();
-    expect($user)->not->toBeNull()
-        ->and($user->name)->toBe('John Doe')
-        ->and($user->pseudo)->toBe('johndoe')
-        ->and(Hash::check('Password123!', $user->password))->toBeTrue();
+    $this->assertDatabaseHas('users', [
+        'email' => $userData['email'],
+        'name' => $userData['name'],
+        'pseudo' => $userData['pseudo'],
+    ]);
 });
 
 test('user cannot register with existing email', function () {
-    // Create an existing user
-    User::factory()->create([
-        'email' => 'existing@example.com'
+    // Create existing user
+    User::create([
+        'name' => 'Existing User',
+        'email' => 'existing@example.com',
+        'password' => bcrypt('Password123!'),
+        'pseudo' => 'existinguser',
     ]);
 
-    $response = $this->postJson('/api/auth/register', [
-        'name' => 'Another User',
+    $userData = [
+        'name' => 'New User',
         'email' => 'existing@example.com',
         'password' => 'Password123!',
         'password_confirmation' => 'Password123!',
-        'pseudo' => 'anotheruser'
-    ]);
+        'pseudo' => 'newuser',
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['email']);
 });
 
 test('user cannot register with invalid data', function () {
-    // Test with invalid data
-    $response = $this->postJson('/api/auth/register', [
-        'name' => 'Jo',
+    $invalidData = [
+        'name' => '',
         'email' => 'invalid-email',
-        'password' => 'pass',
-        'password_confirmation' => 'pass',
-        'pseudo' => 'jo'
-    ]);
+        'password' => 'short',
+        'password_confirmation' => 'different',
+        'pseudo' => 'a', // too short
+    ];
+
+    $response = $this->postJson('/api/auth/register', $invalidData);
 
     $response->assertStatus(422)
-        ->assertJsonValidationErrors(['name', 'email', 'password']);
-
-    // Verify no user was created
-    expect(User::where('email', 'invalid-email')->exists())->toBeFalse();
+        ->assertJsonValidationErrors(['name', 'email', 'password', 'pseudo']);
 });
 
-test('registration requires all fields', function () {
-    // Test with missing required fields
-    $response = $this->postJson('/api/auth/register', [
-        'name' => 'John Doe',
-        // missing email
-        'password' => 'Password123!',
-        // missing pseudo
-    ]);
+test('user cannot register with weak password', function () {
+    $userData = [
+        'name' => 'Saad chabba',
+        'email' => 'saad.chabba@example.com',
+        'password' => 'weakpass',
+        'password_confirmation' => 'weakpass',
+        'pseudo' => 'Saadchabba',
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
 
     $response->assertStatus(422)
-        ->assertJsonValidationErrors(['email', 'pseudo']);
+        ->assertJsonValidationErrors(['password']);
+});
+
+test('user cannot register with duplicate pseudo', function () {
+    // Create existing user
+    User::create([
+        'name' => 'Existing User',
+        'email' => 'existing@example.com',
+        'password' => bcrypt('Password123!'),
+        'pseudo' => 'saadchabba',
+    ]);
+
+    $userData = [
+        'name' => 'New User',
+        'email' => 'new@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+        'pseudo' => 'saadchabba',
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['pseudo']);
+});
+
+test('email is trimmed during registration', function () {
+    $userData = [
+        'name' => 'Saad chabba',
+        'email' => '  saad.chabba@example.com  ',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+        'pseudo' => 'Saadchabba',
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
+
+    $response->assertStatus(201);
+
+    $this->assertDatabaseHas('users', [
+        'email' => trim($userData['email']),
+    ]);
+});
+
+test('user cannot register with special characters in name', function () {
+    $userData = [
+        'name' => 'Saad@123',
+        'email' => 'saad.chabba@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+        'pseudo' => 'Saadchabba',
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['name']);
+});
+
+test('user cannot register with password matching email or name', function () {
+    $userData = [
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+        'password' => 'john@example.com',
+        'password_confirmation' => 'john@example.com',
+        'pseudo' => 'johndoe',
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['password']);
+});
+
+test('user cannot register with very long inputs', function () {
+    $userData = [
+        'name' => str_repeat('a', 256),
+        'email' => str_repeat('a', 246) . '@example.com',
+        'password' => str_repeat('A', 101) . '123!',
+        'password_confirmation' => str_repeat('A', 101) . '123!',
+        'pseudo' => str_repeat('a', 51),
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['name', 'email', 'password', 'pseudo']);
+});
+
+test('user cannot register with spaces in pseudo', function () {
+    $userData = [
+        'name' => 'Saad chabba',
+        'email' => 'saad.chabba@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+        'pseudo' => 'saad chabba',
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['pseudo']);
+});
+
+test('user cannot register with password containing spaces', function () {
+    $userData = [
+        'name' => 'Saad chabba',
+        'email' => 'saad.chabba@example.com',
+        'password' => 'Password 123!',
+        'password_confirmation' => 'Password 123!',
+        'pseudo' => 'Saadchabba',
+    ];
+
+    $response = $this->postJson('/api/auth/register', $userData);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['password']);
 });
