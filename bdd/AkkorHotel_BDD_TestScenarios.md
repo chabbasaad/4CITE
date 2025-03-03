@@ -202,8 +202,6 @@ Scenario: Login with a deactivated account
 Scenario: Login with a password containing spaces
   Given a registered user with email "user@example.com" and password "password 123"
   When they submit login credentials with a password containing spaces:
-  | email | user@example.com |
-  | password | password 123 | (contains spaces)
   Then they should see an error message indicating invalid credentials
   And they should remain on the login page
 
@@ -225,9 +223,7 @@ Scenario: Login with a blank email or password
 
 Scenario: Login with a blank password
   Given a registered user with email "user@example.com" and password "password123"
-  When they submit login credentials with a blank password:
-    | email | user@example.com |
-    | password | | blank
+  When they submit login credentials with a blank password
   Then they should see an error message indicating the password is required
   And they should remain on the login page
 ```
