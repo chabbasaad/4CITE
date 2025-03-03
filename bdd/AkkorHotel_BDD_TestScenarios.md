@@ -37,10 +37,7 @@ Scenario: Attempting registration with an existing email
 
 Scenario: Attempting registration with invalid data
   Given a visitor is on the registration page
-  When they submit registration with invalid details:
-    | name      | Sa                   | (too short)
-    | email     | invalid-email        | (invalid format)
-    | password  | pass                 | (too short)
+  When they submit registration with invalid details
   Then they should see validation error messages
   And they should remain on the registration page with their data preserved
 
