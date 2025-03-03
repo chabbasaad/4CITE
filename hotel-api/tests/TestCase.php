@@ -14,6 +14,7 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        
         // Disable foreign key checks during tests
         if (DB::connection()->getDriverName() === 'sqlite') {
             DB::statement('PRAGMA foreign_keys = OFF');
