@@ -21,6 +21,20 @@ services:
       - DB_USERNAME=laravel
       - DB_PASSWORD=secret
 
+  nginx:
+    image: nginx:alpine
+    container_name: laravel-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - laravel-network
+
   db:
     image: mysql:8.0
     container_name: laravel-db
