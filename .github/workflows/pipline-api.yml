@@ -49,7 +49,7 @@
               rm -rf hotel-api
               tar -xzf app.tar.gz 
               cd hotel-api
-              docker-compose down
-              docker image rm web-traficandme_frontend
-              docker-compose up -d
+              sudo docker-compose down
+              sudo docker image rm web-traficandme_frontend
+              sudo docker-compose up -d
             EOF
