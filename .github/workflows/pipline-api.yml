@@ -42,14 +42,14 @@
               
               # Installer Docker Compose 
               if ! command -v docker-compose &> /dev/null; then
-                sudo apt update
-                sudo apt install -y docker-compose
+                echo "Bandello31!!!" | sudo -S apt update
+                echo "Bandello31!!!" | sudo -S apt install -y docker-compose
               fi
               
               rm -rf hotel-api
               tar -xzf app.tar.gz 
               cd hotel-api
-              sudo docker-compose down
-              sudo docker image rm web-traficandme_frontend
-              sudo docker-compose up -d
+              echo "Bandello31!!!" | sudo -S echo "Bandello31!!!" | -S  docker-compose down
+              echo "Bandello31!!!" | sudo -S docker image rm web-traficandme_frontend
+              echo "Bandello31!!!" | sudo -S docker-compose up -d
             EOF
