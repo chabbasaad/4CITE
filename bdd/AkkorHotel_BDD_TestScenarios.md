@@ -20,10 +20,10 @@ Feature: User Registration
 Scenario: Successful registration as a new user
   Given a visitor is on the registration page
   When they submit valid registration details including:
-    | name      | John Doe             |
-    | email     | john.doe@example.com |
+    | name      | Saad chabba             |
+    | email     | Saad.chabba@example.com |
     | password  | Password123!         |
-    | pseudo    | johndoe              |
+    | pseudo    | Saadchabba              |
   Then they should have a new account created
   And they should be logged into the system
   And they should see a welcome message
@@ -38,11 +38,110 @@ Scenario: Attempting registration with an existing email
 Scenario: Attempting registration with invalid data
   Given a visitor is on the registration page
   When they submit registration with invalid details:
-    | name      | Jo                   | (too short)
+    | name      | Sa                   | (too short)
     | email     | invalid-email        | (invalid format)
     | password  | pass                 | (too short)
   Then they should see validation error messages
   And they should remain on the registration page with their data preserved
+
+Scenario: Registration with a weak password
+    Given a visitor is on the registration page
+    When they submit registration details with a weak password
+    Then they should see an error message indicating the password is too weak
+    And they should remain on the registration page
+    And the system should suggest password requirements (e.g., minimum length, special characters)
+
+Scenario: Registration with a missing required field
+    Given a visitor is on the registration page
+    When they submit registration details with a missing required field (e.g., email)
+    Then they should see an error message indicating the field is required
+    And they should remain on the registration page
+    And the system should highlight the missing field
+
+Scenario: Registration with an email containing leading/trailing spaces
+    Given a visitor is on the registration page
+
+    When they submit registration details with an email containing leading/trailing spaces
+    Then the system should trim the spaces and register the email as "saad.chabba@example.com"
+    And they should have a new account created
+    And they should be logged into the system
+    And they should see a welcome message
+
+Scenario: Registration with a duplicate pseudo (username)
+    Given a visitor is on the registration page
+
+    And a user with pseudo "johndoe" already exists in the system
+    When they submit registration details with pseudo "saadchabba"
+    Then they should see an error message indicating the pseudo is already taken
+    And they should remain on the registration page
+
+Scenario: Registration with a very long name or email
+    Given a visitor is on the registration page
+    When they submit registration details with a very long name or email
+    Then they should see an error message indicating the name or email exceeds the maximum allowed length
+    And they should remain on the registration page
+
+
+Scenario: Registration with special characters in the name
+    Given a visitor is on the registration page
+
+    When they submit registration details with special characters in the name
+    Then they should have a new account created
+    And they should be logged into the system
+    And they should see a welcome message
+
+Scenario: Registration with a password containing spaces
+    Given a visitor is on the registration page
+    When they submit registration details with a password containing spaces:
+    | name | John Doe |
+    | email | john.doe@example.com |
+    | password | Password 123! | (contains spaces)
+    | pseudo | johndoe |
+    Then they should see an error message indicating that passwords cannot contain spaces
+    And they should remain on the registration page
+
+
+Scenario: Registration with a password that matches the email or name
+    Given a visitor is on the registration page
+    When they submit registration details with a password that matches their email or name
+    Then they should see an error message indicating that the password cannot match the email or name
+    And they should remain on the registration page
+
+Scenario: Registration with an email in a non-standard format
+    Given a visitor is on the registration page
+    When they submit registration details with an email in a non-standard format
+    Then they should see an error message indicating the email format is invalid
+    And they should remain on the registration page
+
+Scenario: Registration with a pseudo containing special characters
+    Given a visitor is on the registration page
+    When they submit registration details with a pseudo containing special characters
+    Then they should see an error message indicating that the pseudo cannot contain special characters
+    And they should remain on the registration page
+
+Scenario: Registration with a pseudo that is too short or too long
+    Given a visitor is on the registration page
+    When they submit registration details with a pseudo that is too short or too long
+    Then they should see an error message indicating the pseudo length is invalid
+    And they should remain on the registration page
+
+Scenario: Registration with a password that exceeds the maximum length
+    Given a visitor is on the registration page
+    When they submit registration details with a password that exceeds the maximum allowed length
+    Then they should see an error message indicating the password exceeds the maximum allowed length
+    And they should remain on the registration page
+
+Scenario: Registration with a name containing numbers or symbols
+    Given a visitor is on the registration page
+    When they submit registration details with a name containing numbers or symbols
+    Then they should see an error message indicating that the name cannot contain numbers or symbols
+    And they should remain on the registration page
+
+Scenario: Registration with a password that does not meet complexity requirements
+    Given a visitor is on the registration page
+    When they submit registration details with a password that does not meet complexity requirements
+    Then they should see an error message indicating the password does not meet complexity requirements
+    And they should remain on the registration page
 ```
 
 ### Feature: User Login
@@ -276,7 +375,7 @@ Scenario: Employee views hotel details with bookings
 
 Scenario: User views non-existent hotel
   Given a user is on the hotel listing page
-  When they try to access details for a hotel that doesn't exist
+  When they try to access details for a hotel that chabbasn't exist
   Then they should see a message indicating the hotel was not found
 ```
 
@@ -323,7 +422,7 @@ Scenario: Employee attempts to update a hotel
 
 Scenario: Admin attempts to update a non-existent hotel
   Given an admin is logged into the system
-  When they attempt to update a hotel that doesn't exist
+  When they attempt to update a hotel that chabbasn't exist
   Then they should see a message indicating the hotel was not found
 ```
 
@@ -531,7 +630,7 @@ Feature: Booking Search
 
 Scenario: Admin searches bookings by user information
   Given an admin is logged into the system
-  When they search bookings with the term "john@example.com"
+  When they search bookings with the term "Saad@example.com"
   Then they should see bookings associated with that email
 
 Scenario: Admin searches bookings by hotel name
@@ -551,8 +650,8 @@ Scenario: Admin filters bookings by status
 
 Scenario: Admin combines search and filters
   Given an admin is logged into the system
-  When they search for "john" with status "confirmed" and date range April 1st to April 30th
-  Then they should see only confirmed bookings for users matching "john" within that date range
+  When they search for "Saad" with status "confirmed" and date range April 1st to April 30th
+  Then they should see only confirmed bookings for users matching "Saad" within that date range
 ```
 
 ## Role-Based Access
