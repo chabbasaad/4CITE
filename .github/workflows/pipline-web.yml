@@ -3,12 +3,12 @@ name: Pipeline-Web
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - 'front-end/**'
   pull_request:
     branches:
-      - main
+      - master
       - develop
     paths:
       - 'front-end/**'
