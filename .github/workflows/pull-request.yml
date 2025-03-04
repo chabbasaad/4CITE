@@ -2,11 +2,17 @@ name: Pull Request Checks
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
+    paths:
+      - 'hotel-api/**'
+      - '.github/workflows/**'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hotel-api
 
     services:
       mysql:
@@ -42,11 +48,6 @@ jobs:
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
 
-    - name: Create Database
-      run: |
-        mkdir -p database
-        touch database/database.sqlite
-
     - name: Execute tests
       env:
         DB_CONNECTION: mysql
@@ -55,4 +56,7 @@ jobs:
         DB_DATABASE: hotel_api_test
         DB_USERNAME: user
         DB_PASSWORD: password
-      run: vendor/bin/phpunit
+      run: |
+        echo "Running Tests for Pull Request..."
+        php artisan test --testsuite=Feature,Unit
+        echo "Tests completed!"

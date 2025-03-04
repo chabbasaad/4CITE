@@ -251,7 +251,7 @@ class HotelManagementTest extends TestCase
         $response = $this->actingAs($admin)
             ->deleteJson("/api/hotels/{$hotel->id}");
 
-        $response->assertStatus(200);
+    $response->assertStatus(200);
         $this->assertDatabaseMissing('hotels', ['id' => $hotel->id]);
     }
 

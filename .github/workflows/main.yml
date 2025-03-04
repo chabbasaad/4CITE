@@ -2,11 +2,17 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
+    paths:
+      - 'hotel-api/**'
+      - '.github/workflows/**'
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hotel-api
 
     services:
       mysql:
@@ -50,11 +56,17 @@ jobs:
         DB_DATABASE: hotel_api_test
         DB_USERNAME: user
         DB_PASSWORD: password
-      run: vendor/bin/phpunit --coverage-text
+      run: |
+        echo "Running Tests..."
+        php artisan test --testsuite=Feature,Unit
+        echo "Tests completed!"
 
   security:
     needs: test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hotel-api
 
     steps:
     - uses: actions/checkout@v3
@@ -75,11 +87,17 @@ jobs:
       uses: StephaneBour/actions-php-security-checker@1.1
 
     - name: Composer Audit
-      run: composer audit
+      run: |
+        echo "Running Security Audit..."
+        composer audit
+        echo "Security checks completed!"
 
   build:
     needs: security
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hotel-api
 
     steps:
     - uses: actions/checkout@v3
@@ -100,18 +118,22 @@ jobs:
 
     - name: Clear and Cache Config
       run: |
+        echo "Optimizing application..."
         php artisan config:clear
         php artisan config:cache
         php artisan route:cache
         php artisan view:cache
+        echo "Optimization completed!"
 
     - name: Create Build Artifact
       run: |
-        tar -czf build.tar.gz \
+        echo "Creating build artifact..."
+        tar -czf ../build.tar.gz \
           --exclude=".git" \
           --exclude="node_modules" \
           --exclude="tests" \
           .
+        echo "Build artifact created!"
 
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v3
