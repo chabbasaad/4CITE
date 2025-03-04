@@ -82,9 +82,14 @@ jobs:
 
     - name: Security Check
       uses: symfonycorp/security-checker-action@v4
+      with:
+        lock: ./hotel-api/composer.lock
+        format: markdown
 
     - name: PHP Security Checker
       uses: StephaneBour/actions-php-security-checker@1.1
+      with:
+        composer-lock: ./hotel-api/composer.lock
 
     - name: Composer Audit
       run: |
