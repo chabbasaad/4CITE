@@ -185,4 +185,19 @@ class User extends Authenticatable
     {
         $this->attributes['email'] = strtolower(trim($value));
     }
+
+    /**
+     * Set the user's role, enforcing case sensitivity.
+     *
+     * @param string $value
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    public function setRoleAttribute($value)
+    {
+        if (!in_array($value, self::getAvailableRoles(), true)) {
+            throw new \InvalidArgumentException('Role must be one of: ' . implode(', ', self::getAvailableRoles()));
+        }
+        $this->attributes['role'] = $value;
+    }
 }

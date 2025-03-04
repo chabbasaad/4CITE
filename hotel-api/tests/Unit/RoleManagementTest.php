@@ -62,14 +62,16 @@ class RoleManagementTest extends TestCase
     // Role Validation Tests
     public function test_role_must_be_valid()
     {
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Role must be one of: user, employee, admin');
         User::factory()->create(['role' => 'invalid_role']);
     }
 
     public function test_role_is_case_sensitive()
     {
         // Test with uppercase role
-        $this->expectException(\Illuminate\Database\QueryException::class);
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Role must be one of: user, employee, admin');
         User::factory()->create(['role' => 'ADMIN']);
     }
 
