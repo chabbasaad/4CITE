@@ -142,6 +142,8 @@ jobs:
         DB_PASSWORD: password
       run: |
         echo "Running Laravel specific security checks..."
+         php artisan migrate:fresh --force
+
         php artisan about --only=environment
         php artisan config:clear
         php artisan route:clear
