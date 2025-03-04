@@ -27,7 +27,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -57,6 +57,90 @@ jobs:
         DB_USERNAME: user
         DB_PASSWORD: password
       run: |
-        echo "Running Tests for Pull Request..."
+        echo "Running Tests..."
         php artisan test --testsuite=Feature,Unit
         echo "Tests completed!"
+
+  security:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hotel-api
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl
+
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Run Composer Audit
+      run: |
+        echo "Running Composer Security Audit..."
+        composer audit
+        if [ $? -eq 0 ]; then
+          echo "No security vulnerabilities found!"
+        else
+          echo "Security vulnerabilities found!"
+          exit 1
+        fi
+
+    - name: Check for Known Vulnerabilities
+      run: |
+        echo "Checking for known vulnerabilities..."
+        composer show --direct --format=json | jq -r '.installed[] | .name + " " + .version' | while read package version; do
+          response=$(curl -s "https://packagist.org/packages/$package.json")
+          if echo "$response" | jq -e '.security-advisories != null and .security-advisories != []' > /dev/null; then
+            echo "⚠️ Security advisory found for $package version $version"
+            exit 1
+          fi
+        done
+        echo "No known vulnerabilities found in direct dependencies!"
+
+    - name: Laravel Security Check
+      run: |
+        echo "Running Laravel specific security checks..."
+        php artisan about --only=environment
+        php artisan config:clear
+        php artisan route:clear
+        php artisan view:clear
+        php artisan cache:clear
+        echo "Checking configuration..."
+        php artisan config:cache --no-interaction
+        if [ -f ".env" ]; then
+          if grep -q "APP_DEBUG=true" .env; then
+            echo "Warning: APP_DEBUG is set to true"
+            exit 1
+          fi
+          if grep -q "APP_ENV=local" .env; then
+            echo "Warning: APP_ENV is set to local"
+            exit 1
+          fi
+        fi
+        echo "Laravel security checks completed!"
+
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hotel-api
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: PHP Code Style (Laravel Pint)
+      run: vendor/bin/pint --test

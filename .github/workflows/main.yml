@@ -80,28 +80,50 @@ jobs:
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-    - name: Install Symfony CLI
+    - name: Run Composer Audit
       run: |
-        curl -sS https://get.symfony.com/cli/installer | bash
-        mv /home/runner/.symfony5/bin/symfony /usr/local/bin/symfony
-
-    - name: Security Check
-      id: security-check
-      run: |
-        echo "Running Local Security Check..."
-        composer require --dev sensiolabs/security-checker
-        vendor/bin/security-checker security:check composer.lock
-
-    - name: PHP Security Checker
-      uses: StephaneBour/actions-php-security-checker@1.1
-      with:
-        composer-lock: composer.lock
-
-    - name: Composer Audit
-      run: |
-        echo "Running Security Audit..."
+        echo "Running Composer Security Audit..."
         composer audit
-        echo "Security checks completed!"
+        if [ $? -eq 0 ]; then
+          echo "No security vulnerabilities found!"
+        else
+          echo "Security vulnerabilities found!"
+          exit 1
+        fi
+
+    - name: Check for Known Vulnerabilities
+      run: |
+        echo "Checking for known vulnerabilities..."
+        composer show --direct --format=json | jq -r '.installed[] | .name + " " + .version' | while read package version; do
+          response=$(curl -s "https://packagist.org/packages/$package.json")
+          if echo "$response" | jq -e '.security-advisories != null and .security-advisories != []' > /dev/null; then
+            echo "⚠️ Security advisory found for $package version $version"
+            exit 1
+          fi
+        done
+        echo "No known vulnerabilities found in direct dependencies!"
+
+    - name: Laravel Security Check
+      run: |
+        echo "Running Laravel specific security checks..."
+        php artisan about --only=environment
+        php artisan config:clear
+        php artisan route:clear
+        php artisan view:clear
+        php artisan cache:clear
+        echo "Checking configuration..."
+        php artisan config:cache --no-interaction
+        if [ -f ".env" ]; then
+          if grep -q "APP_DEBUG=true" .env; then
+            echo "Warning: APP_DEBUG is set to true"
+            exit 1
+          fi
+          if grep -q "APP_ENV=local" .env; then
+            echo "Warning: APP_ENV is set to local"
+            exit 1
+          fi
+        fi
+        echo "Laravel security checks completed!"
 
   build:
     needs: security
