@@ -142,8 +142,7 @@ jobs:
         DB_PASSWORD: password
       run: |
         echo "Running Laravel specific security checks..."
-         php artisan migrate:fresh --force
-
+        php artisan migrate:fresh --force
         php artisan about --only=environment
         php artisan config:clear
         php artisan route:clear
@@ -167,7 +166,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        extensions: mbstring, xml, ctype, iconv, intl
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql, pdo_mysql
 
     - name: Install Dependencies
       run: composer install --no-dev --optimize-autoloader
@@ -194,19 +193,30 @@ jobs:
       run: |
         echo "Optimizing application..."
         php artisan config:clear
+        php artisan route:clear
+        php artisan view:clear
+        php artisan cache:clear
+        sleep 2
         php artisan config:cache
         php artisan route:cache
         php artisan view:cache
+        sleep 2
         echo "Optimization completed!"
+
+    - name: Create Build Directory
+      run: |
+        echo "Preparing build directory..."
+        mkdir -p ../build
+        cp -r . ../build/
+        cd ../build
+        rm -rf .git node_modules tests
+        echo "Build directory prepared!"
 
     - name: Create Build Artifact
       run: |
         echo "Creating build artifact..."
-        tar -czf build.tar.gz \
-          --exclude=".git" \
-          --exclude="node_modules" \
-          --exclude="tests" \
-          .
+        cd ../build
+        tar -czf ../hotel-api/build.tar.gz .
         echo "Build artifact created!"
 
     - name: Upload Build Artifact
