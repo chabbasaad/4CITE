@@ -27,7 +27,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -69,7 +69,7 @@ jobs:
         working-directory: ./hotel-api
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -105,7 +105,7 @@ jobs:
         working-directory: ./hotel-api
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -141,10 +141,13 @@ jobs:
         echo "Build artifact created!"
 
     - name: Upload Build Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-artifact
-        path: build.tar.gz
+        path: ../build.tar.gz
+        retention-days: 5
+        compression-level: 9
+        overwrite: true
 
   deploy:
     needs: build
@@ -153,13 +156,14 @@ jobs:
 
     steps:
     - name: Download Build Artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: build-artifact
+        path: ./artifacts
 
     - name: Simulate Deployment
       run: |
         echo "Starting deployment to production environment..."
-        echo "Deploying build.tar.gz..."
+        echo "Deploying build.tar.gz from ./artifacts..."
         echo "Running database migrations..."
         echo "Deployment completed successfully!"
