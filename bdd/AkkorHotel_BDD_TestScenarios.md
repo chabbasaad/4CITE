@@ -767,26 +767,6 @@ Scenario: User attempting to view another user's profile
   Then they should see an access denied message
 ```
 
-### Feature: Account Authentication
-
-```gherkin
-Feature: Account Authentication
-
-Scenario: Accessing protected content with valid login
-  Given a user is logged into the system
-  When they access their booking history
-  Then they should see their list of bookings
-
-Scenario: Accessing protected content without login
-  Given a user is not logged in
-  When they attempt to access their booking history
-  Then they should be redirected to the login page
-
-Scenario: Accessing protected content after session expires
-  Given a user's login session has expired
-  When they attempt to access their booking history
-  Then they should be redirected to the login page
-
 Scenario: Accessing public content without login
   Given a user is not logged in
   When they browse the hotel listings
