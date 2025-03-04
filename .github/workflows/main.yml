@@ -80,21 +80,17 @@ jobs:
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
+    - name: Install Symfony CLI
+      run: |
+        curl -sS https://get.symfony.com/cli/installer | bash
+        mv /home/runner/.symfony5/bin/symfony /usr/local/bin/symfony
+
     - name: Security Check
       id: security-check
       run: |
-        echo "Running Symfony Security Check..."
-        if [ -f "composer.lock" ]; then
-          RESULT=$(symfony security:check --format=json composer.lock || true)
-          echo "result=$RESULT" >> $GITHUB_OUTPUT
-          if [ "$RESULT" != "{}" ]; then
-            echo "Security vulnerabilities found!"
-            exit 1
-          fi
-        else
-          echo "composer.lock not found"
-          exit 1
-        fi
+        echo "Running Local Security Check..."
+        composer require --dev sensiolabs/security-checker
+        vendor/bin/security-checker security:check composer.lock
 
     - name: PHP Security Checker
       uses: StephaneBour/actions-php-security-checker@1.1
