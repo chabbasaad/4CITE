@@ -81,15 +81,25 @@ jobs:
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - name: Security Check
-      uses: symfonycorp/security-checker-action@v4
-      with:
-        lock: ./hotel-api/composer.lock
-        format: markdown
+      id: security-check
+      run: |
+        echo "Running Symfony Security Check..."
+        if [ -f "composer.lock" ]; then
+          RESULT=$(symfony security:check --format=json composer.lock || true)
+          echo "result=$RESULT" >> $GITHUB_OUTPUT
+          if [ "$RESULT" != "{}" ]; then
+            echo "Security vulnerabilities found!"
+            exit 1
+          fi
+        else
+          echo "composer.lock not found"
+          exit 1
+        fi
 
     - name: PHP Security Checker
       uses: StephaneBour/actions-php-security-checker@1.1
       with:
-        composer-lock: ./hotel-api/composer.lock
+        composer-lock: composer.lock
 
     - name: Composer Audit
       run: |
@@ -133,7 +143,7 @@ jobs:
     - name: Create Build Artifact
       run: |
         echo "Creating build artifact..."
-        tar -czf ../build.tar.gz \
+        tar -czf build.tar.gz \
           --exclude=".git" \
           --exclude="node_modules" \
           --exclude="tests" \
@@ -144,7 +154,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: build-artifact
-        path: ../build.tar.gz
+        path: ${{ github.workspace }}/hotel-api/build.tar.gz
         retention-days: 5
         compression-level: 9
         overwrite: true
