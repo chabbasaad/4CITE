@@ -68,6 +68,7 @@ class RoleManagementTest extends TestCase
 
     public function test_role_is_case_sensitive()
     {
+        // Test with uppercase role
         $this->expectException(\Illuminate\Database\QueryException::class);
         User::factory()->create(['role' => 'ADMIN']);
     }
