@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('location');
             $table->text('description');
             $table->json('picture_list')->nullable();
-            $table->decimal('price_per_night', 10, 2);
+            $table->decimal('price_per_night', 10, 2)->unsigned();
             $table->boolean('is_available')->default(true);
-            $table->integer('total_rooms');
-            $table->integer('available_rooms');
+            $table->unsignedInteger('total_rooms');
+            $table->unsignedInteger('available_rooms');
             $table->json('amenities')->nullable();
             $table->timestamps();
 

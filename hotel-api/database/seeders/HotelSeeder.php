@@ -23,6 +23,7 @@ class HotelSeeder extends Seeder
                 'is_available' => true,
                 'amenities' => ['Swimming Pool', 'Spa', 'Private Beach', 'Restaurant', '24/7 Room Service'],
                 'total_rooms' => 50,
+                'available_rooms' => 45,
             ],
             [
                 'name' => 'City Center Hotel',
@@ -36,6 +37,7 @@ class HotelSeeder extends Seeder
                 'is_available' => true,
                 'amenities' => ['Business Center', 'Gym', 'Restaurant', 'Conference Rooms'],
                 'total_rooms' => 100,
+                'available_rooms' => 85,
             ],
             [
                 'name' => 'Mountain View Lodge',
@@ -49,6 +51,7 @@ class HotelSeeder extends Seeder
                 'is_available' => true,
                 'amenities' => ['Fireplace', 'Hiking Trails', 'Restaurant', 'Spa'],
                 'total_rooms' => 30,
+                'available_rooms' => 25,
             ],
             [
                 'name' => 'Historic Boutique Hotel',
@@ -62,6 +65,7 @@ class HotelSeeder extends Seeder
                 'is_available' => true,
                 'amenities' => ['Antique Furnishings', 'Garden', 'Tea Room', 'Library'],
                 'total_rooms' => 20,
+                'available_rooms' => 15,
             ],
             [
                 'name' => 'Resort & Spa Retreat',
@@ -76,6 +80,7 @@ class HotelSeeder extends Seeder
                 'is_available' => true,
                 'amenities' => ['Luxury Spa', 'Yoga Studio', 'Meditation Garden', 'Organic Restaurant', 'Pool'],
                 'total_rooms' => 40,
+                'available_rooms' => 35,
             ],
         ];
 
@@ -89,6 +94,7 @@ class HotelSeeder extends Seeder
                 'is_available' => $hotel['is_available'],
                 'amenities' => json_encode($hotel['amenities']),
                 'total_rooms' => $hotel['total_rooms'],
+                'available_rooms' => $hotel['available_rooms'],
             ]);
         }
     }

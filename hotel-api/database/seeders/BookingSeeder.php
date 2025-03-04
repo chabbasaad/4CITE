@@ -33,7 +33,7 @@ class BookingSeeder extends Seeder
                     'guests_count' => rand(1, 4),
                     'status' => 'confirmed',
                     'special_requests' => $this->getRandomSpecialRequest(),
-                    'guest_names' => json_encode([$user->name, 'Guest ' . rand(1, 100)]),
+                    'guest_names' => [$user->name, 'Guest ' . rand(1, 100)],
                     'contact_phone' => '+1' . rand(1000000000, 9999999999),
                 ]);
             }
@@ -57,7 +57,7 @@ class BookingSeeder extends Seeder
                     'guests_count' => rand(1, 4),
                     'status' => 'completed',
                     'special_requests' => $this->getRandomSpecialRequest(),
-                    'guest_names' => json_encode([$user->name]),
+                    'guest_names' => [$user->name],
                     'contact_phone' => '+1' . rand(1000000000, 9999999999),
                 ]);
             }
@@ -77,7 +77,7 @@ class BookingSeeder extends Seeder
                 'guests_count' => rand(1, 4),
                 'status' => 'cancelled',
                 'special_requests' => $this->getRandomSpecialRequest(),
-                'guest_names' => json_encode([$user->name]),
+                'guest_names' => [$user->name],
                 'contact_phone' => '+1' . rand(1000000000, 9999999999),
             ]);
         }

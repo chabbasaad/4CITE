@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class HotelManagementTest extends TestCase
 {
@@ -319,5 +321,194 @@ class HotelManagementTest extends TestCase
         $this->assertTrue($hotels->first()->is_available);
         $this->assertEquals(10, $hotels->first()->available_rooms);
         $this->assertFalse($hotels->last()->is_available);
+    }
+
+    public function test_negative_price_per_night_validation()
+    {
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request->merge([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => -100,
+            'total_rooms' => 20,
+            'available_rooms' => 15,
+            'is_available' => true
+        ]);
+
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(),
+            $request->rules()
+        );
+
+        if ($validator->fails()) {
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
+    }
+
+    public function test_negative_total_rooms_validation()
+    {
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request->merge([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => 100,
+            'total_rooms' => -10,
+            'available_rooms' => 5,
+            'is_available' => true
+        ]);
+
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(),
+            $request->rules()
+        );
+
+        if ($validator->fails()) {
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
+    }
+
+    public function test_negative_available_rooms_validation()
+    {
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request->merge([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => 100,
+            'total_rooms' => 20,
+            'available_rooms' => -5,
+            'is_available' => true
+        ]);
+
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(),
+            $request->rules()
+        );
+
+        if ($validator->fails()) {
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
+    }
+
+    public function test_available_rooms_exceeding_total_rooms_validation()
+    {
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request->merge([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => 100,
+            'total_rooms' => 10,
+            'available_rooms' => 20,
+            'is_available' => true
+        ]);
+
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(),
+            $request->rules()
+        );
+
+        if ($validator->fails()) {
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
+    }
+
+    public function test_zero_price_validation()
+    {
+        $request = new Request();
+        $request->merge([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => 0,
+            'total_rooms' => 10,
+            'available_rooms' => 5,
+            'is_available' => true,
+            'amenities' => ['wifi', 'parking'],
+            'picture_list' => ['image1.jpg']
+        ]);
+
+        $request->setMethod('POST');
+
+        $rules = [
+            'price_per_night' => ['required', 'numeric', 'gt:0'],
+            'total_rooms' => ['required', 'integer', 'gt:0'],
+            'available_rooms' => ['required', 'integer', 'gte:0', 'lte:total_rooms']
+        ];
+
+        $validator = Validator::make(
+            $request->all(),
+            $rules
+        );
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('price_per_night', $validator->errors()->toArray());
+    }
+
+    public function test_zero_total_rooms_validation()
+    {
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request->merge([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => 100,
+            'total_rooms' => 0,
+            'available_rooms' => 0,
+            'is_available' => true
+        ]);
+
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            $request->all(),
+            $request->rules()
+        );
+
+        if ($validator->fails()) {
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
+    }
+
+    public function test_price_decimal_validation()
+    {
+        $request = new Request();
+        $request->merge([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => 100.999,
+            'total_rooms' => 10,
+            'available_rooms' => 5,
+            'is_available' => true,
+            'amenities' => ['wifi', 'parking'],
+            'picture_list' => ['image1.jpg']
+        ]);
+
+        $request->setMethod('POST');
+
+        $rules = [
+            'price_per_night' => ['required', 'numeric', 'gt:0', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'total_rooms' => ['required', 'integer', 'gt:0'],
+            'available_rooms' => ['required', 'integer', 'gte:0', 'lte:total_rooms']
+        ];
+
+        $validator = Validator::make(
+            $request->all(),
+            $rules
+        );
+
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('price_per_night', $validator->errors()->toArray());
     }
 }
