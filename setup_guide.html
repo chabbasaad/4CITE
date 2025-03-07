@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Hotel Booking System Setup Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+        * {
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        body {
+            color: rgb(223, 223, 223);
+            background: #000;
+            padding-inline: 40px;
+            padding-block: 20px;
+        }
+        h1, h2, h3 {
+            color: #73ff33;
+        }
+        h3 {
+            color: #73ff33;
+        }
+        h1 {
+            border-bottom: 1px solid #73ff3342;
+            padding-bottom: 5px;
+        }
+        p, li {
+            color: #aaaaaa;
+        }
+        ul {
+            list-style: square;
+            margin-left: 20px;
+        }
+        ol {
+            list-style: decimal;
+            margin-left: 20px;
+        }
+        code {
+            padding: 2px 4px;
+            border-radius: 5px;
+            color: #f55;
+        }
+        h4 {
+            color: #ffa634;
+            font-size: 18px;
+            font-weight: 900;
+        }
+        li a {
+            color: #7173ff;
+        }
+        pre {
+            background: #2728225e;
+            color: #f8f8f2a8;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        .frontend-section {
+            border-left: 3px solid #7173ff;
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+        .frontend-section h2, .frontend-section h3 {
+            color: #7173ff;
+        }
+        .frontend-section pre {
+            background: #1a1a2e;
+        }
+    </style>
+</head>
+<body>
+
+    <header style="text-align: center; margin-bottom: 20px;"><img alt="SUPINFO Logo" src="https://newsroom.ionis-group.com/wp-content/uploads/2020/11/supinfo-logo-2020-blanc-png.png" style="width: 200px; height: auto; display: block; margin: 0 auto;"/>
+        <h2>Project Team 4CITE</h2>
+        <p>Saad Chabba - Backend Developer</p>
+        <p>Hamza Belyahiaoui - Frontend Developer</p>
+        <h1>Hotel Booking System Setup Guide</h1>
+        <h2>Full Stack Application (Laravel / React)</h2>
+        </header>
+
+    <h2>1. System Requirements</h2>
+    <ul>
+        <li>PHP >= 8.2</li>
+        <li>Composer (Latest Version)</li>
+        <li>MySQL >= 8.0</li>
+        <li>Node.js & NPM</li>
+        <li>Docker & Docker Compose (Optional, for containerized setup)</li>
+    </ul>
+
+    <h2>2. Installation Methods</h2>
+    
+    <h3>Method A: Local Installation</h3>
+    <ol>
+        <li><strong>Clone Repository</strong>
+            <pre>git clone https://github.com/chabbasaad/4CITE.git
+cd &lt;project-folder&gt;</pre>
+        </li>
+        <li><strong>Install Dependencies</strong>
+            <pre>composer install</pre>
+        </li>
+        <li><strong>Environment Setup</strong>
+            <pre>cp .env.example .env</pre>
+        </li>
+        <li><strong>Database Configuration</strong>
+            <pre>DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=hotel
+DB_USERNAME=root
+DB_PASSWORD=</pre>
+        </li>
+        <li><strong>Application Setup</strong>
+            <pre>php artisan key:generate
+php artisan migrate --seed
+php artisan serve</pre>
+        </li>
+    </ol>
+
+    <h3>Method B: Docker Installation (Recommended)</h3>
+    <ol>
+        <li><strong>Clone Repository</strong>
+            <pre>git clone https://github.com/chabbasaad/4CITE.git
+cd &lt;project-folder&gt;</pre>
+        </li>
+       
+        <li><strong>Launch Docker Environment</strong>
+            <pre>docker-compose up -d --build</pre>
+        </li>
+    </ol>
+
+    <h2>3. Access Points</h2>
+    <ul>
+        <li><strong>Frontend Application:</strong> <code>http://localhost:5173</code></li>
+        <li><strong>Backend API:</strong> <code>http://localhost:8000</code></li>
+        <li><strong>API Documentation:</strong> <code>http://localhost:8000/docs/api</code></li>
+    </ul>
+
+    <h2>4. Docker Management Commands</h2>
+    <pre>
+# Start containers
+docker-compose up -d
+
+# Stop containers
+docker-compose down
+
+# View logs
+docker-compose logs -f
+
+# Rebuild containers
+docker-compose up -d --build
+
+# Run artisan commands
+docker-compose exec app php artisan &lt;command&gt;
+
+# Run composer commands
+docker-compose exec app composer &lt;command&gt;</pre>
+
+   
+
+    <h2>5. Testing Guide</h2>
+    
+    <h3>Local Testing Commands</h3>
+    <pre>
+# Run all tests
+php artisan test
+
+# Run unit tests only
+php artisan test --testsuite=Unit
+
+# Run feature tests only
+php artisan test --testsuite=Feature
+
+# Run specific test class
+php artisan test --filter=AuthenticationTest</pre>
+
+    <h3>Docker Testing Commands</h3>
+    <pre>
+# Run all tests
+docker-compose exec app php artisan test
+
+# Run unit tests only
+docker-compose exec app php artisan test --testsuite=Unit
+
+# Run feature tests only
+docker-compose exec app php artisan test --testsuite=Feature
+
+# Run specific test class
+docker-compose exec app php artisan test --filter=AuthenticationTest</pre>
+
+    <h2>6. Core Features</h2>
+    <ul>
+        <li>User Authentication System</li>
+        <li>Hotel Management Interface</li>
+        <li>Advanced Booking System</li>
+        <li>Administrative Dashboard</li>
+        <li>RESTful API Endpoints</li>
+    </ul>
+
+    <div class="frontend-section">
+        <h2>Frontend Setup and Testing</h2>
+        
+        <h3>Docker Installation (Frontend)</h3>
+        <ol>
+            <li><strong>Navigate to Frontend Directory</strong>
+                <pre>cd front-end</pre>
+            </li>
+            <li><strong>Build Docker Image</strong>
+                <pre>docker build -t hotel-frontend .</pre>
+            </li>
+            <li><strong>Run Frontend Container</strong>
+                <pre>docker run -d -p 5173:3000 --name hotel-frontend hotel-frontend</pre>
+            </li>
+        </ol>
+
+        <h3>Available Scripts</h3>
+        <pre>
+# Development server
+npm run dev
+
+# Production build
+npm run build
+
+# Run tests
+npm test
+
+# Run linting
+npm run lint
+
+# Preview production build
+npm run preview</pre>
+
+        <h3>Frontend Testing</h3>
+        <p>The project uses Jest and React Testing Library for testing. To run tests in Docker:</p>
+        <pre>
+# Run tests in Docker container
+docker exec hotel-frontend npm test
+
+# Run tests with coverage
+docker exec hotel-frontend npm test -- --coverage
+
+# Run tests in watch mode
+docker exec hotel-frontend npm test -- --watch</pre>
+
+        <h3>Frontend Dependencies</h3>
+        <ul>
+            <li>React v19.0.0</li>
+            <li>TypeScript</li>
+            <li>Tailwind CSS v4.0.9</li>
+            <li>Headless UI</li>
+            <li>Hero Icons</li>
+            <li>Framer Motion</li>
+            <li>Zustand (State Management)</li>
+        </ul>
+    </div>
+
+    <footer style="margin-top: 50px; text-align: center; padding: 20px; border-top: 1px solid #73ff3342;">
+        <p>Made with Passion & ❤️ By 4CITE Team.</p>
+    </footer>
+</body>
+</html> 
