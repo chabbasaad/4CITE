@@ -55,7 +55,6 @@ export default function BookingUpdate({ id ,setIsOpenUpdate}: { id: number,setIs
         e.preventDefault();
         await updateBooking(Number(id), bookingData);
         setIsOpenUpdate(false);
-        window.location.reload();
     };
 
     if (loading) {

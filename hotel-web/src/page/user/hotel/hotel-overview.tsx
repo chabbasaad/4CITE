@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { StarIcon } from '@heroicons/react/20/solid'
 import useBookingStore from "../../../service/stores/booking-store.tsx";
 import { BookingCreateRequestData } from "../../../service/model/booking/booking-create.tsx";
-import {Tab, TabGroup, TabList} from "@headlessui/react";
+import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/react";
 
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
@@ -62,40 +62,39 @@ export default function HotelOverview() {
 
     return (
         <div className="bg-white mt-10">
-            <div className="pt-6">
-                <div className="ml-150 relative d-flex item-center h-48">
-                    <img
-                        src={hotel.picture_list[currentImageIndex]}
-                        alt={hotel.name}
-                        className=" h-50 w-100 object-cover rounded-md"
-                    />
-                </div>
-                <div className="mx-auto mt-6 hidden w-250  max-w-2xl sm:block lg:max-w-none">
-                    <TabGroup>
-                        <TabList className="grid grid-cols-3 gap-6">
-                            {hotel.picture_list.map((image : string, index : number) => (
-                                <Tab
-                                    key={index}
-                                    onClick={() => setCurrentImageIndex(index)}
-                                    className="group w-50 relative flex h-24  cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-gray-900 uppercase hover:bg-gray-50"
-                                >
-                                    <span className="sr-only">Image {index + 1}</span>
-                                    <span className="absolute w-50 inset-0 overflow-hidden rounded-md">
-                                        <img src={image} alt={`Image ${index + 1}`} className="w-50 object-cover"/>
-                                    </span>
-                                    <span
-                                        aria-hidden="true"
-                                        className={`pointer-events-none absolute inset-0 rounded-md ring-2 ring-transparent ring-offset-2 
-                                        ${currentImageIndex === index ? 'ring-indigo-500' : ''}`}
-                                    />
-                                </Tab>
-                            ))}
-                        </TabList>
-                    </TabGroup>
+
+            <TabGroup className="flex flex-col-reverse">
+                <div className="mx-auto ml-150  mr-10 hidden w-full max-w-2xl sm:block lg:max-w-none">
+                    <TabList className="grid grid-cols-4 w-200 gap-6">
+                        {hotel.picture_list.map((image: string, index: number) => (
+                            <Tab
+                                key={index}
+                                className="group relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-gray-900 uppercase hover:bg-gray-50 focus:ring-3 focus:ring-indigo-500/50 focus:ring-offset-4 focus:outline-hidden"
+                            >
+                                <span className="sr-only">{index}</span>
+                                <span className="absolute inset-0 overflow-hidden rounded-md">
+                      <img alt="" src={image} className="size-full object-cover"/>
+                    </span>
+                                <span
+                                    aria-hidden="true"
+                                    className="pointer-events-none absolute inset-0 rounded-md ring-2 ring-transparent ring-offset-2 group-data-selected:ring-indigo-500"
+                                />
+                            </Tab>
+                        ))}
+                    </TabList>
                 </div>
 
+                <TabPanels>
+                    {hotel.picture_list.map((image: string, index: number) => (
+                        <TabPanel key={index}>
+                            <img alt={image} src={image}
+                                 className="aspect-square p-10  d-flex intem-center ml-150  object-cover sm:rounded-lg"/>
+                        </TabPanel>
+                    ))}
+                </TabPanels>
 
-            </div>
+
+            </TabGroup>
 
             <div
                 className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">

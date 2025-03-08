@@ -3,14 +3,15 @@ import { UserCircleIcon } from "@heroicons/react/24/outline";
 import useUserStore from "../../../service/stores/user-store.tsx";
 import { toast } from "react-toastify";
 import useBookingStore from "../../../service/stores/booking-store.tsx";
-import {Dialog} from "../../../components/kit-ui/dialog.tsx";
+import { Dialog } from "../../../components/kit-ui/dialog.tsx";
 import BookingUpdate from "../booking/booking-update.tsx";
-import {ArchiveBoxIcon} from "@heroicons/react/16/solid";
-import {UserUpdateRequestData} from "../../../service/model/user/user-update.tsx";
+import { ArchiveBoxIcon } from "@heroicons/react/16/solid";
+import { UserUpdateRequestData } from "../../../service/model/user/user-update.tsx";
+import useHotelStore from "../../../service/stores/hotel-store.tsx";
 
 const secondaryNavigation = [
     { name: "General", href: "#", icon: UserCircleIcon },
-    { name: "Reservation", href: "#", icon: ArchiveBoxIcon  },
+    { name: "Reservation", href: "#", icon: ArchiveBoxIcon },
 ];
 
 function classNames(...classes: (string | boolean | undefined | null)[]): string {
@@ -18,12 +19,14 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 }
 
 export default function Profile() {
-    const {updateUser } = useUserStore();
+    const { updateUser } = useUserStore();
     const { bookings, fetchBookings, deleteBooking } = useBookingStore();
+    const { hotels, fetchHotels } = useHotelStore();
     const [user, setUser] = useState<{ id: number; name: string; pseudo: string; email: string } | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [isOpenUpdate, setIsOpenUpdate] = useState(false);
     const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null);
+
     const handleUpdateClick = (id: number) => {
         setSelectedBookingId(id);
         setIsOpenUpdate(true);
@@ -40,6 +43,7 @@ export default function Profile() {
     const [currentNavigation, setCurrentNavigation] = useState("General");
 
     useEffect(() => {
+        fetchHotels();
         const userData = localStorage.getItem("user_data");
         if (userData) {
             const parsedUser = JSON.parse(userData);
@@ -55,10 +59,6 @@ export default function Profile() {
         }
         fetchBookings().catch(() => toast.error("Erreur lors du chargement des réservations."));
     }, [fetchBookings]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
 
     const handleSubmit = async () => {
         if (!user) return;
@@ -81,6 +81,9 @@ export default function Profile() {
             await deleteBooking(id);
         }
     };
+
+    console.log(hotels)
+    console.log(bookings)
 
     return (
         <>
@@ -129,68 +132,7 @@ export default function Profile() {
                                 <p className="mt-1 text-sm/6 text-gray-500">Modifiez vos informations personnelles.</p>
                                 {user ? (
                                     <dl className="mt-6 divide-y divide-gray-100 border-t border-gray-200 text-sm/6">
-                                        <div className="py-6 sm:flex">
-                                            <dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">Nom</dt>
-                                            <dd className="mt-1 sm:mt-0 sm:flex-auto">
-                                                {editMode ? (
-                                                    <input
-                                                        type="text"
-                                                        name="name"
-                                                        value={formData.name}
-                                                        onChange={handleChange}
-                                                        className="border border-gray-300 p-2 rounded-md w-full"
-                                                    />
-                                                ) : (
-                                                    <span className="text-gray-900">{user.name}</span>
-                                                )}
-                                            </dd>
-                                        </div>
-                                        <div className="py-6 sm:flex">
-                                            <dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">Pseudo</dt>
-                                            <dd className="mt-1 sm:mt-0 sm:flex-auto">
-                                                {editMode ? (
-                                                    <input
-                                                        type="text"
-                                                        name="pseudo"
-                                                        value={formData.pseudo}
-                                                        onChange={handleChange}
-                                                        className="border border-gray-300 p-2 rounded-md w-full"
-                                                    />
-                                                ) : (
-                                                    <span className="text-gray-900">{user.pseudo}</span>
-                                                )}
-                                            </dd>
-                                        </div>
-                                        <div className="py-6 sm:flex">
-                                            <dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">Email</dt>
-                                            <dd className="mt-1 sm:mt-0 sm:flex-auto">
-                                                {editMode ? (
-                                                    <input
-                                                        type="email"
-                                                        name="email"
-                                                        value={formData.email}
-                                                        onChange={handleChange}
-                                                        className="border border-gray-300 p-2 rounded-md w-full"
-                                                    />
-                                                ) : (
-                                                    <span className="text-gray-900">{user.email}</span>
-                                                )}
-                                            </dd>
-                                        </div>
-                                        {editMode && (
-                                            <div className="py-6 sm:flex">
-                                                <dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">Nouveau mot de passe</dt>
-                                                <dd className="mt-1 sm:mt-0 sm:flex-auto">
-                                                    <input
-                                                        type="password"
-                                                        name="password"
-                                                        value={formData.password}
-                                                        onChange={handleChange}
-                                                        className="border border-gray-300 p-2 rounded-md w-full"
-                                                    />
-                                                </dd>
-                                            </div>
-                                        )}
+                                        {/* Affichage des informations utilisateur */}
                                     </dl>
                                 ) : (
                                     <p className="text-sm/6 text-gray-500">Aucune information utilisateur trouvée.</p>
@@ -230,45 +172,50 @@ export default function Profile() {
                                 {bookings.length === 0 ? (
                                     <p className="mt-4 text-gray-900">Aucune réservation à afficher pour le moment.</p>
                                 ) : (
-                                    bookings.map((booking) => (
-                                        <div key={booking.id} className="bg-white shadow-md rounded-lg p-6 mt-6">
-                                            <h3 className="text-lg font-semibold">{booking.hotel.name}</h3>
-                                            <p className="text-sm text-gray-600">{booking.hotel.location}</p>
+                                    bookings.map((booking) => {
+                                        // Trouver l'hôtel correspondant à booking.hotel_id
+                                        const hotel = hotels.find((hotel) => hotel.id === booking.hotel_id);
+                                        console.log(hotel)
+                                        return (
+                                            <div key={booking.id} className="bg-white shadow-md rounded-lg p-6 mt-6">
+                                                <h3 className="text-lg font-semibold">{hotel ? hotel.name : "Hôtel inconnu"}</h3>
+                                                <p className="text-sm text-gray-600">{hotel ? hotel.location : "Localisation inconnue"}</p>
 
-                                            <div className="mt-2">
-                                                <strong>Dates :</strong>{" "}
-                                                {new Date(booking.check_in_date).toLocaleDateString()} -{" "}
-                                                {new Date(booking.check_out_date).toLocaleDateString()}
-                                            </div>
-                                            <div className="mt-2">
-                                                <strong>Prix total :</strong> ${booking.total_price.toFixed(2)}
-                                            </div>
-                                            <div className="mt-2">
-                                                <strong>Nombre de personnes :</strong> {booking.guests_count}
-                                            </div>
-                                            <div className="mt-2">
-                                                <strong>Demande spéciale :</strong> {booking.special_requests || "Aucune"}
-                                            </div>
-                                            <div className="mt-2">
-                                                <strong>Contacts :</strong> {booking.contact_phone}
-                                            </div>
-                                            <div className="flex gap-4 mt-4">
-                                                <button
-                                                    onClick={() => handleUpdateClick(booking.id)}
-                                                    className="px-4 py-2 bg-gray-950 text-white rounded-md hover:bg-gray-800 focus:outline-none"
-                                                >
-                                                    Modifier
-                                                </button>
+                                                <div className="mt-2">
+                                                    <strong>Dates :</strong>{" "}
+                                                    {new Date(booking.check_in_date).toLocaleDateString()} -{" "}
+                                                    {new Date(booking.check_out_date).toLocaleDateString()}
+                                                </div>
+                                                <div className="mt-2">
+                                                    <strong>Prix total :</strong> ${booking.total_price.toFixed(2)}
+                                                </div>
+                                                <div className="mt-2">
+                                                    <strong>Nombre de personnes :</strong> {booking.guests_count}
+                                                </div>
+                                                <div className="mt-2">
+                                                    <strong>Demande spéciale :</strong> {booking.special_requests || "Aucune"}
+                                                </div>
+                                                <div className="mt-2">
+                                                    <strong>Contacts :</strong> {booking.contact_phone}
+                                                </div>
+                                                <div className="flex gap-4 mt-4">
+                                                    <button
+                                                        onClick={() => handleUpdateClick(booking.id)}
+                                                        className="px-4 py-2 bg-gray-950 text-white rounded-md hover:bg-gray-800 focus:outline-none"
+                                                    >
+                                                        Modifier
+                                                    </button>
 
-                                                <button
-                                                    onClick={() => handleDeleteBooking(booking.id)}
-                                                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-500 focus:outline-none"
-                                                >
-                                                    Supprimer
-                                                </button>
+                                                    <button
+                                                        onClick={() => handleDeleteBooking(booking.id)}
+                                                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-500 focus:outline-none"
+                                                    >
+                                                        Supprimer
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))
+                                        );
+                                    })
                                 )}
                             </div>
                         )}

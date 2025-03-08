@@ -1,18 +1,10 @@
 import {useEffect, useState} from "react";
 import { toast } from "react-toastify";
-import { Button } from "../../../components/kit-ui/button.tsx";
 import useBookingStore from "../../../service/stores/booking-store.tsx";
-import {Dialog} from "../../../components/kit-ui/dialog.tsx";
-import HotelUpdate from "../hotel/hotel-update.tsx";
 
 export default function BookingList() {
     const { bookings, loading, fetchBookings, deleteBooking } = useBookingStore();
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedHotelId, setSelectedHotelId] = useState<number | null>(null);
-    const handleUpdateClick = (id: number) => {
-        setSelectedHotelId(id);
-        setIsOpen(true);
-    };
+
     useEffect(() => {
         fetchBookings().catch(() => toast.error("Erreur lors du chargement des réservations."));
     }, [fetchBookings]);
@@ -24,12 +16,6 @@ export default function BookingList() {
     if (!Array.isArray(bookings) || bookings.length === 0) {
         return <p className="text-center text-gray-700 mt-4">Aucune réservation trouvée.</p>;
     }
-
-    const handleDelete = async (id: number) => {
-        if (window.confirm("Voulez-vous vraiment supprimer ?")) {
-                await deleteBooking(id);
-        }
-    };
 
     return (
         <div className="px-4 sm:px-6 lg:px-8">
