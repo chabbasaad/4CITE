@@ -8,6 +8,7 @@ import {
 } from "../servises/service-hotel.tsx";
 import {HotelUpdateRequestData} from "../model/hotel/hotel-update.tsx";
 import {HotelCreateRequestData} from "../model/hotel/hotel-create.tsx";
+import {Hotel} from "../model/model-hotel.tsx";
 
 interface HotelState {
     hotels: Hotel[];

@@ -6,17 +6,14 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Login from "./login.tsx";
 
-// Mock de la fonction login
 jest.mock('../../service/servises/service-user.tsx', () => ({
     login: jest.fn(),
 }));
 
-// Mock de useNavigate
 jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),
 }));
 
-// Mock de toast
 jest.mock('react-toastify', () => ({
     toast: {
         success: jest.fn(),

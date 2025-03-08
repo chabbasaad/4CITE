@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { StarIcon } from '@heroicons/react/20/solid'
 import useBookingStore from "../../../service/stores/booking-store.tsx";
 import { BookingCreateRequestData } from "../../../service/model/booking/booking-create.tsx";
+import {Tab, TabGroup, TabList} from "@headlessui/react";
 
 const reviews = { href: '#', average: 4, totalCount: 117 }
 
@@ -13,18 +14,6 @@ export default function HotelOverview() {
     const { hotels, fetchHotel } = useHotelStore();
     const { createBooking } = useBookingStore();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-    const prevImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            prevIndex === 0 ? hotel.picture_list.length - 1 : prevIndex - 1
-        );
-    };
-
-    const nextImage = () => {
-        setCurrentImageIndex((prevIndex) =>
-            prevIndex === hotel.picture_list.length - 1 ? 0 : prevIndex + 1
-        );
-    };
 
     const [hotelData, setHotelData] = useState<BookingCreateRequestData>({
         hotel_id: id ? Number(id) : 0,
@@ -74,24 +63,35 @@ export default function HotelOverview() {
     return (
         <div className="bg-white mt-10">
             <div className="pt-6">
-                <div className="relative w-full h-48">
+                <div className="ml-150 relative d-flex item-center h-48">
                     <img
                         src={hotel.picture_list[currentImageIndex]}
                         alt={hotel.name}
-                        className="w-full h-48 object-cover rounded-md"
+                        className=" h-50 w-100 object-cover rounded-md"
                     />
-                    <button
-                        onClick={prevImage}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
-                    >
-                        ◀
-                    </button>
-                    <button
-                        onClick={nextImage}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
-                    >
-                        ▶
-                    </button>
+                </div>
+                <div className="mx-auto mt-6 hidden w-250  max-w-2xl sm:block lg:max-w-none">
+                    <TabGroup>
+                        <TabList className="grid grid-cols-3 gap-6">
+                            {hotel.picture_list.map((image : string, index : number) => (
+                                <Tab
+                                    key={index}
+                                    onClick={() => setCurrentImageIndex(index)}
+                                    className="group w-50 relative flex h-24  cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-gray-900 uppercase hover:bg-gray-50"
+                                >
+                                    <span className="sr-only">Image {index + 1}</span>
+                                    <span className="absolute w-50 inset-0 overflow-hidden rounded-md">
+                                        <img src={image} alt={`Image ${index + 1}`} className="w-50 object-cover"/>
+                                    </span>
+                                    <span
+                                        aria-hidden="true"
+                                        className={`pointer-events-none absolute inset-0 rounded-md ring-2 ring-transparent ring-offset-2 
+                                        ${currentImageIndex === index ? 'ring-indigo-500' : ''}`}
+                                    />
+                                </Tab>
+                            ))}
+                        </TabList>
+                    </TabGroup>
                 </div>
 
 
@@ -108,7 +108,7 @@ export default function HotelOverview() {
                     <p className="text-3xl tracking-tight text-gray-900">{hotel.price_per_night} par nuit</p>
 
                     <div className="mt-10">
-                    <h2 className="text-sm font-medium text-gray-900">Details</h2>
+                        <h2 className="text-sm font-medium text-gray-900">Details</h2>
 
                         <div className="mt-4 space-y-6">
                             <p className="text-sm text-gray-600">
@@ -119,12 +119,12 @@ export default function HotelOverview() {
                     </div>
 
                     <div className="mt-6">
-                    <h3 className="sr-only">Reviews</h3>
+                        <h3 className="sr-only">Reviews</h3>
+                        <div className="flex items-center">
                             <div className="flex items-center">
-                                <div className="flex items-center">
-                                    {[0, 1, 2, 3, 4].map((rating) => (
-                                        <StarIcon
-                                            key={rating}
+                                {[0, 1, 2, 3, 4].map((rating) => (
+                                    <StarIcon
+                                        key={rating}
                                             aria-hidden="true"
                                             className={classNames(
                                                 reviews.average > rating ? 'text-yellow-300' : 'text-gray-200',

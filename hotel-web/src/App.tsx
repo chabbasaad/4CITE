@@ -5,20 +5,6 @@ import {BrowserRouter} from "react-router-dom";
 import Header from "./components/header/header.tsx";
 import { ToastContainer } from 'react-toastify';
 
-const getUserRole = () => {
-    const userData = localStorage.getItem("user_data");
-
-    if (!userData) return null;
-
-    try {
-        const user = JSON.parse(userData);
-        return user?.role;
-    } catch (error) {
-        console.error("Erreur de parsing des données utilisateur :", error);
-        return null;
-    }
-};
-
 function App() {
 
   return (

@@ -1,3 +1,4 @@
+import {User} from "./user/user.tsx";
 
 export interface UserRequest {
     id: number;
@@ -27,7 +28,7 @@ export interface UserLogin {
 
 export interface UserLoginResponseData {
     "message": string,
-    "user": UserResponseData,
+    "user": User,
     "token": string
 }
 

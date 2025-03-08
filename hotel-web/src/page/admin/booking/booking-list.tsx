@@ -75,7 +75,7 @@ export default function BookingList() {
                                         {booking.guest_names.join(", ")}
                                     </td>
                                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
-                                        {booking.hotel_id}
+                                        {booking.hotel.name}
                                     </td>
                                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
                                         {new Date(booking.check_in_date).toLocaleDateString()}
@@ -86,20 +86,6 @@ export default function BookingList() {
                                     <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-500">
                                         {booking.guests_count}
                                     </td>
-                                    <td className="relative py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-0">
-                                        <Button
-                                            className="bg-blue-600 hover:bg-blue-500 mr-2"
-                                            onClick={() => handleUpdateClick(booking.id)}
-                                        >
-                                            Modifier
-                                        </Button>
-                                        <Button
-                                            className="bg-red-600 hover:bg-red-500"
-                                            onClick={() => handleDelete(booking.id)}
-                                        >
-                                            Supprimer
-                                        </Button>
-                                    </td>
                                 </tr>
                             ))}
                             </tbody>
@@ -107,9 +93,6 @@ export default function BookingList() {
                     </div>
                 </div>
             </div>
-            <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
-                {selectedHotelId && <HotelUpdate id={selectedHotelId} />}
-            </Dialog>
         </div>
     );
 }

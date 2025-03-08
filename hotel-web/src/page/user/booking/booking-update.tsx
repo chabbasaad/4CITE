@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import useBookingStore from "../../../service/stores/booking-store.tsx";
-import { BookingUpdateRequestData } from "../../../service/model/booking/booking-update.tsx";
+import useBookingStore from "../../../service/stores/booking-store.tsx"; // Supposons que vous avez un store booking-store.tsx
+import { BookingUpdateRequestData } from "../../../service/model/booking/booking-update.tsx"; // Le modèle pour la mise à jour de la réservation
 
-export default function BookingUpdate({ id }: { id: number }) {
+export default function BookingUpdate({ id ,setIsOpenUpdate}: { id: number,setIsOpenUpdate: (open: boolean) => void }) {
     const { bookings, loading, updateBooking } = useBookingStore();
     const [bookingData, setBookingData] = useState<BookingUpdateRequestData>({
         check_in_date: "",
         check_out_date: "",
-        status: "confirmed",
+        status: "pending", // L'état par défaut peut être "pending" ou autre selon votre logique
         special_requests: "",
         guest_names: [],
         contact_phone: "",
@@ -16,15 +16,15 @@ export default function BookingUpdate({ id }: { id: number }) {
 
     useEffect(() => {
         if (id) {
-            const booking = bookings.find((booking) => booking.id === id);
+            const booking = bookings.find((booking) => booking.id === Number(id));
             if (booking) {
                 setBookingData({
                     check_in_date: booking.check_in_date,
                     check_out_date: booking.check_out_date,
                     status: booking.status,
-                    special_requests: booking.special_requests || "",
-                    guest_names: booking.guest_names || [],
-                    contact_phone: booking.contact_phone || "",
+                    special_requests: booking.special_requests,
+                    guest_names: booking.guest_names,
+                    contact_phone: booking.contact_phone,
                 });
             } else {
                 toast.error("Réservation non trouvée.");
@@ -33,17 +33,29 @@ export default function BookingUpdate({ id }: { id: number }) {
     }, [id, bookings]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value, type } = e.target;
+        e.preventDefault();
+        const { name, value } = e.target;
         setBookingData({
             ...bookingData,
-            [name]: type === "number" ? Number(value) : value,
+            [name]: value,
+        });
+    };
+
+    const handleGuestNamesChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        e.preventDefault();
+        const updatedNames = [...bookingData.guest_names];
+        updatedNames[index] = e.target.value;
+        setBookingData({
+            ...bookingData,
+            guest_names: updatedNames,
         });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await updateBooking(id, bookingData);
-
+        await updateBooking(Number(id), bookingData);
+        setIsOpenUpdate(false);
+        window.location.reload();
     };
 
     if (loading) {
@@ -62,7 +74,7 @@ export default function BookingUpdate({ id }: { id: number }) {
                         value={bookingData.check_in_date}
                         onChange={handleChange}
                         required
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                 </div>
 
@@ -74,7 +86,7 @@ export default function BookingUpdate({ id }: { id: number }) {
                         value={bookingData.check_out_date}
                         onChange={handleChange}
                         required
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                 </div>
 
@@ -84,13 +96,11 @@ export default function BookingUpdate({ id }: { id: number }) {
                         name="status"
                         value={bookingData.status}
                         onChange={handleChange}
-                        required
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     >
-                        <option value="confirmed">Confirmé</option>
-                        <option value="canceled">Annulé</option>
-                        <option value="checked-in">Arrivé</option>
-                        <option value="checked-out">Parti</option>
+                        <option value="pending">En attente</option>
+                        <option value="confirmed">Confirmée</option>
+                        <option value="cancelled">Annulée</option>
                     </select>
                 </div>
 
@@ -98,44 +108,50 @@ export default function BookingUpdate({ id }: { id: number }) {
                     <label className="block text-gray-700 font-medium">Demandes spéciales</label>
                     <textarea
                         name="special_requests"
-                        placeholder="Demande spéciale (facultatif)"
+                        placeholder="Demandes spéciales"
                         value={bookingData.special_requests}
                         onChange={handleChange}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-gray-700 font-medium">Nom des invités</label>
-                    <input
-                        type="text"
-                        name="guest_names"
-                        placeholder="Nom des invités"
-                        value={bookingData.guest_names.join(", ")}
-                        onChange={(e) => setBookingData({
-                            ...bookingData,
-                            guest_names: e.target.value.split(",").map((name) => name.trim()),
-                        })}
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    />
+                    <label className="block text-gray-700 font-medium">Noms des invités</label>
+                    {bookingData.guest_names.map((guest, index) => (
+                        <input
+                            key={index}
+                            type="text"
+                            name={`guest_name_${index}`}
+                            placeholder={`Nom de l'invité ${index + 1}`}
+                            value={guest}
+                            onChange={(e) => handleGuestNamesChange(e, index)}
+                            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        />
+                    ))}
+                    <button
+                        type="button"
+                        onClick={() => setBookingData({ ...bookingData, guest_names: [...bookingData.guest_names, ""] })}
+                        className="text-indigo-600 mt-2"
+                    >
+                        Ajouter un invité
+                    </button>
                 </div>
 
                 <div>
-                    <label className="block text-gray-700 font-medium">Numéro de contact</label>
+                    <label className="block text-gray-700 font-medium">Numéro de téléphone</label>
                     <input
                         type="text"
                         name="contact_phone"
-                        placeholder="Numéro de contact"
                         value={bookingData.contact_phone}
                         onChange={handleChange}
                         required
-                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     />
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full bg-gray-950 text-white py-2 rounded-lg font-semibold transition duration-200 hover:bg-gray-800"
+                    className="w-full bg-gray-950 text-white py-2 rounded-lg font-semibold transition duration-200 hover:bg-gray-800 "
                 >
                     Mettre à jour la réservation
                 </button>

@@ -109,7 +109,7 @@ export default function HotelsList() {
                 <HotelCreate setIsOpenCreate={setIsOpen}  />
             </Dialog>
             <Dialog open={isOpenUpdate} onClose={() => setIsOpenUpdate(false)}>
-                {selectedHotelId && <HotelUpdate id={selectedHotelId}  />}
+                {selectedHotelId && <HotelUpdate id={selectedHotelId} setIsOpenUpdate={setIsOpenUpdate}  />}
             </Dialog>
         </div>
 

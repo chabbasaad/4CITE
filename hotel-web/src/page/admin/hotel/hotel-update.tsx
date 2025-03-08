@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import useHotelStore from "../../../service/stores/hotel-store.tsx";
 import { HotelUpdateRequestData } from "../../../service/model/hotel/hotel-update.tsx";
 
-export default function HotelUpdate({ id }: { id: number }) {
+export default function HotelUpdate({ id ,setIsOpenUpdate}: { id: number,setIsOpenUpdate: (open: boolean) => void }) {
     const { hotels, loading, updateHotel } = useHotelStore();
     const [hotelData, setHotelData] = useState<HotelUpdateRequestData>({
         name: "",
@@ -39,6 +39,7 @@ export default function HotelUpdate({ id }: { id: number }) {
     }, [id, hotels]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        e.preventDefault();
         const { name, value, type } = e.target;
         setHotelData({
             ...hotelData,
@@ -60,7 +61,6 @@ export default function HotelUpdate({ id }: { id: number }) {
         e.preventDefault();
         const updatedHotelData = {
             ...hotelData,
-            //picture_list: JSON.stringify(hotelData.picture_list),
         };
         const urlRegex = /^(https?:\/\/[^\s]+)$/;
         const isValidUrls = hotelData.picture_list.every(url => urlRegex.test(url));
@@ -71,7 +71,7 @@ export default function HotelUpdate({ id }: { id: number }) {
         }
 
         await updateHotel(Number(id), updatedHotelData);
-
+        setIsOpenUpdate(false)
 
     };
 

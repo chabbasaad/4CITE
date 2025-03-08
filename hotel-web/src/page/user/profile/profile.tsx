@@ -6,6 +6,7 @@ import useBookingStore from "../../../service/stores/booking-store.tsx";
 import {Dialog} from "../../../components/kit-ui/dialog.tsx";
 import BookingUpdate from "../booking/booking-update.tsx";
 import {ArchiveBoxIcon} from "@heroicons/react/16/solid";
+import {UserUpdateRequestData} from "../../../service/model/user/user-update.tsx";
 
 const secondaryNavigation = [
     { name: "General", href: "#", icon: UserCircleIcon },
@@ -17,23 +18,24 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 }
 
 export default function Profile() {
-    const { fetchUsers,updateUser } = useUserStore();
+    const {updateUser } = useUserStore();
     const { bookings, fetchBookings, deleteBooking } = useBookingStore();
     const [user, setUser] = useState<{ id: number; name: string; pseudo: string; email: string } | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [isOpenUpdate, setIsOpenUpdate] = useState(false);
-    const [selectedHotelId, setSelectedHotelId] = useState<number | null>(null);
+    const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null);
     const handleUpdateClick = (id: number) => {
-        setSelectedHotelId(id);
+        setSelectedBookingId(id);
         setIsOpenUpdate(true);
     };
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<UserUpdateRequestData>({
         name: "",
         pseudo: "",
         email: "",
+        role: "user",
         password: "",
-        password_confirmation: "pas",
+        password_confirmation: "",
     });
     const [currentNavigation, setCurrentNavigation] = useState("General");
 
@@ -44,6 +46,7 @@ export default function Profile() {
             setUser(parsedUser);
             setFormData({
                 name: parsedUser.name,
+                role: "user",
                 pseudo: parsedUser.pseudo,
                 email: parsedUser.email,
                 password: parsedUser.password,
@@ -61,11 +64,9 @@ export default function Profile() {
         if (!user) return;
         try {
             const response = await updateUser(user.id, formData);
-            const updatedUser = response.data;
-            localStorage.setItem("user_data", JSON.stringify(updatedUser));
-            setUser(updatedUser);
+            localStorage.setItem("user_data", JSON.stringify(response.data));
+            setUser(response.data);
             setEditMode(false);
-            fetchUsers();
         } catch (error) {
             console.error("Erreur API:", error);
         }
@@ -199,7 +200,7 @@ export default function Profile() {
                                         <div className="flex gap-x-4">
                                             <button
                                                 onClick={handleSubmit}
-                                                className="px-4 py-2 text-white bg-indigo-600 rounded-md hover:bg-indigo-500"
+                                                className="px-4 py-2 text-white bg-gray-950 rounded-md hover:bg-gray-800"
                                             >
                                                 Sauvegarder
                                             </button>
@@ -253,8 +254,8 @@ export default function Profile() {
                                             </div>
                                             <div className="flex gap-4 mt-4">
                                                 <button
-                                                    onClick={() => handleUpdateClick(booking)}
-                                                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500 focus:outline-none"
+                                                    onClick={() => handleUpdateClick(booking.id)}
+                                                    className="px-4 py-2 bg-gray-950 text-white rounded-md hover:bg-gray-800 focus:outline-none"
                                                 >
                                                     Modifier
                                                 </button>
@@ -274,7 +275,7 @@ export default function Profile() {
                     </div>
                 </main>
                 <Dialog open={isOpenUpdate} onClose={() => setIsOpenUpdate(false)}>
-                    {selectedHotelId && <BookingUpdate id={selectedHotelId} />}
+                    {selectedBookingId && <BookingUpdate id={selectedBookingId} setIsOpenUpdate={setIsOpenUpdate} />}
                 </Dialog>
             </div>
         </>

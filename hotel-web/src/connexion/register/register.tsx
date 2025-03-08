@@ -1,5 +1,4 @@
 import { useState } from "react";
-import useUserStore from "../../service/stores/user-store.tsx";
 import {register} from "../../service/servises/service-user.tsx"; // Importer le hook de navigation
 
 export default function Register({ closeModal }: { closeModal: () => void }) {
@@ -8,7 +7,6 @@ export default function Register({ closeModal }: { closeModal: () => void }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
-    const { fetchUsers } = useUserStore();
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -27,7 +25,6 @@ export default function Register({ closeModal }: { closeModal: () => void }) {
             if (response.token) {
                 localStorage.setItem("user_token",  response.token);
                 localStorage.setItem("user_data", JSON.stringify(response.user));
-                await fetchUsers();
                 closeModal();
             }
         } catch (error) {

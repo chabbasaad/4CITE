@@ -6,7 +6,6 @@ import Register from "../../connexion/register/register";
 import { Dialog } from '../../components/kit-ui/dialog';
 import { Button } from "../../components/kit-ui/button";
 
-// Définition des types de navigation
 type NavigationItem = {
     name: string;
     href: string;
@@ -22,6 +21,7 @@ const navigation: NavigationItem[] = [
 const navigationAdmin: NavigationItem[] = [
     { name: 'Accueil', href: '/', current: false },
     { name: 'Nous', href: '/nous', current: false },
+    { name: 'Hotel', href: '/hotel', current: false },
     { name: 'Gestion User', href: 'admin/gestion-users', current: false },
     { name: 'Gestion Hotel', href: 'admin/gestion-hotel', current: false },
     { name: 'Gestion Reservation', href: 'admin/gestion-booking', current: false },
@@ -34,7 +34,7 @@ function classNames(...classes: (string | undefined | null | false)[]): string {
 export default function Header() {
     const userData = localStorage.getItem("user_data");
     const user = userData ? JSON.parse(userData) as { role?: string } : null;
-    const userRole = user?.role || "user";
+    const userRole = user?.role || "";
 
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenRegister, setIsOpenRegister] = useState(false);

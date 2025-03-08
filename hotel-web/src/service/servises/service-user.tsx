@@ -22,10 +22,9 @@ export const register = async (params: Omit<UserRequest, "id">): Promise<UserReg
         const response = await axios.post<UserRegisterResponseData>(API_URL +'auth/register', params);
         toast.success(response.data.message);
         return response.data;
-    }catch (error: unknown) {
-
+    }catch (error) {
         if (error instanceof Error) {
-            toast.error(`Error: ${error.message || "Unknown error"}`);
+            toast.error(`Error: ${error.response.data.message || "Unknown error"}`);
             console.error("Erreur:", error);
         }
         throw error;
@@ -39,10 +38,10 @@ export const login = async (param: Omit<UserLogin, "id">): Promise<UserLoginResp
          return response.data;
         } catch (error) {
             if (error instanceof Error) {
-                toast.error(`Error: ${error.message || "Unknown error"}`);
+                toast.error(`Error: ${error.response.data.message || "Unknown error"}`);
                 console.error("Erreur:", error);
             }
-            throw error;;
+            throw error;
         }
 };
 

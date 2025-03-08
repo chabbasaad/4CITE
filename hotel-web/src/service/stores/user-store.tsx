@@ -1,23 +1,25 @@
 import { create } from "zustand";
-import {createUser, deleteUser, fetchUsers, updateUser} from "../servises/service-user.tsx";
+import {createUser, deleteUser, fetchUsers, login, updateUser} from "../servises/service-user.tsx";
 import {User} from "../model/user/user.tsx";
 import {UserCreateRequestData} from "../model/user/user-create.tsx";
-import {UserUpdateRequestData} from "../model/user/user-update.tsx";
+import {UserUpdateRequestData, UserUpdateResponseData} from "../model/user/user-update.tsx";
+import {UserLogin, UserLoginResponseData} from "../model/model-user.tsx";
 
 interface UserState {
     users: User[];
-    user: User | null;
+    userUp: User | null;
     loading: boolean;
     fetchUsers: () => Promise<void>;
+    fetchUser: (params : UserLogin) => Promise<UserLoginResponseData | null>;
     createUser : (params: UserCreateRequestData) => Promise<void>;
-    updateUser : (id: number, params :UserUpdateRequestData)=> Promise<void>;
+    updateUser : (id: number, params : UserUpdateRequestData)=> Promise<UserUpdateResponseData | null>;
     deleteUser: (id: number) => Promise<void>;
 
 }
 
 const useUserStore = create<UserState>((set) => ({
     users: [],
-    user: null,
+    userUp: null ,
     loading : false,
 
     fetchUsers: async () => {
@@ -27,6 +29,18 @@ const useUserStore = create<UserState>((set) => ({
             set({ users });
         } catch (error) {
             console.error(error);
+        }
+    },
+
+    fetchUser: async (params): Promise<UserLoginResponseData | null> => {
+        try {
+            const response = await login(params);
+            const userUp = response.user
+            set({ userUp });
+            return response;
+        } catch (error) {
+            console.error(error);
+            return null;
         }
     },
 
@@ -44,17 +58,19 @@ const useUserStore = create<UserState>((set) => ({
         }
     },
 
-    updateUser: async (id, params) => {
+    updateUser: async (id, params) : Promise<UserUpdateResponseData | null> => {
         set({ loading: true });
         try {
             const response  = await updateUser(id, params);
             const updatedUser = response.data;
             set((state ) => ({
                 users: state.users.map((h) => (h.id === id ? updatedUser : h)),
-                user: updatedUser,
+                userUp: updatedUser,
             }));
+            return response;
         } catch (error) {
             console.error(error);
+            return null;
         } finally {
             set({ loading: false });
         }
@@ -66,7 +82,7 @@ const useUserStore = create<UserState>((set) => ({
             await deleteUser(id);
             set((state) => ({
                 users: state.users.filter((h) => h.id !== id),
-                user: state.user?.id === id ? null : state.user,
+                user: state.userUp?.id === id ? null : state.userUp,
             }));
         } catch (error) {
             console.error("Erreur lors de la suppression de l'hôtel:", error);

@@ -11,7 +11,6 @@ export default function UsersList() {
     const [isOpenUpdate, setIsOpenUpdate] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
-    const [IsOpenCreate, setIsOpenCreate] = useState(false);
 
     useEffect(() => {
         fetchUsers().catch(() => toast.error("Erreur lors du chargement des utilisateurs."));

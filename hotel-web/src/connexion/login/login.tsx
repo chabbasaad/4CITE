@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {login} from "../../service/servises/service-user.tsx";
 import {toast} from "react-toastify";
+import useUserStore from "../../service/stores/user-store.tsx";
 
 export default function Login({ closeModal }: { closeModal: () => void }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const navigate = useNavigate();
+    const {   fetchUser } = useUserStore();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -16,9 +15,9 @@ export default function Login({ closeModal }: { closeModal: () => void }) {
                 email,
                 password
             }
-            const response = await login(user);
+            const response = await fetchUser(user);
 
-            if (response.token) {
+            if (response) {
                 localStorage.setItem("user_token", response.token);
                 localStorage.setItem("user_data", JSON.stringify(response.user));
 
