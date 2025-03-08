@@ -2,55 +2,68 @@ import { useEffect, useState } from 'react';
 import useHotelStore from "../../../service/stores/hotel-store.tsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { GetHotelsParams } from "../../../service/model/model-hotel.tsx";
 
 export default function HotelListFilter() {
     const { hotels, loading, fetchHotels } = useHotelStore();
     const navigate = useNavigate();
 
-    const [filters, setFilters] = useState<GetHotelsParams>({
+    const [filters, setFilters] = useState({
         search: '',
+        location: '',
         min_price: 0,
         max_price: 0,
-        available: false,
+        available: 'false',
         sort_by: "price_per_night",
         direction: "asc",
-        per_page: 10,
     });
 
     useEffect(() => {
-        fetchHotels(filters).catch(() => toast.error("Erreur lors du chargement des hôtels."));
-    }, [filters]);
+        fetchHotels().catch(() => toast.error("Erreur lors du chargement des hôtels."));
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        let newValue: string | number | boolean = value;
-
-        if (name === "min_price" || name === "max_price") {
-            newValue = value ? parseFloat(value) : 0;
-        } else if (name === "available") {
-            newValue = value === "true";
-        }
-
-        setFilters({ ...filters, [name]: newValue });
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [name]: name.includes("price") ? (value ? parseFloat(value) : 0) : value,
+        }));
     };
 
     const resetFilters = () => {
         setFilters({
             search: '',
+            location: '',
             min_price: 0,
             max_price: 0,
-            available: true,
+            available: 'false',
             sort_by: "price_per_night",
             direction: "asc",
-            per_page: 10,
         });
     };
 
+    // Filtrage des hôtels localement
+    const filteredHotels = hotels
+        .filter(hotel =>
+            hotel.name.toLowerCase().includes(filters.search.toLowerCase()) &&
+            hotel.location.toLowerCase().includes(filters.location.toLowerCase()) &&
+            (filters.min_price === 0 || hotel.price_per_night >= filters.min_price) &&
+            (filters.max_price === 0 || hotel.price_per_night <= filters.max_price) &&
+            (filters.available === "false" || hotel.is_available === true)
+        )
+        .sort((a, b) => {
+            const fieldA = a[filters.sort_by as keyof typeof a];
+            const fieldB = b[filters.sort_by as keyof typeof b];
 
+            if (typeof fieldA === "number" && typeof fieldB === "number") {
+                return filters.direction === "asc" ? fieldA - fieldB : fieldB - fieldA;
+            } else if (typeof fieldA === "string" && typeof fieldB === "string") {
+                return filters.direction === "asc" ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
+            }
+            return 0;
+        });
 
     return (
-        <div className="bg-gray-950 h-screen">
+        <div className="bg-gray-950 min-h-screen">
             <main className="bg-gray-950 mx-auto max-w-7xl px-4 py-16">
                 <div className="border-b pb-10 flex justify-between items-center">
                     <h1 className="text-4xl font-bold tracking-tight text-white">Nos Hôtels</h1>
@@ -93,7 +106,7 @@ export default function HotelListFilter() {
                         />
                         <select
                             name="available"
-                            value={filters.available.toString()}
+                            value={filters.available}
                             onChange={handleInputChange}
                             className="p-2 rounded bg-gray-800 text-white border border-gray-700"
                         >
@@ -126,7 +139,6 @@ export default function HotelListFilter() {
                         </select>
                     </div>
 
-                    {/* Boutons */}
                     <div className="mt-4 flex justify-end space-x-4">
                         <button
                             onClick={resetFilters}
@@ -141,27 +153,31 @@ export default function HotelListFilter() {
                     {loading ? (
                         <p className="text-center text-white bg-gray-950">Chargement...</p>
                     ) : (
-                        hotels.slice(0, 8).map((hotel) => (
-                            <div
-                                key={hotel.id}
-                                className="group relative rounded-lg border p-4 shadow-lg cursor-pointer"
-                                onClick={() => navigate(`/hotel/${hotel.id}`)}
-                            >
-                                <img
-                                    src={hotel.picture_list[0]}
-                                    alt={hotel.name}
-                                    className="w-full h-48 object-cover rounded-md group-hover:opacity-75"
-                                />
-                                <div className="mt-4">
-                                    <h3 className="text-lg font-semibold text-white">{hotel.name}</h3>
-                                    <p className="text-sm text-white">{hotel.location}</p>
-                                    <p className="text-sm mt-1 text-white">{hotel.description}</p>
-                                    <p className="mt-2 font-semibold text-white">
-                                        {hotel.price_per_night.toFixed(2)} € / nuit
-                                    </p>
+                        filteredHotels.length > 0 ? (
+                            filteredHotels.map((hotel) => (
+                                <div
+                                    key={hotel.id}
+                                    className="group relative rounded-lg border p-4 shadow-lg cursor-pointer bg-gray-900 hover:bg-gray-800"
+                                    onClick={() => navigate(`/hotel/${hotel.id}`)}
+                                >
+                                    <img
+                                        src={hotel.picture_list[0]}
+                                        alt={hotel.name}
+                                        className="w-full h-48 object-cover rounded-md group-hover:opacity-75"
+                                    />
+                                    <div className="mt-4">
+                                        <h3 className="text-lg font-semibold text-white">{hotel.name}</h3>
+                                        <p className="text-sm text-white">{hotel.location}</p>
+                                        <p className="text-sm mt-1 text-white">{hotel.description}</p>
+                                        <p className="mt-2 font-semibold text-white">
+                                            {hotel.price_per_night.toFixed(2)} € / nuit
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            ))
+                        ) : (
+                            <p className="text-center text-white col-span-full">Aucun hôtel ne correspond aux filtres sélectionnés.</p>
+                        )
                     )}
                 </div>
             </main>

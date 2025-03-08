@@ -12,6 +12,19 @@ export default function HotelOverview() {
     const { id } = useParams();
     const { hotels, fetchHotel } = useHotelStore();
     const { createBooking } = useBookingStore();
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    const prevImage = () => {
+        setCurrentImageIndex((prevIndex) =>
+            prevIndex === 0 ? hotel.picture_list.length - 1 : prevIndex - 1
+        );
+    };
+
+    const nextImage = () => {
+        setCurrentImageIndex((prevIndex) =>
+            prevIndex === hotel.picture_list.length - 1 ? 0 : prevIndex + 1
+        );
+    };
 
     const [hotelData, setHotelData] = useState<BookingCreateRequestData>({
         hotel_id: id ? Number(id) : 0,
@@ -61,43 +74,52 @@ export default function HotelOverview() {
     return (
         <div className="bg-white mt-10">
             <div className="pt-6">
-
-                <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
+                <div className="relative w-full h-48">
                     <img
-                        alt={hotel.picture_list[0]}
-                        src={hotel.picture_list[0]}
-                        className="hidden size-full rounded-lg object-cover lg:block"
+                        src={hotel.picture_list[currentImageIndex]}
+                        alt={hotel.name}
+                        className="w-full h-48 object-cover rounded-md"
                     />
-
-                    <img
-                        alt={hotel.picture_list[1]}
-                        src={hotel.picture_list[1]}
-                        className="aspect-4/5 size-full object-cover sm:rounded-lg lg:aspect-auto"
-                    />
+                    <button
+                        onClick={prevImage}
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+                    >
+                        ◀
+                    </button>
+                    <button
+                        onClick={nextImage}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+                    >
+                        ▶
+                    </button>
                 </div>
 
-                <div
-                    className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
-                    <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
-                        <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{hotel.name}</h1>
+
+            </div>
+
+            <div
+                className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
+                <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
+                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{hotel.name}</h1>
+                </div>
+
+                <div className="mt-4 lg:row-span-3 lg:mt-0">
+                    <h2 className="sr-only">Product information</h2>
+                    <p className="text-3xl tracking-tight text-gray-900">{hotel.price_per_night} par nuit</p>
+
+                    <div className="mt-10">
+                    <h2 className="text-sm font-medium text-gray-900">Details</h2>
+
+                        <div className="mt-4 space-y-6">
+                            <p className="text-sm text-gray-600">
+                                Notre chambre d'hôtel est conçue pour offrir un confort optimal et une expérience
+                                inoubliable.
+                            </p>
+                        </div>
                     </div>
 
-                    <div className="mt-4 lg:row-span-3 lg:mt-0">
-                        <h2 className="sr-only">Product information</h2>
-                        <p className="text-3xl tracking-tight text-gray-900">{hotel.price_per_night} par nuit</p>
-
-                        <div className="mt-10">
-                            <h2 className="text-sm font-medium text-gray-900">Details</h2>
-
-                            <div className="mt-4 space-y-6">
-                                <p className="text-sm text-gray-600">
-                                    Notre chambre d'hôtel est conçue pour offrir un confort optimal et une expérience inoubliable.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="mt-6">
-                            <h3 className="sr-only">Reviews</h3>
+                    <div className="mt-6">
+                    <h3 className="sr-only">Reviews</h3>
                             <div className="flex items-center">
                                 <div className="flex items-center">
                                     {[0, 1, 2, 3, 4].map((rating) => (
@@ -252,7 +274,7 @@ export default function HotelOverview() {
 
                     </div>
                 </div>
-            </div>
+
         </div>
     );
 }

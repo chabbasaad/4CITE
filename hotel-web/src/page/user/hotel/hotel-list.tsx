@@ -1,23 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import {toast} from "react-toastify";
 import useHotelStore from "../../../service/stores/hotel-store.tsx";
-import {useEffect, useState} from "react";
-import {GetHotelsParams} from "../../../service/model/model-hotel.tsx";
+import {useEffect} from "react";
 
 export default function HotelList() {
     const { hotels, loading, fetchHotels } = useHotelStore();
     const navigate = useNavigate();
-    const [filters, setFilters] = useState<GetHotelsParams>({
-        search: '',
-        min_price: 0,
-        max_price: 0,
-        available: true,
-        sort_by: "price_per_night",
-        direction: "asc",
-        per_page: 10,
-    });
+
     useEffect(() => {
-        fetchHotels(filters).catch(() => toast.error("Erreur lors du chargement des hôtels."));
+        fetchHotels().catch(() => toast.error("Erreur lors du chargement des hôtels."));
     }, [fetchHotels]);
 
     if (!Array.isArray(hotels)) {

@@ -1,6 +1,5 @@
 import axios from "axios";
 import {
-    GetHotelsParams,
     Hotel,
 } from "../model/model-hotel.tsx";
 import { toast } from "react-toastify";
@@ -8,20 +7,17 @@ import {HotelUpdateRequestData, HotelUpdateResponseData} from "../model/hotel/ho
 import {HotelCreateRequestData, HotelCreateResponseData} from "../model/hotel/hotel-create.tsx";
 
 const apiUrl = import.meta.env.VITE_API_URL;
-console.log("API URL:", apiUrl);
-
-
-const API_URL = "http://89.168.20.112:8000/api/hotels";
+const API_URL = `${apiUrl}/hotels`;
 
 const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("user_token")}`,
     "Content-Type": "application/json",
 });
 
-export const fetchHotels = async (params: GetHotelsParams): Promise<Hotel[]> => {
+export const fetchHotels = async (): Promise<Hotel[]> => {
     try {
-        const response = await axios.get<Hotel[]>(API_URL, { params, headers: getAuthHeaders() });
-        return response.data;
+        const response = await axios.get<Hotel[]>(API_URL,{ headers: getAuthHeaders() });
+        return response.data.data;
     } catch (error) {
         if (error instanceof Error) {
             console.error("Erreur:", error);

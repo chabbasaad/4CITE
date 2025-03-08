@@ -2,7 +2,7 @@ import { useState } from "react";
 import useHotelStore from "../../../service/stores/hotel-store.tsx";
 import {HotelCreateRequestData} from "../../../service/model/hotel/hotel-create.tsx";
 
-export default function HotelCreate() {
+export default function HotelCreate({  setIsOpenCreate }: { setIsOpenCreate: (open: boolean) => void }) {
     const { createHotel } = useHotelStore();
     const [hotelData, setHotelData] = useState<HotelCreateRequestData>({
         name: "Hôtel Example",
@@ -18,6 +18,7 @@ export default function HotelCreate() {
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        e.preventDefault();
         const { name, value, type } = e.target;
         setHotelData({
             ...hotelData,
@@ -25,7 +26,8 @@ export default function HotelCreate() {
         });
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         await createHotel(hotelData);
         setHotelData({
                 name: "",
@@ -39,16 +41,17 @@ export default function HotelCreate() {
                 amenities: [],
                 available: true
             });
+        setIsOpenCreate(false);
     };
 
     return (
-        <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg ">
+        <div className="max-w-2xl  mx-auto bg-white  rounded-lg">
             <h2 className="text-2xl font-bold mb-4 text-gray-900">Ajouter un hôtel</h2>
             <div className="space-y-6 d-flex">
                 <div className="grid grid-cols-2 gap-6">
                     <div>
                         <div className="space-y-2">
-                            <label htmlFor="name" className="block font-medium text-gray-700">Nom de l'hôtel</label>
+                            <label htmlFor="name" className="block  m-2 font-medium text-gray-700">Nom de l'hôtel</label>
                             <input
                                 id="name"
                                 type="text"
@@ -56,13 +59,13 @@ export default function HotelCreate() {
                                 value={hotelData.name}
                                 onChange={handleChange}
                                 required
-                                className="w-full p-2 border rounded"
+                                className="m-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 placeholder="Nom de l'hôtel"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label htmlFor="location" className="block font-medium text-gray-700">Localisation</label>
+                            <label htmlFor="location" className="m-2 block font-medium text-gray-700">Localisation</label>
                             <input
                                 id="location"
                                 type="text"
@@ -70,26 +73,26 @@ export default function HotelCreate() {
                                 value={hotelData.location}
                                 onChange={handleChange}
                                 required
-                                className="w-full p-2 border rounded"
+                                className="m-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 placeholder="Localisation de l'hôtel"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label htmlFor="description" className="block font-medium text-gray-700">Description</label>
+                            <label htmlFor="description" className="m-2 block font-medium text-gray-700">Description</label>
                             <textarea
                                 id="description"
                                 name="description"
                                 value={hotelData.description}
                                 onChange={handleChange}
                                 required
-                                className="w-full p-2 border rounded"
+                                className="m-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 placeholder="Description de l'hôtel"
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <label htmlFor="price_per_night" className="block font-medium text-gray-700">Prix par nuit
+                        <div className="space-y-2 mt-2">
+                            <label htmlFor="price_per_night" className=" m-2 block font-medium text-gray-700">Prix par nuit
                                 (€)</label>
                             <input
                                 id="price_per_night"
@@ -98,7 +101,7 @@ export default function HotelCreate() {
                                 value={hotelData.price_per_night}
                                 onChange={handleChange}
                                 required
-                                className="w-full p-2 border rounded"
+                                className="m-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 placeholder="Prix par nuit"
                             />
                         </div>
@@ -106,7 +109,7 @@ export default function HotelCreate() {
                     <div>
 
                         <div className="space-y-2">
-                            <label htmlFor="total_rooms" className="block font-medium text-gray-700">Nombre total de
+                            <label htmlFor="total_rooms" className="m-2 block font-medium text-gray-700">Nombre total de
                                 chambres</label>
                             <input
                                 id="total_rooms"
@@ -115,13 +118,13 @@ export default function HotelCreate() {
                                 value={hotelData.total_rooms}
                                 onChange={handleChange}
                                 required
-                                className="w-full p-2 border rounded"
+                                className="m-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 placeholder="Nombre total de chambres"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label htmlFor="available_rooms" className="block font-medium text-gray-700">Nombre de
+                            <label htmlFor="available_rooms" className="m-2 block font-medium text-gray-700">Nombre de
                                 chambres
                                 disponibles</label>
                             <input
@@ -131,13 +134,13 @@ export default function HotelCreate() {
                                 value={hotelData.available_rooms}
                                 onChange={handleChange}
                                 required
-                                className="w-full p-2 border rounded"
+                                className="m-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 placeholder="Chambres disponibles"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label htmlFor="amenities" className="block font-medium text-gray-700">Services et
+                            <label htmlFor="amenities" className="m-2 block font-medium text-gray-700">Services et
                                 Commodités</label>
                             <input
                                 id="amenities"
@@ -148,12 +151,12 @@ export default function HotelCreate() {
                                     ...hotelData,
                                     amenities: e.target.value.split(",").map(item => item.trim())
                                 })}
-                                className="w-full p-2 border rounded"
+                                className="m-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 placeholder="Services, séparés par des virgules"
                             />
                         </div>
                         <div>
-                            <label className="block font-medium text-gray-700">Photos de l'hôtel</label>
+                            <label className="m-2 block font-medium text-gray-700">Photos de l'hôtel</label>
                             <input
                                 type="text"
                                 name="picture_list"
@@ -164,7 +167,7 @@ export default function HotelCreate() {
                                         picture_list: e.target.value.split(",").map(item => item.trim()),
                                     })
                                 }
-                                className="w-full p-2 border rounded"
+                                className="m-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 placeholder="URLs des images séparées par des virgules"
                             />
                         </div>
@@ -174,7 +177,7 @@ export default function HotelCreate() {
 
                 <button
                     onClick={handleSubmit}
-                    className="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-500"
+                    className="w-full bg-gray-950 text-white p-2 rounded hover:bg-gray-8000"
                 >
                     Ajouter l'hôtel
                 </button>

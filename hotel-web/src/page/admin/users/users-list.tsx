@@ -11,6 +11,7 @@ export default function UsersList() {
     const [isOpenUpdate, setIsOpenUpdate] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
+    const [IsOpenCreate, setIsOpenCreate] = useState(false);
 
     useEffect(() => {
         fetchUsers().catch(() => toast.error("Erreur lors du chargement des utilisateurs."));
@@ -37,8 +38,8 @@ export default function UsersList() {
 
     return (
         <div className="flex flex-col px-4 sm:px-6 lg:px-8">
-            {/* En-tête */}
             <div className="sm:flex sm:items-center mb-4">
+
                 <div className="sm:flex-auto">
                     <h1 className="text-lg font-semibold text-gray-900 mt-5">Liste des Utilisateurs</h1>
                     <p className="mt-2 text-sm text-gray-700">
@@ -51,7 +52,7 @@ export default function UsersList() {
                     </Button>
                 </div>
             </div>
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 ">
                 <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <div className="overflow-y-auto max-h-full">
@@ -120,10 +121,10 @@ export default function UsersList() {
             </div>
 
             <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
-                <UserCreate />
+                <UserCreate setIsOpenCreate={setIsOpen}  />
             </Dialog>
             <Dialog open={isOpenUpdate} onClose={() => setIsOpenUpdate(false)}>
-                {selectedUserId && <UserUpdate id={selectedUserId} />}
+                {selectedUserId && <UserUpdate id={selectedUserId} setIsOpenUpdate={setIsOpenUpdate} />}
             </Dialog>
         </div>
     );

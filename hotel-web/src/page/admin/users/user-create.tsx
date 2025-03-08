@@ -2,7 +2,7 @@ import { useState } from "react";
 import useUserStore from "../../../service/stores/user-store.tsx";
 import { UserCreateRequestData } from "../../../service/model/user/user-create.tsx";
 
-export default function UserCreate() {
+export default function UserCreate({ setIsOpenCreate }: {  setIsOpenCreate: (open: boolean) => void }) {
     const { createUser } = useUserStore();
     const [userData, setUserData] = useState<UserCreateRequestData>({
         name: "",
@@ -15,6 +15,7 @@ export default function UserCreate() {
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        e.preventDefault();
         const { name, value } = e.target;
         setUserData({
             ...userData,
@@ -33,10 +34,11 @@ export default function UserCreate() {
             role: "user",
             password_confirmation: ""
         });
+        setIsOpenCreate(false);
     };
 
     return (
-        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+        <div className="max-w-md mx-auto bg-white p-6 rounded-lg ">
             <h2 className="text-2xl font-bold mb-4 text-gray-900">Ajouter un utilisateur</h2>
             <div className="space-y-4">
                 <div>
@@ -48,7 +50,7 @@ export default function UserCreate() {
                         value={userData.name}
                         onChange={handleChange}
                         required
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         placeholder="Nom complet"
                     />
                 </div>
@@ -62,7 +64,7 @@ export default function UserCreate() {
                         value={userData.pseudo}
                         onChange={handleChange}
                         required
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         placeholder="Pseudo"
                     />
                 </div>
@@ -76,7 +78,7 @@ export default function UserCreate() {
                         value={userData.email}
                         onChange={handleChange}
                         required
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         placeholder="Email"
                     />
                 </div>
@@ -90,7 +92,7 @@ export default function UserCreate() {
                         value={userData.password}
                         onChange={handleChange}
                         required
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         placeholder="Mot de passe"
                     />
                 </div>
@@ -102,7 +104,7 @@ export default function UserCreate() {
                         name="role"
                         value={userData.role}
                         onChange={handleChange}
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     >
                         <option value="user">Utilisateur</option>
                         <option value="admin">Administrateur</option>
@@ -111,7 +113,7 @@ export default function UserCreate() {
 
                 <button
                     onClick={handleSubmit}
-                    className="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-500"
+                    className="w-full bg-gray-950 text-white p-2 rounded hover:bg-gray-800"
                 >
                     Ajouter l'utilisateur
                 </button>

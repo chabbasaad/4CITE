@@ -18,11 +18,11 @@ export interface Hotel {
 
 
 export interface GetHotelsParams {
-    available: boolean;
+    available: boolean | null;
     direction: "asc" | "desc";
-    max_price: number;
-    min_price: number;
-    per_page: number;
-    search: string;
+    max_price: number | null;
+    min_price: number | null;
+    per_page: number | null;
+    search: string | null ;
     sort_by: "name" | "location" | "price_per_night" | "created_at";
 }

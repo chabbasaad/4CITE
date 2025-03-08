@@ -9,15 +9,13 @@ import {UserCreateRequestData, UserCreateResponseData} from "../model/user/user-
 import {UserFetchResponseData} from "../model/user/user-fetch.tsx";
 import {UserUpdateRequestData, UserUpdateResponseData} from "../model/user/user-update.tsx";
 
-//http://89.168.20.112:8000/docs/api#/operations/hotel.index
-const API_URL = "http://89.168.20.112:8000/api/";
+const apiUrl = import.meta.env.VITE_API_URL;
+const API_URL = `${apiUrl}/`;
 
 const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("user_token")}`,
     "Content-Type": "application/json",
 });
-
-
 
 export const register = async (params: Omit<UserRequest, "id">): Promise<UserRegisterResponseData> => {
     try {
@@ -51,6 +49,7 @@ export const login = async (param: Omit<UserLogin, "id">): Promise<UserLoginResp
 export const fetchUsers = async (): Promise<UserFetchResponseData> => {
     try {
         const response = await axios.get<UserFetchResponseData>(`${API_URL}users`, { headers: getAuthHeaders() });
+        console.log(response)
         return response.data;
     } catch (error) {
         if (error instanceof Error) {

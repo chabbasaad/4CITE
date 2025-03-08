@@ -13,7 +13,6 @@ interface BookingState {
     createBooking : (params: BookingCreateRequestData) => Promise<void>;
     updateBooking : (id: number, params :BookingUpdateRequestData)=> Promise<void>;
     deleteBooking: (id: number) => Promise<void>;
-
 }
 
 const useBookingStore = create<BookingState>((set) => ({

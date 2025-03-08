@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import useUserStore from "../../../service/stores/user-store.tsx";
 import { UserUpdateRequestData } from "../../../service/model/user/user-update.tsx";
 
-export default function UserUpdate({ id }: { id: number }) {
+export default function UserUpdate({ id, setIsOpenUpdate }: { id: number, setIsOpenUpdate: (open: boolean) => void }) {
     const { users, loading, updateUser } = useUserStore();
     const [userData, setUserData] = useState<UserUpdateRequestData>({
         name: "",
@@ -33,6 +33,7 @@ export default function UserUpdate({ id }: { id: number }) {
     }, [id, users]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        e.preventDefault();
         const { name, value } = e.target;
         setUserData({
             ...userData,
@@ -44,6 +45,7 @@ export default function UserUpdate({ id }: { id: number }) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         await updateUser(Number(id), userData);
+        setIsOpenUpdate(false);
     };
 
     if (loading) {
@@ -64,7 +66,7 @@ export default function UserUpdate({ id }: { id: number }) {
                         value={userData.name}
                         onChange={handleChange}
                         required
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
                 </div>
 
@@ -78,7 +80,7 @@ export default function UserUpdate({ id }: { id: number }) {
                         value={userData.pseudo}
                         onChange={handleChange}
                         required
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
                 </div>
 
@@ -92,7 +94,7 @@ export default function UserUpdate({ id }: { id: number }) {
                         value={userData.email}
                         onChange={handleChange}
                         required
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
                 </div>
 
@@ -103,7 +105,7 @@ export default function UserUpdate({ id }: { id: number }) {
                         name="role"
                         value={userData.role}
                         onChange={handleChange}
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     >
                         <option value="user">Utilisateur</option>
                         <option value="admin">Administrateur</option>
@@ -119,7 +121,7 @@ export default function UserUpdate({ id }: { id: number }) {
                         placeholder="Nouveau mot de passe"
                         value={userData.password}
                         onChange={handleChange}
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
                 </div>
 
@@ -132,13 +134,13 @@ export default function UserUpdate({ id }: { id: number }) {
                         placeholder="Confirmez le mot de passe"
                         value={userData.password_confirmation}
                         onChange={handleChange}
-                        className="w-full p-2 border rounded"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />
                 </div>
 
                 <button
                     type="submit"
-                    className="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-500"
+                    className="w-full bg-gray-950 text-white p-2 rounded hover:bg-gray-800"
                 >
                     Mettre à jour l'utilisateur
                 </button>

@@ -4,7 +4,8 @@ import {BookingFetchRequestData, BookingFetchResponseData} from "../model/bookin
 import {BookingCreateRequestData, BookingCreateResponseData} from "../model/booking/booking-create.tsx";
 import {BookingUpdateRequestData, BookingUpdateResponseData} from "../model/booking/booking-update.tsx";
 
-const API_URL = "http://89.168.20.112:8000/api/bookings";
+const apiUrl = import.meta.env.VITE_API_URL;
+const API_URL = `${apiUrl}/bookings`;
 
 const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("user_token")}`,
