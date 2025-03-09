@@ -43,14 +43,6 @@ jobs:
       - name: Run Test
         run: npm test
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()  # Exécute cette étape même si les tests échouent
-        with:
-          name: test-results
-          path: build/reports/tests/test/
-
-
   security:
     needs: test
     runs-on: ubuntu-latest
