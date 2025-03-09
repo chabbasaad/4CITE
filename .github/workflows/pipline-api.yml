@@ -69,6 +69,8 @@ jobs:
 
   security:
     needs: test
+    # Only run on push to master, not on pull requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -160,6 +162,8 @@ jobs:
 
   build:
     needs: security
+    # Only run on push to master, not on pull requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -251,6 +255,8 @@ jobs:
 
   deploy:
     needs: build
+    # Only run on push to master, not on pull requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     environment: production
 
