@@ -20,11 +20,11 @@ export default function HotelsList() {
     }, [fetchHotels]);
 
     if (loading) {
-        return <p className="text-center text-gray-700 mt-4">Chargement des hôtels...</p>;
+        return <p className="mt-15 text-center text-gray-700 mt-4">Chargement des hôtels...</p>;
     }
 
     if (!Array.isArray(hotels) || hotels.length === 0) {
-        return <p className="text-center text-gray-700 mt-4">Aucun hôtel trouvé.</p>;
+        return <p className="mt-15 text-center text-gray-700 mt-4">Aucun hôtel trouvé.</p>;
     }
 
     const handleDelete = async (id: number) => {
@@ -34,7 +34,7 @@ export default function HotelsList() {
     };
 
     return (
-        <div className="px-4 sm:px-6 lg:px-8">
+        <div className="mt-15 px-4 sm:px-6 lg:px-8">
             <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                     <h1 className="text-lg font-semibold text-gray-900 mt-5">Liste des Hôtels</h1>
