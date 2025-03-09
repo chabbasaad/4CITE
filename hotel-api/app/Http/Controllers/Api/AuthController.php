@@ -15,7 +15,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 class AuthController extends Controller
 {
     /**
-     * Register a new user.
+     * Register a new user in db.
      *
      * @param RegisterRequest $request
      * @return JsonResponse
