@@ -12,60 +12,57 @@ A comprehensive hotel booking system built with Laravel and React, featuring use
 
 ## 🛠 System Requirements
 
-- PHP >= 8.2
-- Composer (Latest Version)
-- MySQL >= 8.0
-- Node.js & NPM
-- Docker & Docker Compose (Optional, for containerized setup)
+### Backend Requirements (Docker)
+- Docker >= 20.10.x
+- Docker Compose >= 2.0.x
 
-## 🚀 Installation Methods
+### Frontend Requirements (Local)
+- Node.js >= 18.x
+- npm >= 9.x
 
-### Method A: Local Installation
+## 🚀 Installation Guide
+
+### Backend Setup (Docker)
 
 1. **Clone Repository**
    ```bash
    git clone https://github.com/chabbasaad/4CITE.git
    cd <project-folder>
+   ```
+
+2. **Configure Backend Environment**
+   ```bash
+   cd hotel-api
+   ```
+
+3. **Start Docker Services**
+   ```bash
+   docker-compose up -d --build
+   ```
+
+   This command will:
+   - Build and start all Docker containers
+   - Automatically create the database
+   - Run all migrations
+   - Seed the database with initial data
+   
+   > Note: All database setup is handled automatically through a startup script. No manual migration commands are needed.
+
+### Frontend Setup (Local)
+
+1. **Navigate to Frontend Directory**
+   ```bash
+   cd hotel-web
    ```
 
 2. **Install Dependencies**
    ```bash
-   composer install
+   npm install
    ```
 
-3. **Environment Setup**
+3. **Start Development Server**
    ```bash
-   cp .env.example .env
-   ```
-
-4. **Database Configuration**
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=hotel
-   DB_USERNAME=root
-   DB_PASSWORD=
-   ```
-
-5. **Application Setup**
-   ```bash
-   php artisan key:generate
-   php artisan migrate --seed
-   php artisan serve
-   ```
-
-### Method B: Docker Installation (Recommended)
-
-1. **Clone Repository**
-   ```bash
-   git clone https://github.com/chabbasaad/4CITE.git
-   cd <project-folder>
-   ```
-
-2. **Launch Docker Environment**
-   ```bash
-   docker-compose up -d --build
+   npm run dev
    ```
 
 ## 🌐 Access Points
@@ -74,7 +71,7 @@ A comprehensive hotel booking system built with Laravel and React, featuring use
 - **Backend API:** `http://localhost:8000`
 - **API Documentation:** `http://localhost:8000/docs/api`
 
-## 🐳 Docker Management Commands
+## 🐳 Docker Management Commands (Backend Only)
 
 ```bash
 # Start containers
@@ -91,91 +88,51 @@ docker-compose up -d --build
 
 # Run artisan commands
 docker-compose exec app php artisan <command>
-
-# Run composer commands
-docker-compose exec app composer <command>
 ```
 
 ## 🧪 Testing Guide
 
-### Backend Testing
+### Backend Testing (Docker)
 
-#### Local Testing Commands
-```bash
-# Run all tests
-php artisan test
-
-# Run unit tests only
-php artisan test --testsuite=Unit
-
-# Run feature tests only
-php artisan test --testsuite=Feature
-
-# Run specific test class
-php artisan test --filter=AuthenticationTest
-```
-
-#### Docker Testing Commands
 ```bash
 # Run all tests
 docker-compose exec app php artisan test
 
-# Run unit tests only
+# Run specific test suites
 docker-compose exec app php artisan test --testsuite=Unit
-
-# Run feature tests only
 docker-compose exec app php artisan test --testsuite=Feature
 ```
 
-## 🎨 Frontend Setup and Testing
-
-### Docker Installation (Frontend)
-
-1. **Navigate to Frontend Directory**
-   ```bash
-   cd front-end
-   ```
-
-2. **Build Docker Image**
-   ```bash
-   docker build -t hotel-frontend .
-   ```
-
-3. **Run Frontend Container**
-   ```bash
-   docker run -d -p 5173:3000 --name hotel-frontend hotel-frontend
-   ```
-
-### Available Scripts
+### Frontend Testing (Local)
 
 ```bash
-# Development server
-npm run dev
-
-# Production build
-npm run build
+# Navigate to frontend directory
+cd hotel-web
 
 # Run tests
 npm test
+
+# Run tests with coverage
+npm test -- --coverage
+
+# Run tests in watch mode
+npm test -- --watch
+```
+
+## 🎨 Frontend Development Scripts
+
+```bash
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
 
 # Run linting
 npm run lint
 
 # Preview production build
 npm run preview
-```
-
-### Frontend Testing
-
-```bash
-# Run tests in Docker container
-docker exec hotel-frontend npm test
-
-# Run tests with coverage
-docker exec hotel-frontend npm test -- --coverage
-
-# Run tests in watch mode
-docker exec hotel-frontend npm test -- --watch
 ```
 
 ### Frontend Dependencies

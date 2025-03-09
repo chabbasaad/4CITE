@@ -80,69 +80,87 @@
         </header>
 
     <h2>1. System Requirements</h2>
+    <h3>Backend Requirements (Docker)</h3>
     <ul>
         <li>Docker >= 20.10.x</li>
         <li>Docker Compose >= 2.0.x</li>
-        <li>Git</li>
-        <li>(Optional for local development) PHP >= 8.2</li>
-        <li>(Optional for local development) Node.js >= 18.x</li>
     </ul>
+
+    <div style="border-left: 3px solid #9d00ff; padding-left: 20px; margin: 20px 0;">
+        <h3 style="color: #9d00ff;">Frontend Requirements (Local)</h3>
+        <ul style="color: #d8c5ff;">
+            <li>Node.js >= 18.x</li>
+            <li>npm >= 9.x</li>
+        </ul>
+    </div>
 
     <h2>2. Project Structure</h2>
     <pre>
 project-root/
-├── hotel-api/          # Backend Laravel Application
+├── hotel-api/          # Backend Laravel Application (Docker)
 │   ├── Dockerfile
 │   ├── docker/
 │   │   └── nginx/     # Nginx configuration
 │   └── ...
-├── hotel-web/         # Frontend React Application
-│   ├── Dockerfile
-│   └── ...
-└── docker-compose.yml # Main Docker configuration</pre>
+└── hotel-web/         # Frontend React Application (Local)
+    └── ...</pre>
 
-    <h2>3. Installation Methods</h2>
+    <h2>3. Installation Guide</h2>
     
-    <h3>Method A: Docker Installation (Recommended)</h3>
+    <h3>Backend Setup (Docker)</h3>
     <ol>
         <li><strong>Clone Repository</strong>
             <pre>git clone https://github.com/chabbasaad/4CITE.git
 cd 4CITE</pre>
         </li>
-        <li><strong>Environment Setup</strong>
-            <pre># Copy backend environment file
-cp hotel-api/.env.example hotel-api/.env</pre>
+        <li><strong>Configure Backend</strong>
+            <pre>cd hotel-api</pre>
         </li>
-        <li><strong>Start Docker Environment</strong>
-            <pre># Build and start all services
-docker-compose up -d --build</pre>
-        </li>
-        <li><strong>Initialize Backend</strong>
-            <pre># Generate application key
-docker-compose exec backend php artisan key:generate
-
-# Run database migrations and seeders
-docker-compose exec backend php artisan migrate --seed</pre>
+        <li><strong>Start Docker Services</strong>
+            <pre>docker-compose up -d --build</pre>
+            <div style="background: #2d2d2d; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                <p style="color: #73ff33; margin: 0;">This single command handles the complete setup:</p>
+                <ul style="margin-top: 10px;">
+                    <li>Builds and starts all Docker containers</li>
+                    <li>Automatically creates the database</li>
+                    <li>Runs all migrations through a startup script</li>
+                    <li>Seeds the database with initial data</li>
+                </ul>
+                <p style="color: #ffa634; margin-top: 10px;"><strong>Note:</strong> No manual migration or seeding commands are needed as everything is automated through the startup script.</p>
+            </div>
         </li>
     </ol>
 
+    <div style="border-left: 3px solid #9d00ff; padding-left: 20px; margin: 20px 0;">
+        <h3 style="color: #9d00ff;">Frontend Setup (Local)</h3>
+        <ol>
+            <li><strong>Navigate to Frontend Directory</strong>
+                <pre style="background: #2a1f3d;">cd hotel-web</pre>
+            </li>
+            <li><strong>Install Dependencies</strong>
+                <pre style="background: #2a1f3d;">npm install</pre>
+            </li>
+            <li><strong>Start Development Server</strong>
+                <pre style="background: #2a1f3d;">npm run dev</pre>
+            </li>
+        </ol>
+    </div>
+
     <div style="border-left: 3px solid #73ff33; padding-left: 20px; margin: 20px 0;">
-        <h3 style="color: #73ff33;">Default Login Credentials</h3>
-        <p>After installation, the system is seeded with default users and sample data:</p>
+        <h3>Default Login Credentials</h3>
+        <p>After installation, you can use these default accounts:</p>
 
         <h4>Admin Account:</h4>
         <pre>Email: admin@example.com
         Password: password123</pre>
 
-        <h4>Sample employee Account:</h4>
+        <h4>Sample Employee Account:</h4>
         <pre>Email: employee1@example.com
         Password: password123</pre>
 
         <h4>Sample User Account:</h4>
         <pre>Email: user1@example.com
         Password: password123</pre>
-
-
 
         <h4>Seeded Data Includes:</h4>
         <ul>
@@ -154,12 +172,17 @@ docker-compose exec backend php artisan migrate --seed</pre>
 
         </div>
 
-    <h2>4. Docker Services</h2>
+    <h2>4. Services</h2>
+    <h3>Backend Services (Docker)</h3>
     <ul>
-        <li><strong>Backend (Laravel):</strong> PHP-FPM service running Laravel application</li>
+        <li><strong>Laravel API:</strong> PHP-FPM service running Laravel application</li>
         <li><strong>Nginx:</strong> Web server for the backend API</li>
         <li><strong>MySQL:</strong> Database server</li>
-        <li><strong>Frontend (React):</strong> Vite development server for React application</li>
+    </ul>
+
+    <h3>Frontend Service (Local)</h3>
+    <ul>
+        <li><strong>Vite Dev Server:</strong> Local development server for React application</li>
     </ul>
 
     <h2>5. Access Points</h2>
@@ -167,10 +190,11 @@ docker-compose exec backend php artisan migrate --seed</pre>
         <li><strong>Frontend Application:</strong> <code>http://localhost:5173</code></li>
         <li><strong>Backend API:</strong> <code>http://localhost:8000</code></li>
         <li><strong>API Documentation:</strong> <code>http://localhost:8000/docs/api</code></li>
-        <li><strong>MySQL:</strong> <code>localhost:3306</code></li>
     </ul>
 
-    <h2>6. Docker Management Commands</h2>
+    <h2>6. Development Commands</h2>
+    
+    <h3>Backend Commands (Docker)</h3>
     <pre>
 # Start all services
 docker-compose up -d
@@ -178,69 +202,72 @@ docker-compose up -d
 # Stop all services
 docker-compose down
 
-# View logs of all services
+# View logs
 docker-compose logs -f
 
-# View logs of specific service
-docker-compose logs -f backend
-docker-compose logs -f frontend
-docker-compose logs -f nginx
+# Run artisan commands
+docker-compose exec app php artisan list</pre>
 
-# Rebuild services
-docker-compose up -d --build
+    <div style="border-left: 3px solid #9d00ff; padding-left: 20px; margin: 20px 0;">
+        <h3 style="color: #9d00ff;">Frontend Commands (Local)</h3>
+        <pre style="background: #2a1f3d;">
+# Start development server
+npm run dev
 
-# Backend Commands
-docker-compose exec backend php artisan list
-docker-compose exec backend php artisan migrate
-docker-compose exec backend composer install
+# Build for production
+npm run build
 
-# Frontend Commands
-docker-compose exec frontend npm install
-docker-compose exec frontend npm run build</pre>
+# Run tests
+npm test
+
+# Run linting
+npm run lint</pre>
+    </div>
 
     <h2>7. Testing Guide</h2>
     
-    <h3>Backend Testing</h3>
+    <h3>Backend Testing (Docker)</h3>
     <pre>
 # Run all tests
-docker-compose exec backend php artisan test
+docker-compose exec app php artisan test
 
 # Run specific test suites
-docker-compose exec backend php artisan test --testsuite=Unit
-docker-compose exec backend php artisan test --testsuite=Feature
+docker-compose exec app php artisan test --testsuite=Unit
+docker-compose exec app php artisan test --testsuite=Feature</pre>
 
-# Run specific test class
-docker-compose exec backend php artisan test --filter=AuthenticationTest</pre>
-
-    <h3>Frontend Testing</h3>
-    <pre>
+    <div style="border-left: 3px solid #9d00ff; padding-left: 20px; margin: 20px 0;">
+        <h3 style="color: #9d00ff;">Frontend Testing (Local)</h3>
+        <pre style="background: #2a1f3d;">
 # Run tests
-docker-compose exec frontend npm test
+npm test
 
 # Run tests with coverage
-docker-compose exec frontend npm test -- --coverage
+npm test -- --coverage
 
 # Run tests in watch mode
-docker-compose exec frontend npm test -- --watch</pre>
+npm test -- --watch</pre>
+    </div>
 
     <h2>8. Troubleshooting</h2>
+    <h3>Backend Issues (Docker)</h3>
     <ul>
         <li><strong>Permission Issues:</strong>
-            <pre>chmod -R 777 hotel-api/storage hotel-api/bootstrap/cache</pre>
-        </li>
-        <li><strong>Container Access:</strong>
-            <pre># Access backend container
-docker-compose exec backend bash
-
-# Access frontend container
-docker-compose exec frontend sh</pre>
+            <pre>docker-compose exec app chmod -R 777 storage bootstrap/cache</pre>
         </li>
         <li><strong>Reset Environment:</strong>
-            <pre># Remove all containers and volumes
-docker-compose down -v
-
-# Rebuild from scratch
+            <pre>docker-compose down -v
 docker-compose up -d --build</pre>
+        </li>
+    </ul>
+
+    <h3>Frontend Issues (Local)</h3>
+    <ul>
+        <li><strong>Node Modules Issues:</strong>
+            <pre>rm -rf node_modules
+npm install</pre>
+        </li>
+        <li><strong>Port Conflicts:</strong>
+            <pre># Edit vite.config.ts to change port if 5173 is in use</pre>
         </li>
     </ul>
 
@@ -260,9 +287,6 @@ docker-compose up -d --build</pre>
         <h3 style="color: #ff7300;">Accessing Documentation</h3>
         <ol>
             <li><strong>Local Environment:</strong>
-                <pre>http://localhost:8000/docs/api</pre>
-            </li>
-            <li><strong>Docker Environment:</strong>
                 <pre>http://localhost:8000/docs/api</pre>
             </li>
         </ol>
