@@ -158,7 +158,25 @@ jobs:
         DB_PASSWORD: password
       run: |
         echo "Running Laravel specific security checks..."
+        
+        # Update .env to use file driver
+        sed -i 's/CACHE_DRIVER=.*/CACHE_DRIVER=file/' .env
+        sed -i 's/SESSION_DRIVER=.*/SESSION_DRIVER=file/' .env
+        
+        # Clear cache files manually
+        rm -rf bootstrap/cache/*.php
+        rm -rf storage/framework/cache/*
+        rm -rf storage/framework/views/*
+        rm -rf storage/framework/sessions/*
+        
+        # Run environment check
         php artisan about --only=environment
+        
+        # Cache configuration without database
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+        
         echo "Laravel security checks completed!"
 
   build:
