@@ -81,59 +81,167 @@
 
     <h2>1. System Requirements</h2>
     <ul>
-        <li>PHP >= 8.2</li>
-        <li>Composer (Latest Version)</li>
-        <li>MySQL >= 8.0</li>
-        <li>Node.js & NPM</li>
-        <li>Docker & Docker Compose (Optional, for containerized setup)</li>
+        <li>Docker >= 20.10.x</li>
+        <li>Docker Compose >= 2.0.x</li>
+        <li>Git</li>
+        <li>(Optional for local development) PHP >= 8.2</li>
+        <li>(Optional for local development) Node.js >= 18.x</li>
     </ul>
 
-    <h2>2. Installation Methods</h2>
+    <h2>2. Project Structure</h2>
+    <pre>
+project-root/
+├── hotel-api/          # Backend Laravel Application
+│   ├── Dockerfile
+│   ├── docker/
+│   │   └── nginx/     # Nginx configuration
+│   └── ...
+├── hotel-web/         # Frontend React Application
+│   ├── Dockerfile
+│   └── ...
+└── docker-compose.yml # Main Docker configuration</pre>
+
+    <h2>3. Installation Methods</h2>
     
-    <h3>Method A: Local Installation</h3>
+    <h3>Method A: Docker Installation (Recommended)</h3>
     <ol>
         <li><strong>Clone Repository</strong>
             <pre>git clone https://github.com/chabbasaad/4CITE.git
-cd &lt;project-folder&gt;</pre>
-        </li>
-        <li><strong>Install Dependencies</strong>
-            <pre>composer install</pre>
+cd 4CITE</pre>
         </li>
         <li><strong>Environment Setup</strong>
-            <pre>cp .env.example .env</pre>
+            <pre># Copy backend environment file
+cp hotel-api/.env.example hotel-api/.env</pre>
         </li>
-        <li><strong>Database Configuration</strong>
-            <pre>DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=hotel
-DB_USERNAME=root
-DB_PASSWORD=</pre>
+        <li><strong>Start Docker Environment</strong>
+            <pre># Build and start all services
+docker-compose up -d --build</pre>
         </li>
-        <li><strong>Application Setup</strong>
-            <pre>php artisan key:generate
-php artisan migrate --seed
-php artisan serve</pre>
+        <li><strong>Initialize Backend</strong>
+            <pre># Generate application key
+docker-compose exec backend php artisan key:generate
+
+# Run database migrations and seeders
+docker-compose exec backend php artisan migrate --seed</pre>
         </li>
     </ol>
 
-    <h3>Method B: Docker Installation (Recommended)</h3>
-    <ol>
-        <li><strong>Clone Repository</strong>
-            <pre>git clone https://github.com/chabbasaad/4CITE.git
-cd &lt;project-folder&gt;</pre>
-        </li>
-       
-        <li><strong>Launch Docker Environment</strong>
-            <pre>docker-compose up -d --build</pre>
-        </li>
-    </ol>
+    <div style="border-left: 3px solid #73ff33; padding-left: 20px; margin: 20px 0;">
+        <h3 style="color: #73ff33;">Default Login Credentials</h3>
+        <p>After installation, the system is seeded with default users and sample data:</p>
 
-    <h2>3. Access Points</h2>
+        <h4>Admin Account:</h4>
+        <pre>Email: admin@example.com
+        Password: password123</pre>
+
+        <h4>Sample employee Account:</h4>
+        <pre>Email: employee1@example.com
+        Password: password123</pre>
+
+        <h4>Sample User Account:</h4>
+        <pre>Email: user1@example.com
+        Password: password123</pre>
+
+
+
+        <h4>Seeded Data Includes:</h4>
+        <ul>
+            <li>Sample Hotels with descriptions and images</li>
+            <li>Room categories and pricing</li>
+            <li>Example bookings</li>
+            <li>User roles and permissions</li>
+        </ul>
+
+        </div>
+
+    <h2>4. Docker Services</h2>
+    <ul>
+        <li><strong>Backend (Laravel):</strong> PHP-FPM service running Laravel application</li>
+        <li><strong>Nginx:</strong> Web server for the backend API</li>
+        <li><strong>MySQL:</strong> Database server</li>
+        <li><strong>Frontend (React):</strong> Vite development server for React application</li>
+    </ul>
+
+    <h2>5. Access Points</h2>
     <ul>
         <li><strong>Frontend Application:</strong> <code>http://localhost:5173</code></li>
         <li><strong>Backend API:</strong> <code>http://localhost:8000</code></li>
         <li><strong>API Documentation:</strong> <code>http://localhost:8000/docs/api</code></li>
+        <li><strong>MySQL:</strong> <code>localhost:3306</code></li>
+    </ul>
+
+    <h2>6. Docker Management Commands</h2>
+    <pre>
+# Start all services
+docker-compose up -d
+
+# Stop all services
+docker-compose down
+
+# View logs of all services
+docker-compose logs -f
+
+# View logs of specific service
+docker-compose logs -f backend
+docker-compose logs -f frontend
+docker-compose logs -f nginx
+
+# Rebuild services
+docker-compose up -d --build
+
+# Backend Commands
+docker-compose exec backend php artisan list
+docker-compose exec backend php artisan migrate
+docker-compose exec backend composer install
+
+# Frontend Commands
+docker-compose exec frontend npm install
+docker-compose exec frontend npm run build</pre>
+
+    <h2>7. Testing Guide</h2>
+    
+    <h3>Backend Testing</h3>
+    <pre>
+# Run all tests
+docker-compose exec backend php artisan test
+
+# Run specific test suites
+docker-compose exec backend php artisan test --testsuite=Unit
+docker-compose exec backend php artisan test --testsuite=Feature
+
+# Run specific test class
+docker-compose exec backend php artisan test --filter=AuthenticationTest</pre>
+
+    <h3>Frontend Testing</h3>
+    <pre>
+# Run tests
+docker-compose exec frontend npm test
+
+# Run tests with coverage
+docker-compose exec frontend npm test -- --coverage
+
+# Run tests in watch mode
+docker-compose exec frontend npm test -- --watch</pre>
+
+    <h2>8. Troubleshooting</h2>
+    <ul>
+        <li><strong>Permission Issues:</strong>
+            <pre>chmod -R 777 hotel-api/storage hotel-api/bootstrap/cache</pre>
+        </li>
+        <li><strong>Container Access:</strong>
+            <pre># Access backend container
+docker-compose exec backend bash
+
+# Access frontend container
+docker-compose exec frontend sh</pre>
+        </li>
+        <li><strong>Reset Environment:</strong>
+            <pre># Remove all containers and volumes
+docker-compose down -v
+
+# Rebuild from scratch
+docker-compose up -d --build</pre>
+        </li>
     </ul>
 
     <div style="border-left: 3px solid #ff7300; padding-left: 20px; margin: 20px 0;">
@@ -169,59 +277,7 @@ cd &lt;project-folder&gt;</pre>
         </ul>
     </div>
 
-    <h2>4. Docker Management Commands</h2>
-    <pre>
-# Start containers
-docker-compose up -d
-
-# Stop containers
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# Rebuild containers
-docker-compose up -d --build
-
-# Run artisan commands
-docker-compose exec app php artisan &lt;command&gt;
-
-# Run composer commands
-docker-compose exec app composer &lt;command&gt;</pre>
-
-   
-
-    <h2>5. Testing Guide</h2>
-    
-    <h3>Local Testing Commands</h3>
-    <pre>
-# Run all tests
-php artisan test
-
-# Run unit tests only
-php artisan test --testsuite=Unit
-
-# Run feature tests only
-php artisan test --testsuite=Feature
-
-# Run specific test class
-php artisan test --filter=AuthenticationTest</pre>
-
-    <h3>Docker Testing Commands</h3>
-    <pre>
-# Run all tests
-docker-compose exec app php artisan test
-
-# Run unit tests only
-docker-compose exec app php artisan test --testsuite=Unit
-
-# Run feature tests only
-docker-compose exec app php artisan test --testsuite=Feature
-
-# Run specific test class
-docker-compose exec app php artisan test --filter=AuthenticationTest</pre>
-
-    <h2>6. Core Features</h2>
+    <h2>9. Core Features</h2>
     <ul>
         <li>User Authentication System</li>
         <li>Hotel Management Interface</li>
@@ -229,63 +285,6 @@ docker-compose exec app php artisan test --filter=AuthenticationTest</pre>
         <li>Administrative Dashboard</li>
         <li>RESTful API Endpoints</li>
     </ul>
-
-    <div class="frontend-section">
-        <h2>Frontend Setup and Testing</h2>
-        
-        <h3>Docker Installation (Frontend)</h3>
-        <ol>
-            <li><strong>Navigate to Frontend Directory</strong>
-                <pre>cd front-end</pre>
-            </li>
-            <li><strong>Build Docker Image</strong>
-                <pre>docker build -t hotel-frontend .</pre>
-            </li>
-            <li><strong>Run Frontend Container</strong>
-                <pre>docker run -d -p 5173:3000 --name hotel-frontend hotel-frontend</pre>
-            </li>
-        </ol>
-
-        <h3>Available Scripts</h3>
-        <pre>
-# Development server
-npm run dev
-
-# Production build
-npm run build
-
-# Run tests
-npm test
-
-# Run linting
-npm run lint
-
-# Preview production build
-npm run preview</pre>
-
-        <h3>Frontend Testing</h3>
-        <p>The project uses Jest and React Testing Library for testing. To run tests in Docker:</p>
-        <pre>
-# Run tests in Docker container
-docker exec hotel-frontend npm test
-
-# Run tests with coverage
-docker exec hotel-frontend npm test -- --coverage
-
-# Run tests in watch mode
-docker exec hotel-frontend npm test -- --watch</pre>
-
-        <h3>Frontend Dependencies</h3>
-        <ul>
-            <li>React v19.0.0</li>
-            <li>TypeScript</li>
-            <li>Tailwind CSS v4.0.9</li>
-            <li>Headless UI</li>
-            <li>Hero Icons</li>
-            <li>Framer Motion</li>
-            <li>Zustand (State Management)</li>
-        </ul>
-    </div>
 
     <footer style="margin-top: 50px; text-align: center; padding: 20px; border-top: 1px solid #73ff3342;">
         <p>Made with Passion & ❤️ By 4CITE Team.</p>

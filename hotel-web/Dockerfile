@@ -2,12 +2,17 @@ FROM node:18
 
 WORKDIR /app
 
-COPY . .
+# Copy package files
+COPY package*.json ./
 
+# Install dependencies
 RUN npm install
 
-RUN npm run build
+# Copy the rest of the application
+COPY . .
 
-EXPOSE 3000
+# Expose port
+EXPOSE 5173
 
-CMD ["npx", "serve", "dist"]
+# Start development server instead of production build
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
