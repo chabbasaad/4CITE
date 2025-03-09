@@ -10,6 +10,7 @@ class DatabaseMonitor extends Command
     protected $signature = 'db:monitor';
     protected $description = 'Monitor database connection';
 
+    // Check if the database connection is working
     public function handle()
     {
         try {
