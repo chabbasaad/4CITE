@@ -13,7 +13,6 @@ export default function HotelOverview() {
     const { id } = useParams();
     const { hotels, fetchHotel } = useHotelStore();
     const { createBooking } = useBookingStore();
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const [hotelData, setHotelData] = useState<BookingCreateRequestData>({
         hotel_id: id ? Number(id) : 0,
@@ -62,42 +61,52 @@ export default function HotelOverview() {
 
     return (
         <div className="bg-white mt-10">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <TabGroup className="flex flex-col-reverse">
+                    <div className="mt-6 w-full max-w-2xl mx-auto sm:block lg:max-w-none">
+                        <TabList className="grid grid-cols-4 gap-6">
+                            {hotel.picture_list.map((image: string, index: number) => (
+                                <Tab
+                                    key={index}
+                                    className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring focus:ring-indigo-500 focus:ring-offset-4"
+                                >
+                                    <span className="sr-only">View image {index + 1}</span>
+                                    <span className="absolute inset-0 overflow-hidden rounded-md">
+                                        <img 
+                                            src={image} 
+                                            alt="" 
+                                            className="h-full w-full object-cover object-center"
+                                        />
+                                    </span>
+                                    <span
+                                        className="pointer-events-none absolute inset-0 rounded-md ring-2 ring-transparent ring-offset-2"
+                                        aria-hidden="true"
+                                    />
+                                </Tab>
+                            ))}
+                        </TabList>
+                    </div>
 
-            <TabGroup className="flex flex-col-reverse">
-                <div className="mx-auto ml-150  mr-10 hidden w-full max-w-2xl sm:block lg:max-w-none">
-                    <TabList className="grid grid-cols-4 w-200 gap-6">
-                        {hotel.picture_list.map((image: string, index: number) => (
-                            <Tab
-                                key={index}
-                                className="group relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium text-gray-900 uppercase hover:bg-gray-50 focus:ring-3 focus:ring-indigo-500/50 focus:ring-offset-4 focus:outline-hidden"
-                            >
-                                <span className="sr-only">{index}</span>
-                                <span className="absolute inset-0 overflow-hidden rounded-md">
-                      <img alt="" src={image} className="size-full object-cover"/>
-                    </span>
-                                <span
-                                    aria-hidden="true"
-                                    className="pointer-events-none absolute inset-0 rounded-md ring-2 ring-transparent ring-offset-2 group-data-selected:ring-indigo-500"
-                                />
-                            </Tab>
-                        ))}
-                    </TabList>
-                </div>
+                    <div className="w-full">
+                        <TabPanels className="aspect-w-16 aspect-h-9 w-full overflow-hidden rounded-lg">
+                            {hotel.picture_list.map((image: string, index: number) => (
+                                <TabPanel key={index}>
+                                    <div className="relative h-[400px] w-full overflow-hidden rounded-lg">
+                                        <img
+                                            src={image}
+                                            alt={`View of ${hotel.name}`}
+                                            className="absolute inset-0 h-full w-full object-cover object-center"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-10"></div>
+                                    </div>
+                                </TabPanel>
+                            ))}
+                        </TabPanels>
+                    </div>
+                </TabGroup>
+            </div>
 
-                <TabPanels>
-                    {hotel.picture_list.map((image: string, index: number) => (
-                        <TabPanel key={index}>
-                            <img alt={image} src={image}
-                                 className="aspect-square p-10  d-flex intem-center ml-150  object-cover sm:rounded-lg"/>
-                        </TabPanel>
-                    ))}
-                </TabPanels>
-
-
-            </TabGroup>
-
-            <div
-                className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
+            <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
                 <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
                     <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{hotel.name}</h1>
                 </div>
