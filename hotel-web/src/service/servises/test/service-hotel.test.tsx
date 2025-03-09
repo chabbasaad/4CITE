@@ -29,7 +29,6 @@ describe("API Hotel Tests", () => {
         mock.reset();
     });
 
-    // ✅ TEST 1: Récupérer la liste des hôtels
     it("should fetch hotels successfully", async () => {
         const mockResponse = {
             data: [
@@ -59,7 +58,33 @@ describe("API Hotel Tests", () => {
         expect(response.data).toEqual(mockResponse.data);
     });
 
-    // ✅ TEST 3: Créer un hôtel
+    it("should handle fetch hotel by invalid ID", async () => {
+        mock.onGet(`${API_URL}/999`).reply(404, { message: "Hotel not found" });
+
+        await expect(fetchHotel(999)).rejects.toThrow("Request failed with status code 404");
+        expect(toast.error).toHaveBeenCalledWith("Hotel not found");
+    });
+
+    it("should handle create hotel with duplicate data", async () => {
+        const mockRequest: HotelCreateRequestData = {
+            name: "Hotel Lux", // Already exists
+            location: "Paris",
+            description: "Un bel hôtel",
+            price_per_night: 150,
+            is_available: true,
+            total_rooms: 50,
+            available_rooms: 20,
+            picture_list: [],
+            amenities: [],
+            available: true,
+        };
+
+        mock.onPost(API_URL).reply(409, { message: "Hotel already exists" });
+
+        await expect(createHotel(mockRequest)).rejects.toThrow("Request failed with status code 409");
+        expect(toast.error).toHaveBeenCalledWith("Hotel already exists");
+    });
+
     it("should create a hotel successfully", async () => {
         const mockRequest: HotelCreateRequestData = {
             name: "Hotel Paradise",
@@ -87,7 +112,25 @@ describe("API Hotel Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("Hôtel créé avec succès");
     });
 
-    // ✅ TEST 4: Mettre à jour un hôtel
+    it("should handle create hotel with missing data", async () => {
+        const mockRequest: HotelCreateRequestData = {
+            name: "", // Missing name
+            location: "", // Missing location
+            description: "Un hôtel sans description",
+            price_per_night: 0, // Invalid price
+            is_available: true,
+            total_rooms: 0, // Invalid total rooms
+            available_rooms: 0, // Invalid available rooms
+            picture_list: [],
+            amenities: [""],
+            available: false,
+        };
+
+
+        await expect(createHotel(mockRequest)).rejects.toThrow("Request failed with status code 404");
+        expect(toast.error).toHaveBeenCalledWith("Une erreur est survenue");
+    });
+
     it("should update a hotel successfully", async () => {
         const mockRequest: HotelUpdateRequestData = {
             name: "Hotel Lux",
@@ -114,7 +157,24 @@ describe("API Hotel Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("Hôtel mis à jour avec succès");
     });
 
-    // ✅ TEST 5: Supprimer un hôtel
+    it("should handle update hotel with missing data", async () => {
+        const mockRequest: HotelUpdateRequestData = {
+            name: "", // Missing name
+            location: "", // Missing location
+            description: "",
+            price_per_night: 0, // Invalid price
+            is_available: false,
+            total_rooms: 0,
+            available_rooms: 0,
+            picture_list: [],
+            amenities: [],
+        };
+
+
+        await expect(updateHotel(1, mockRequest)).rejects.toThrow("Request failed with status code 404");
+        expect(toast.error).toHaveBeenCalledWith("Hotel not found");
+    });
+
     it("should delete a hotel successfully", async () => {
         mock.onDelete(`${API_URL}/1`).reply(200, { message: "Hôtel supprimé avec succès" });
 
@@ -123,7 +183,13 @@ describe("API Hotel Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("Hôtel supprimé avec succès");
     });
 
-    // ❌ TEST 6: Gérer une erreur lors de la récupération des hôtels
+    it("should handle delete non-existing hotel", async () => {
+        mock.onDelete(`${API_URL}/999`).reply(404, { message: "Hotel not found" });
+
+        await expect(deleteHotel(999)).rejects.toThrow("Request failed with status code 404");
+        expect(toast.error).toHaveBeenCalledWith("Hotel not found");
+    });
+
     it("should handle fetchHotels error", async () => {
         mock.onGet(`${API_URL}`).reply(500, { message: "Erreur serveur" });
 
@@ -131,7 +197,6 @@ describe("API Hotel Tests", () => {
         expect(toast.error).toHaveBeenCalledWith("Erreur serveur");
     });
 
-    // ❌ TEST 7: Gérer une erreur lors de la création d'un hôtel
     it("should handle createHotel error", async () => {
         mock.onPost(API_URL).reply(400, { message: "Erreur de validation" });
 
@@ -140,6 +205,20 @@ describe("API Hotel Tests", () => {
         })).rejects.toThrow();
 
         expect(toast.error).toHaveBeenCalledWith("Erreur serveur");
+    });
+
+    it("should handle fetch hotels when server is down", async () => {
+        mock.onGet(`${API_URL}`).reply(500, { message: "Server Error" });
+
+        await expect(fetchHotels()).rejects.toThrow("Request failed with status code 500");
+        expect(toast.error).toHaveBeenCalledWith("Server Error");
+    });
+
+    it("should handle server timeout", async () => {
+        mock.onGet(`${API_URL}`).timeout();
+
+        await expect(fetchHotels()).rejects.toThrow("timeout of 0ms exceeded");
+        expect(toast.error).toHaveBeenCalledWith("Hotel not found");
     });
 });
 

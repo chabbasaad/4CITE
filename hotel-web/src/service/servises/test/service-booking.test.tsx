@@ -30,7 +30,6 @@ describe("API Booking Tests", () => {
         mock.reset();
     });
 
-    // ✅ TEST 1: Récupérer la liste des réservations
     it("should fetch bookings successfully", async () => {
         const mockResponse: BookingFetchResponseData = {
             data: [
@@ -73,7 +72,31 @@ describe("API Booking Tests", () => {
         expect(response.data).toEqual(mockResponse.data);
     });
 
-    // ✅ TEST 2: Créer une réservation
+    it("should handle fetch bookings with empty response", async () => {
+        const mockResponse: BookingFetchResponseData = { data: [] };
+        mock.onGet(`${API_URL}`).reply(200, mockResponse);
+
+        const response = await fetchBookings();
+
+        expect(response.data).toEqual([]);
+    });
+
+    it("should handle create booking with missing data", async () => {
+        const mockRequest: BookingCreateRequestData = {
+            hotel_id: 1,
+            check_in_date: "", // Missing check-in date
+            check_out_date: "", // Missing check-out date
+            special_requests: "None",
+            guest_names: ["John Doe"],
+            contact_phone: "" // Missing phone number
+        };
+
+        mock.onPost(API_URL).reply(400, { message: "Missing required fields" });
+
+        await expect(createBooking(mockRequest)).rejects.toThrow("Request failed with status code 400");
+        expect(toast.error).toHaveBeenCalledWith("Missing required fields");
+    });
+
     it("should create a booking successfully", async () => {
         const mockRequest: BookingCreateRequestData = {
             hotel_id: 1,
@@ -111,7 +134,22 @@ describe("API Booking Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("");
     });
 
-    // ✅ TEST 3: Mettre à jour une réservation
+    it("should handle create booking with invalid data", async () => {
+        const mockRequest: BookingCreateRequestData = {
+            hotel_id: 1,
+            check_in_date: "2025-03-01",
+            check_out_date: "2025-03-07",
+            special_requests: "None",
+            guest_names: [], // Invalid guest name list
+            contact_phone: "123456789"
+        };
+
+        mock.onPost(API_URL).reply(400, { message: "Invalid guest names" });
+
+        await expect(createBooking(mockRequest)).rejects.toThrow("Request failed with status code 400");
+        expect(toast.error).toHaveBeenCalledWith("Invalid guest names");
+    });
+
     it("should update a booking successfully", async () => {
         const mockRequest: BookingUpdateRequestData = {
             check_in_date: "2025-03-01",
@@ -149,7 +187,22 @@ describe("API Booking Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("");
     });
 
-    // ✅ TEST 4: Supprimer une réservation
+    it("should handle update booking with invalid data", async () => {
+        const mockRequest: BookingUpdateRequestData = {
+            check_in_date: "", // Invalid check-in date
+            check_out_date: "", // Invalid check-out date
+            status: "confirmed",
+            special_requests: "None",
+            guest_names: ["John Doe"],
+            contact_phone: "123456789"
+        };
+
+        mock.onPut(`${API_URL}/1`).reply(400, { message: "Invalid date format" });
+
+        await expect(updateBooking(1, mockRequest)).rejects.toThrow("Request failed with status code 400");
+        expect(toast.error).toHaveBeenCalledWith("Invalid date format");
+    });
+
     it("should delete a booking successfully", async () => {
         mock.onDelete(`${API_URL}/1`).reply(200, { message: "Réservation supprimée avec succès" });
 
@@ -158,7 +211,13 @@ describe("API Booking Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("Réservation supprimée avec succès");
     });
 
-    // ❌ TEST 5: Gérer une erreur lors de la récupération des réservations
+    it("should handle delete non-existing booking", async () => {
+        mock.onDelete(`${API_URL}/999`).reply(404, { message: "Booking not found" });
+
+        await expect(deleteBooking(999)).rejects.toThrow("Request failed with status code 404");
+        expect(toast.error).toHaveBeenCalledWith("Booking not found");
+    });
+
     it("should handle fetchBookings error", async () => {
         mock.onGet(`${API_URL}`).reply(500, { message: "Erreur serveur" });
 
@@ -166,7 +225,6 @@ describe("API Booking Tests", () => {
         expect(toast.error).toHaveBeenCalledWith("Erreur serveur");
     });
 
-    // ❌ TEST 6: Gérer une erreur lors de la création d'une réservation
     it("should handle createBooking error", async () => {
         mock.onPost(API_URL).reply(400, { message: "Erreur de validation" });
 
@@ -180,5 +238,19 @@ describe("API Booking Tests", () => {
         })).rejects.toThrow();
 
         expect(toast.error).toHaveBeenCalledWith("Erreur serveur");
+    });
+
+    it("should handle fetch bookings when server is down", async () => {
+        mock.onGet(`${API_URL}`).reply(500, { message: "Server Error" });
+
+        await expect(fetchBookings()).rejects.toThrow("Request failed with status code 500");
+        expect(toast.error).toHaveBeenCalledWith("Server Error");
+    });
+
+    it("should handle server timeout", async () => {
+        mock.onGet(`${API_URL}`).timeout();
+
+        await expect(fetchBookings()).rejects.toThrow("timeout of 0ms exceeded");
+        expect(toast.error).toHaveBeenCalledWith("Missing required fields");
     });
 });

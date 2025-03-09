@@ -5,7 +5,6 @@ import {HotelCreateRequestData, HotelCreateResponseData} from "../model/hotel/ho
 import {HotelFetchResponseData, HotelFetchsResponseData} from "../model/hotel/hotel-fetch";
 import {testEnv} from "../../../env.ts";
 
-const apiUrl = process.env.VITE_API_URL;
 const API_URL = `${testEnv.VITE_API_URL}/hotels`;
 
 const getAuthHeaders = () => ({

@@ -35,7 +35,6 @@ describe("API User Tests", () => {
         mock.reset();
     });
 
-    // ✅ TEST 1: Inscription d'un utilisateur (register)
     it("should register a user successfully", async () => {
         const mockResponse: UserRegisterResponseData = {
             message: "Inscription réussie",
@@ -67,7 +66,20 @@ describe("API User Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("Inscription réussie");
     });
 
-    // ✅ TEST 2: Connexion d'un utilisateur (login)
+    it("should handle registration with missing required fields", async () => {
+        mock.onPost(`${API_URL}auth/register`).reply(400, { message: "Validation failed" });
+
+        await expect(register({
+            email: "",
+            password: "",
+            name: "",
+            password_confirmation: "",
+            pseudo: ""
+        })).rejects.toThrow("Request failed with status code 400");
+
+        expect(toast.error).toHaveBeenCalledWith("Validation failed");
+    });
+
     it("should login a user successfully", async () => {
         const mockResponse: UserLoginResponseData = {
             message: "Connexion réussie",
@@ -92,6 +104,13 @@ describe("API User Tests", () => {
         expect(response.user).toHaveProperty("pseudo", "aliceD");
     });
 
+    it("should handle login with invalid credentials", async () => {
+        mock.onPost(`${API_URL}auth/login`).reply(401, { message: "Invalid credentials" });
+
+        await expect(login({ email: "wrong@example.com", password: "wrongpass" })).rejects.toThrow("Request failed with status code 401");
+        expect(toast.error).toHaveBeenCalledWith("Invalid credentials");
+    });
+
     it("should fetch users successfully", async () => {
         const mockResponse: UserFetchResponseData = {
             data: [
@@ -113,8 +132,21 @@ describe("API User Tests", () => {
         expect(response.data).toHaveLength(2); // ✅ Vérifie bien `data`
     });
 
+    it("should handle create user with duplicate email", async () => {
+        mock.onPost(`${API_URL}users`).reply(409, { message: "Email already exists" });
 
-    // ✅ TEST 4: Création d’un utilisateur (createUser)
+        await expect(createUser({
+            name: "John Doe",
+            email: "john@example.com",
+            password: "password123",
+            password_confirmation: "password123",
+            pseudo: "johnD",
+            role: "user"
+        })).rejects.toThrow("Request failed with status code 409");
+
+        expect(toast.error).toHaveBeenCalledWith("Email already exists");
+    });
+
     it("should create a user successfully", async () => {
         const mockResponse = { message: "Utilisateur créé avec succès" };
         mock.onPost(`${API_URL}users`).reply(201, mockResponse);
@@ -132,7 +164,6 @@ describe("API User Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("Utilisateur créé avec succès");
     });
 
-    // ✅ TEST 5: Mise à jour d’un utilisateur (updateUser)
     it("should update a user successfully", async () => {
         const mockResponse = { message: "Utilisateur mis à jour" };
         mock.onPut(`${API_URL}users/1`).reply(200, mockResponse);
@@ -143,7 +174,21 @@ describe("API User Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("Utilisateur mis à jour");
     });
 
-    // ✅ TEST 6: Suppression d’un utilisateur (deleteUser)
+    it("should handle user update with invalid data", async () => {
+        mock.onPut(`${API_URL}users/1`).reply(400, { message: "Validation failed" });
+
+        await expect(updateUser(1, {
+            name: "",
+            pseudo: "",
+            email: "",
+            role :"user",
+            password: "password",
+            password_confirmation: "password"
+        })).rejects.toThrow("Request failed with status code 400");
+
+        expect(toast.error).toHaveBeenCalledWith("Validation failed");
+    });
+
     it("should delete a user successfully", async () => {
         const mockResponse = { message: "Utilisateur supprimé" };
         mock.onDelete(`${API_URL}users/1`).reply(200, mockResponse);
@@ -153,7 +198,6 @@ describe("API User Tests", () => {
         expect(toast.success).toHaveBeenCalledWith("Utilisateur supprimé");
     });
 
-    // ❌ TEST 7: Gérer une erreur d'inscription
     it("should handle registration error", async () => {
         mock.onPost(`${API_URL}auth/register`).reply(400, { message: "Erreur d'inscription" });
 
@@ -168,7 +212,6 @@ describe("API User Tests", () => {
         expect(toast.error).toHaveBeenCalledWith("Erreur d'inscription");
     });
 
-    // ❌ TEST 8: Gérer une erreur de connexion
     it("should handle login error", async () => {
         mock.onPost(`${API_URL}auth/login`).reply(401, { message: "Email ou mot de passe incorrect" });
 
@@ -176,11 +219,38 @@ describe("API User Tests", () => {
         expect(toast.error).toHaveBeenCalledWith("Erreur d'inscription");
     });
 
-    // ❌ TEST 9: Gérer une erreur serveur (500)
     it("should handle server error", async () => {
         mock.onGet(`${API_URL}users`).reply(500, { message: "Erreur interne du serveur" });
 
         await expect(fetchUsers()).rejects.toThrow();
         expect(toast.error).toHaveBeenCalledWith("Erreur d'inscription");
+    });
+
+    it("should handle server timeout", async () => {
+        mock.onPost(`${API_URL}auth/register`).timeout();
+
+        await expect(register({
+            email: "test@example.com",
+            password: "password123",
+            name: "Test User",
+            password_confirmation: "password123",
+            pseudo: "testuser"
+        })).rejects.toThrow("timeout of 0ms exceeded");
+
+        expect(toast.error).toHaveBeenCalledWith("Validation failed");
+    });
+
+    it("should handle fetch users with server error", async () => {
+        mock.onGet(`${API_URL}users`).reply(500, { message: "Internal server error" });
+
+        await expect(fetchUsers()).rejects.toThrow("Request failed with status code 500");
+        expect(toast.error).toHaveBeenCalledWith("Internal server error");
+    });
+
+    it("should handle delete user with non-existing user", async () => {
+        mock.onDelete(`${API_URL}users/999`).reply(404, { message: "User not found" });
+
+        await expect(deleteUser(999)).rejects.toThrow("Request failed with status code 404");
+        expect(toast.error).toHaveBeenCalledWith("User not found");
     });
 });

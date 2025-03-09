@@ -9,8 +9,6 @@ export default function Login({ closeModal }: { closeModal: () => void }) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        try {
             const user = {
                 email,
                 password
@@ -24,9 +22,6 @@ export default function Login({ closeModal }: { closeModal: () => void }) {
                 toast.success(`${response.message || "Unknown error"}`);
                 closeModal()
             }
-        } catch (error) {
-            console.error("Login error:", error);
-        }
     };
 
     return (

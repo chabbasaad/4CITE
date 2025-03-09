@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import useBookingStore from "../../../service/stores/booking-store";
 import { BookingUpdateRequestData } from "../../../service/model/booking/booking-update";
 
-export default function BookingUpdate({ id ,setIsOpenUpdate}: { id: number,setIsOpenUpdate: (open: boolean) => void }) {
+export default function BookingUpdate({ id, setIsOpenUpdate }: { id: number, setIsOpenUpdate: (open: boolean) => void }) {
     const { bookings, loading, updateBooking } = useBookingStore();
     const [bookingData, setBookingData] = useState<BookingUpdateRequestData>({
         check_in_date: "",
@@ -32,13 +32,25 @@ export default function BookingUpdate({ id ,setIsOpenUpdate}: { id: number,setIs
         }
     }, [id, bookings]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
         e.preventDefault();
         const { name, value } = e.target;
-        setBookingData({
-            ...bookingData,
-            [name]: value,
-        });
+
+        // Special handling for select element to set status
+        if (e.target instanceof HTMLSelectElement) {
+            setBookingData({
+                ...bookingData,
+                [name]: value,
+            });
+        }
+
+        // Handle input fields (text, date, etc.)
+        if (e.target instanceof HTMLInputElement) {
+            setBookingData({
+                ...bookingData,
+                [name]: value,
+            });
+        }
     };
 
     const handleGuestNamesChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -105,7 +117,7 @@ export default function BookingUpdate({ id ,setIsOpenUpdate}: { id: number,setIs
 
                 <div>
                     <label className="block text-gray-700 font-medium">Demandes spéciales</label>
-                    <textarea
+                    <input
                         name="special_requests"
                         placeholder="Demandes spéciales"
                         value={bookingData.special_requests}

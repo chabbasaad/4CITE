@@ -64,8 +64,13 @@ export default function Profile() {
         if (!user) return;
         try {
             const response = await updateUser(user.id, formData);
-            localStorage.setItem("user_data", JSON.stringify(response.data));
-            setUser(response.data);
+            if (response && response.data) {
+                localStorage.setItem("user_data", JSON.stringify(response.data));
+                setUser(response.data);
+            } else {
+                console.error("Réponse API invalide:", response);
+            }
+
             setEditMode(false);
         } catch (error) {
             console.error("Erreur API:", error);

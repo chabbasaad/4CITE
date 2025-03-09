@@ -12,7 +12,6 @@ import {
 import {testEnv} from "../../../env.ts";
 
 
-const apiUrl = process.env.VITE_API_URL;
 const API_URL = `${testEnv.VITE_API_URL}/`;
 
 const getAuthHeaders = () => ({
