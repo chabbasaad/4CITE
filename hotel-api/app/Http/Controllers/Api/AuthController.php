@@ -121,6 +121,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
+
         return response()->json($user);
     }
 }
