@@ -6,12 +6,14 @@ on:
       - master
     paths:
       - 'hotel-web/**'
-      - '.github/workflows/pipline-web'
+      - '.github/workflows/pipline-web.yml'
   pull_request:
     branches:
       - master
     paths:
       - 'hotel-web/**'
+      - '.github/workflows/pipline-web.yml'
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 jobs:

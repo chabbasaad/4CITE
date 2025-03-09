@@ -5,12 +5,12 @@ on:
     branches: [ master ]
     paths:
       - 'hotel-api/**'
-      - '.github/workflows/**'
+      - '.github/workflows/pipline-api.yml'
   pull_request:
     branches: [ master ]
     paths:
       - 'hotel-api/**'
-      - '.github/workflows/**'
+      - '.github/workflows/pipline-api.yml'
     types: [opened, synchronize, reopened]
 
 jobs:
