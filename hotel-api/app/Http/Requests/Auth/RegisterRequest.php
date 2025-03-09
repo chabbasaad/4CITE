@@ -66,7 +66,7 @@ class RegisterRequest extends FormRequest
             'role' => [
                 'sometimes',
                 'string',
-                'in:user,admin,employee'
+                'in:user,admin,employee',
             ],
         ];
     }

@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Laravel\Sanctum\PersonalAccessToken;
+use Tests\TestCase;
 
 class LogoutTest extends TestCase
 {
@@ -125,7 +125,7 @@ class LogoutTest extends TestCase
         $tokens = collect([
             $user->createToken('token1'),
             $user->createToken('token2'),
-            $user->createToken('token3')
+            $user->createToken('token3'),
         ]);
 
         $this->assertEquals(3, $user->tokens()->count());

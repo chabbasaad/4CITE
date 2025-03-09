@@ -14,9 +14,6 @@ class HotelController extends Controller
 {
     /**
      * List all hotels with pagination, sorting, and filtering.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -28,13 +25,13 @@ class HotelController extends Controller
             'search' => 'nullable|string|max:255',
             'sort_by' => 'nullable|string|in:name,location,price_per_night,created_at',
             'direction' => 'nullable|string|in:asc,desc',
-            'per_page' => 'nullable|integer|min:1|max:100'
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'message' => 'Invalid parameters',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -83,16 +80,13 @@ class HotelController extends Controller
                 'current_page' => $hotels->currentPage(),
                 'per_page' => $hotels->perPage(),
                 'total' => $hotels->total(),
-                'last_page' => $hotels->lastPage()
-            ]
+                'last_page' => $hotels->lastPage(),
+            ],
         ]);
     }
 
     /**
      * Store a newly created hotel.
-     *
-     * @param CreateHotelRequest $request
-     * @return JsonResponse
      */
     public function store(CreateHotelRequest $request): JsonResponse
     {
@@ -102,16 +96,12 @@ class HotelController extends Controller
 
         return response()->json([
             'message' => 'Hotel created successfully',
-            'data' => $hotel
+            'data' => $hotel,
         ], 201);
     }
 
     /**
      * Display the specified hotel.
-     *
-     * @param Request $request
-     * @param Hotel $hotel
-     * @return JsonResponse
      */
     public function show(Request $request, Hotel $hotel): JsonResponse
     {
@@ -125,10 +115,6 @@ class HotelController extends Controller
 
     /**
      * Update the specified hotel.
-     *
-     * @param UpdateHotelRequest $request
-     * @param Hotel $hotel
-     * @return JsonResponse
      */
     public function update(UpdateHotelRequest $request, Hotel $hotel): JsonResponse
     {
@@ -138,37 +124,33 @@ class HotelController extends Controller
 
         return response()->json([
             'message' => 'Hotel updated successfully',
-            'data' => $hotel
+            'data' => $hotel,
         ]);
     }
 
     /**
      * Remove the specified hotel.
-     *
-     * @param Request $request
-     * @param Hotel $hotel
-     * @return JsonResponse
      */
     public function destroy(Request $request, Hotel $hotel): JsonResponse
     {
         // Only admin can delete hotels
-        if (!$request->user()->isAdmin()) {
+        if (! $request->user()->isAdmin()) {
             return response()->json([
-                'message' => 'Only administrators can delete hotels'
+                'message' => 'Only administrators can delete hotels',
             ], 403);
         }
 
         // Check if hotel has any bookings before deletion
         if ($hotel->bookings()->exists()) {
             return response()->json([
-                'message' => 'Cannot delete hotel with existing bookings'
+                'message' => 'Cannot delete hotel with existing bookings',
             ], 409);
         }
 
         $hotel->delete();
 
         return response()->json([
-            'message' => 'Hotel deleted successfully'
+            'message' => 'Hotel deleted successfully',
         ]);
     }
 }

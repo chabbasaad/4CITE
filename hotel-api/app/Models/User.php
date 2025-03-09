@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Exception;
 
 class User extends Authenticatable
 {
@@ -18,7 +18,9 @@ class User extends Authenticatable
      * Available user roles
      */
     const ROLE_USER = 'user';
+
     const ROLE_EMPLOYEE = 'employee';
+
     const ROLE_ADMIN = 'admin';
 
     const MAX_LOGIN_ATTEMPTS = 3;
@@ -36,7 +38,7 @@ class User extends Authenticatable
         'role',
         'login_attempts',
         'locked_at',
-        'is_active'
+        'is_active',
     ];
 
     /**
@@ -84,15 +86,13 @@ class User extends Authenticatable
 
     /**
      * Get all available roles.
-     *
-     * @return array
      */
     public static function getAvailableRoles(): array
     {
         return [
             self::ROLE_USER,
             self::ROLE_EMPLOYEE,
-            self::ROLE_ADMIN
+            self::ROLE_ADMIN,
         ];
     }
 
@@ -106,8 +106,6 @@ class User extends Authenticatable
 
     /**
      * Check if the user is an admin.
-     *
-     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -116,8 +114,6 @@ class User extends Authenticatable
 
     /**
      * Check if the user is an employee.
-     *
-     * @return bool
      */
     public function isEmployee(): bool
     {
@@ -126,8 +122,6 @@ class User extends Authenticatable
 
     /**
      * Check if the user is a regular user.
-     *
-     * @return bool
      */
     public function isUser(): bool
     {
@@ -136,8 +130,6 @@ class User extends Authenticatable
 
     /**
      * Check if user has staff privileges (admin or employee).
-     *
-     * @return bool
      */
     public function isStaff(): bool
     {
@@ -178,7 +170,7 @@ class User extends Authenticatable
     /**
      * Set the user's email, automatically trimming whitespace.
      *
-     * @param string $value
+     * @param  string  $value
      * @return void
      */
     public function setEmailAttribute($value)
@@ -189,14 +181,15 @@ class User extends Authenticatable
     /**
      * Set the user's role, enforcing case sensitivity.
      *
-     * @param string $value
+     * @param  string  $value
      * @return void
+     *
      * @throws \InvalidArgumentException
      */
     public function setRoleAttribute($value)
     {
-        if (!in_array($value, self::getAvailableRoles(), true)) {
-            throw new \InvalidArgumentException('Role must be one of: ' . implode(', ', self::getAvailableRoles()));
+        if (! in_array($value, self::getAvailableRoles(), true)) {
+            throw new \InvalidArgumentException('Role must be one of: '.implode(', ', self::getAvailableRoles()));
         }
         $this->attributes['role'] = $value;
     }

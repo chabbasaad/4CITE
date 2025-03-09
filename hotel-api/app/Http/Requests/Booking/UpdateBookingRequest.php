@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Booking;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Carbon\Carbon;
+use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBookingRequest extends FormRequest
 {
@@ -55,18 +55,18 @@ class UpdateBookingRequest extends FormRequest
                     if ($overlapping) {
                         $fail('The selected dates are not available for this hotel.');
                     }
-                }
+                },
             ],
             'check_out_date' => [
                 'sometimes',
                 'date',
-                'after:check_in_date'
+                'after:check_in_date',
             ],
             'guest_names' => ['sometimes', 'array', 'min:1'],
             'guest_names.*' => ['required', 'string', 'max:255'],
             'contact_phone' => ['sometimes', 'string', 'max:20'],
             'special_requests' => ['nullable', 'string', 'max:1000'],
-            'status' => ['sometimes', 'string', 'in:pending,confirmed,cancelled']
+            'status' => ['sometimes', 'string', 'in:pending,confirmed,cancelled'],
         ];
     }
 
@@ -80,7 +80,7 @@ class UpdateBookingRequest extends FormRequest
         return [
             'guest_names.min' => 'Please provide at least one guest name.',
             'guest_names.*.required' => 'Each guest name is required.',
-            'guest_names.*.max' => 'Guest names cannot be longer than 255 characters.'
+            'guest_names.*.max' => 'Guest names cannot be longer than 255 characters.',
         ];
     }
 }

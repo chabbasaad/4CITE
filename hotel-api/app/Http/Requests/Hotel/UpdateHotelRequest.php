@@ -33,7 +33,7 @@ class UpdateHotelRequest extends FormRequest
             'total_rooms' => ['sometimes', 'integer', 'min:1'],
             'amenities' => ['sometimes', 'nullable', 'array'],
             'amenities.*' => ['string'],
-            'available_rooms' => ['sometimes', 'integer', 'min:0', 'lte:total_rooms']
+            'available_rooms' => ['sometimes', 'integer', 'min:0', 'lte:total_rooms'],
         ];
     }
 
@@ -57,7 +57,7 @@ class UpdateHotelRequest extends FormRequest
             'available_rooms.min' => 'The number of available rooms cannot be negative',
             'available_rooms.lte' => 'The number of available rooms cannot exceed the total number of rooms',
             'amenities.array' => 'Amenities must be a list of strings',
-            'amenities.*.string' => 'Each amenity must be a string'
+            'amenities.*.string' => 'Each amenity must be a string',
         ];
     }
 }

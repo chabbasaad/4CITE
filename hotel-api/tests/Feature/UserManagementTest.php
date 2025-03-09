@@ -56,7 +56,7 @@ class UserManagementTest extends TestCase
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'pseudo' => 'newadmin',
-            'role' => 'admin'
+            'role' => 'admin',
         ];
 
         $response = $this->actingAs($admin)
@@ -66,8 +66,8 @@ class UserManagementTest extends TestCase
             ->assertJson([
                 'data' => [
                     'role' => 'admin',
-                    'email' => 'newadmin@example.com'
-                ]
+                    'email' => 'newadmin@example.com',
+                ],
             ]);
     }
 
@@ -80,7 +80,7 @@ class UserManagementTest extends TestCase
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'pseudo' => 'newemployee',
-            'role' => 'employee'
+            'role' => 'employee',
         ];
 
         $response = $this->actingAs($admin)
@@ -89,8 +89,8 @@ class UserManagementTest extends TestCase
         $response->assertStatus(201)
             ->assertJson([
                 'data' => [
-                    'role' => 'employee'
-                ]
+                    'role' => 'employee',
+                ],
             ]);
     }
 
@@ -103,7 +103,7 @@ class UserManagementTest extends TestCase
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'pseudo' => 'newuser',
-            'role' => 'user' // Creating with correct role
+            'role' => 'user', // Creating with correct role
         ];
 
         $response = $this->actingAs($employee)
@@ -136,8 +136,8 @@ class UserManagementTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $user->id,
-                    'email' => $user->email
-                ]
+                    'email' => $user->email,
+                ],
             ]);
     }
 
@@ -152,8 +152,8 @@ class UserManagementTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
-                    'id' => $user->id
-                ]
+                    'id' => $user->id,
+                ],
             ]);
     }
 
@@ -174,7 +174,7 @@ class UserManagementTest extends TestCase
         $user = User::factory()->create();
         $updateData = [
             'name' => 'Updated Name',
-            'pseudo' => 'updatedpseudo'
+            'pseudo' => 'updatedpseudo',
         ];
 
         $response = $this->actingAs($user)
@@ -184,8 +184,8 @@ class UserManagementTest extends TestCase
             ->assertJson([
                 'data' => [
                     'name' => 'Updated Name',
-                    'pseudo' => 'updatedpseudo'
-                ]
+                    'pseudo' => 'updatedpseudo',
+                ],
             ]);
     }
 
@@ -196,7 +196,7 @@ class UserManagementTest extends TestCase
 
         $response = $this->actingAs($admin)
             ->putJson("/api/users/{$user->id}", [
-                'role' => 'employee'
+                'role' => 'employee',
             ]);
 
         $response->assertStatus(200);
@@ -209,13 +209,13 @@ class UserManagementTest extends TestCase
 
         $response = $this->actingAs($user)
             ->putJson("/api/users/{$user->id}", [
-                'role' => 'admin'
+                'role' => 'admin',
             ]);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors('role')
             ->assertJson([
-                'message' => 'You are not authorized to change roles.'
+                'message' => 'You are not authorized to change roles.',
             ]);
 
         $this->assertEquals('user', $user->fresh()->role);
@@ -254,7 +254,7 @@ class UserManagementTest extends TestCase
 
         $response->assertStatus(400)
             ->assertJson([
-                'message' => 'Cannot delete the last admin user'
+                'message' => 'Cannot delete the last admin user',
             ]);
         $this->assertDatabaseHas('users', ['id' => $admin->id]);
     }

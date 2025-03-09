@@ -1,10 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\HotelController;
 use App\Http\Controllers\Api\BookingController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\HotelController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*

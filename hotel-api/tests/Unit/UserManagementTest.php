@@ -56,7 +56,7 @@ class UserManagementTest extends TestCase
             'email' => 'test@example.com',
             'password' => 'password123',
             'pseudo' => 'testuser',
-            'role' => 'user'
+            'role' => 'user',
         ];
 
         $user = User::create($userData);
@@ -144,7 +144,7 @@ class UserManagementTest extends TestCase
 
         $user->update([
             'name' => 'Updated Name',
-            'pseudo' => 'updatedpseudo'
+            'pseudo' => 'updatedpseudo',
         ]);
 
         $this->assertEquals('Updated Name', $user->fresh()->name);
@@ -180,7 +180,7 @@ class UserManagementTest extends TestCase
         $user->delete();
 
         $this->assertDatabaseMissing('personal_access_tokens', [
-            'tokenable_id' => $user->id
+            'tokenable_id' => $user->id,
         ]);
     }
 }

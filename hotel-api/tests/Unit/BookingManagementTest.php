@@ -2,12 +2,12 @@
 
 namespace Tests\Unit;
 
-use App\Models\User;
-use App\Models\Hotel;
 use App\Models\Booking;
+use App\Models\Hotel;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Carbon\Carbon;
 
 class BookingManagementTest extends TestCase
 {
@@ -48,12 +48,12 @@ class BookingManagementTest extends TestCase
 
         $bookingData = [
             'check_in_date' => '2024-04-20',
-            'check_out_date' => '2024-04-15' // Invalid: check-out before check-in
+            'check_out_date' => '2024-04-15', // Invalid: check-out before check-in
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($bookingData, [
             'check_in_date' => 'required|date',
-            'check_out_date' => 'required|date|after:check_in_date'
+            'check_out_date' => 'required|date|after:check_in_date',
         ]);
 
         if ($validator->fails()) {
@@ -67,12 +67,12 @@ class BookingManagementTest extends TestCase
 
         $bookingData = [
             'guest_names' => array_fill(0, 11, 'Guest Name'), // Too many guests
-            'hotel_id' => 1
+            'hotel_id' => 1,
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($bookingData, [
             'guest_names' => 'required|array|max:10',
-            'hotel_id' => 'required|exists:hotels,id'
+            'hotel_id' => 'required|exists:hotels,id',
         ]);
 
         if ($validator->fails()) {
@@ -87,7 +87,7 @@ class BookingManagementTest extends TestCase
         $booking = Booking::factory()->create([
             'hotel_id' => $hotel->id,
             'check_in_date' => '2024-04-15',
-            'check_out_date' => '2024-04-20' // 5 nights
+            'check_out_date' => '2024-04-20', // 5 nights
         ]);
 
         $this->assertEquals(500, $booking->total_price); // 5 nights * $100
@@ -97,7 +97,7 @@ class BookingManagementTest extends TestCase
     {
         $booking = Booking::factory()->create([
             'check_in_date' => Carbon::now()->addDays(3),
-            'status' => 'confirmed'
+            'status' => 'confirmed',
         ]);
 
         $this->assertTrue($booking->canBeCancelled());
@@ -107,7 +107,7 @@ class BookingManagementTest extends TestCase
     {
         $booking = Booking::factory()->create([
             'check_in_date' => Carbon::now()->addHours(47),
-            'status' => 'confirmed'
+            'status' => 'confirmed',
         ]);
 
         $this->assertFalse($booking->canBeCancelled());
@@ -118,7 +118,7 @@ class BookingManagementTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $booking = Booking::factory()->create([
             'check_in_date' => Carbon::now()->addHour(),
-            'status' => 'confirmed'
+            'status' => 'confirmed',
         ]);
 
         $this->assertTrue($booking->canBeCancelledByUser($admin));
@@ -142,7 +142,7 @@ class BookingManagementTest extends TestCase
     {
         $booking = Booking::factory()->create([
             'check_in_date' => '2024-04-15',
-            'check_out_date' => '2024-04-20'
+            'check_out_date' => '2024-04-20',
         ]);
 
         $this->assertInstanceOf(Carbon::class, $booking->check_in_date);
@@ -153,7 +153,7 @@ class BookingManagementTest extends TestCase
     public function test_booking_guest_names_are_array()
     {
         $booking = Booking::factory()->create([
-            'guest_names' => ['John Doe', 'Jane Doe']
+            'guest_names' => ['John Doe', 'Jane Doe'],
         ]);
 
         $this->assertIsArray($booking->guest_names);
@@ -163,7 +163,7 @@ class BookingManagementTest extends TestCase
     public function test_booking_guests_count_matches_names()
     {
         $booking = Booking::factory()->create([
-            'guest_names' => ['John Doe', 'Jane Doe', 'Jimmy Doe']
+            'guest_names' => ['John Doe', 'Jane Doe', 'Jimmy Doe'],
         ]);
 
         $this->assertEquals(count($booking->guest_names), $booking->guests_count);
@@ -187,7 +187,7 @@ class BookingManagementTest extends TestCase
 
         $aprilBookings = Booking::whereBetween('check_in_date', [
             '2024-04-01',
-            '2024-04-30'
+            '2024-04-30',
         ])->get();
 
         $this->assertCount(1, $aprilBookings);
@@ -259,19 +259,19 @@ class BookingManagementTest extends TestCase
             'user_id' => $user->id,
             'hotel_id' => $hotel->id,
             'status' => 'confirmed',
-            'check_in_date' => '2024-04-15'
+            'check_in_date' => '2024-04-15',
         ]);
 
         // Create non-matching bookings
         Booking::factory()->create([
             'user_id' => $user->id,
             'status' => 'cancelled',
-            'check_in_date' => '2024-04-15'
+            'check_in_date' => '2024-04-15',
         ]);
         Booking::factory()->create([
             'user_id' => $user->id,
             'status' => 'confirmed',
-            'check_in_date' => '2024-05-15'
+            'check_in_date' => '2024-05-15',
         ]);
 
         $query = Booking::query()

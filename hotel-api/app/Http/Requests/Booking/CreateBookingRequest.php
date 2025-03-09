@@ -2,9 +2,8 @@
 
 namespace App\Http\Requests\Booking;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Carbon\Carbon;
+use Illuminate\Foundation\Http\FormRequest;
 
 class CreateBookingRequest extends FormRequest
 {
@@ -27,7 +26,7 @@ class CreateBookingRequest extends FormRequest
         return [
             'hotel_id' => ['required', 'exists:hotels,id', function ($attribute, $value, $fail) {
                 $hotel = \App\Models\Hotel::find($value);
-                if (!$hotel->is_available) {
+                if (! $hotel->is_available) {
                     $fail('This hotel is not available for booking.');
                 }
             }],
@@ -53,17 +52,17 @@ class CreateBookingRequest extends FormRequest
                     if ($overlapping) {
                         $fail('The selected dates are not available for this hotel.');
                     }
-                }
+                },
             ],
             'check_out_date' => [
                 'required',
                 'date',
-                'after:check_in_date'
+                'after:check_in_date',
             ],
             'guest_names' => ['required', 'array', 'min:1'],
             'guest_names.*' => ['required', 'string', 'max:255'],
             'contact_phone' => ['required', 'string', 'max:20'],
-            'special_requests' => ['nullable', 'string', 'max:1000']
+            'special_requests' => ['nullable', 'string', 'max:1000'],
         ];
     }
 
@@ -78,7 +77,7 @@ class CreateBookingRequest extends FormRequest
             'guest_names.required' => 'Please provide at least one guest name.',
             'guest_names.min' => 'Please provide at least one guest name.',
             'guest_names.*.required' => 'Each guest name is required.',
-            'guest_names.*.max' => 'Guest names cannot be longer than 255 characters.'
+            'guest_names.*.max' => 'Guest names cannot be longer than 255 characters.',
         ];
     }
 }

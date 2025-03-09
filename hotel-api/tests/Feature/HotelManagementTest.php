@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Booking;
 use App\Models\Hotel;
 use App\Models\User;
-use App\Models\Booking;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -68,11 +68,11 @@ class HotelManagementTest extends TestCase
                         'id' => $hotel->id,
                         'bookings' => [
                             [
-                                'id' => $booking->id
-                            ]
-                        ]
-                    ]
-                ]
+                                'id' => $booking->id,
+                            ],
+                        ],
+                    ],
+                ],
             ]);
     }
 
@@ -87,8 +87,8 @@ class HotelManagementTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $hotel->id,
-                    'name' => $hotel->name
-                ]
+                    'name' => $hotel->name,
+                ],
             ]);
     }
 
@@ -107,10 +107,10 @@ class HotelManagementTest extends TestCase
                     'id' => $hotel->id,
                     'bookings' => [
                         [
-                            'id' => $booking->id
-                        ]
-                    ]
-                ]
+                            'id' => $booking->id,
+                        ],
+                    ],
+                ],
             ]);
     }
 
@@ -133,7 +133,7 @@ class HotelManagementTest extends TestCase
             'total_rooms' => 20,
             'available_rooms' => 10,
             'amenities' => ['WiFi', 'Pool', 'Gym'],
-            'picture_list' => ['http://example.com/image1.jpg']
+            'picture_list' => ['http://example.com/image1.jpg'],
         ];
 
         $response = $this->actingAs($admin)
@@ -145,8 +145,8 @@ class HotelManagementTest extends TestCase
                     'name' => 'New Hotel',
                     'location' => 'Test Location',
                     'total_rooms' => 20,
-                    'available_rooms' => 10
-                ]
+                    'available_rooms' => 10,
+                ],
             ]);
     }
 
@@ -162,7 +162,7 @@ class HotelManagementTest extends TestCase
             'total_rooms' => 20,
             'available_rooms' => 10,
             'amenities' => ['WiFi', 'Pool', 'Gym'],
-            'picture_list' => ['http://example.com/image1.jpg']
+            'picture_list' => ['http://example.com/image1.jpg'],
         ];
 
         $response = $this->actingAs($employee)
@@ -179,7 +179,7 @@ class HotelManagementTest extends TestCase
             'name' => '',
             'price_per_night' => -10,
             'total_rooms' => 0,
-            'available_rooms' => 50
+            'available_rooms' => 50,
         ];
 
         $response = $this->actingAs($admin)
@@ -199,7 +199,7 @@ class HotelManagementTest extends TestCase
             'price_per_night' => 150,
             'total_rooms' => 30,
             'available_rooms' => 25,
-            'amenities' => ['WiFi', 'Pool', 'Spa']
+            'amenities' => ['WiFi', 'Pool', 'Spa'],
         ];
 
         $response = $this->actingAs($admin)
@@ -211,8 +211,8 @@ class HotelManagementTest extends TestCase
                     'name' => 'Updated Hotel',
                     'price_per_night' => 150,
                     'total_rooms' => 30,
-                    'available_rooms' => 25
-                ]
+                    'available_rooms' => 25,
+                ],
             ]);
     }
 
@@ -223,7 +223,7 @@ class HotelManagementTest extends TestCase
 
         $response = $this->actingAs($employee)
             ->putJson("/api/hotels/{$hotel->id}", [
-                'name' => 'Updated Name'
+                'name' => 'Updated Name',
             ]);
 
         $response->assertStatus(403);
@@ -236,7 +236,7 @@ class HotelManagementTest extends TestCase
 
         $response = $this->actingAs($admin)
             ->putJson('/api/hotels/999', [
-                'name' => 'Updated Name'
+                'name' => 'Updated Name',
             ]);
 
         $response->assertStatus(404);
@@ -251,7 +251,7 @@ class HotelManagementTest extends TestCase
         $response = $this->actingAs($admin)
             ->deleteJson("/api/hotels/{$hotel->id}");
 
-    $response->assertStatus(200);
+        $response->assertStatus(200);
         $this->assertDatabaseMissing('hotels', ['id' => $hotel->id]);
     }
 
@@ -266,7 +266,7 @@ class HotelManagementTest extends TestCase
 
         $response->assertStatus(409)
             ->assertJson([
-                'message' => 'Cannot delete hotel with existing bookings'
+                'message' => 'Cannot delete hotel with existing bookings',
             ]);
         $this->assertDatabaseHas('hotels', ['id' => $hotel->id]);
     }
@@ -294,8 +294,8 @@ class HotelManagementTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonCount(2, 'data')
-            ->assertJsonPath('data.0.name', fn($name) => in_array($name, ['Luxury Beach Resort', 'Luxury Hotel']))
-            ->assertJsonPath('data.1.name', fn($name) => in_array($name, ['Luxury Beach Resort', 'Luxury Hotel']));
+            ->assertJsonPath('data.0.name', fn ($name) => in_array($name, ['Luxury Beach Resort', 'Luxury Hotel']))
+            ->assertJsonPath('data.1.name', fn ($name) => in_array($name, ['Luxury Beach Resort', 'Luxury Hotel']));
     }
 
     public function test_user_can_filter_hotels_by_price_range()
@@ -331,19 +331,19 @@ class HotelManagementTest extends TestCase
             'name' => 'Beach Resort',
             'price_per_night' => 250,
             'is_available' => true,
-            'available_rooms' => 5
+            'available_rooms' => 5,
         ]);
         Hotel::factory()->create([
             'name' => 'Beach Hotel',
             'price_per_night' => 150,
             'is_available' => false,
-            'available_rooms' => 0
+            'available_rooms' => 0,
         ]);
         Hotel::factory()->create([
             'name' => 'Beach Palace',
             'price_per_night' => 450,
             'is_available' => true,
-            'available_rooms' => 3
+            'available_rooms' => 3,
         ]);
 
         $response = $this->getJson('/api/hotels?search=Beach&min_price=200&max_price=400&available=1');
@@ -357,11 +357,11 @@ class HotelManagementTest extends TestCase
     {
         Hotel::factory()->create([
             'name' => 'Mountain Hotel',
-            'description' => 'A luxury experience in the mountains'
+            'description' => 'A luxury experience in the mountains',
         ]);
         Hotel::factory()->create([
             'name' => 'City Hotel',
-            'description' => 'Standard accommodation'
+            'description' => 'Standard accommodation',
         ]);
 
         $response = $this->getJson('/api/hotels?search=luxury');

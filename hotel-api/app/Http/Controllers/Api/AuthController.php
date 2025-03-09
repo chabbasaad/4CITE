@@ -7,18 +7,14 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Request;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
     /**
      * Register a new user.
-     *
-     * @param RegisterRequest $request
-     * @return JsonResponse
      */
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -39,15 +35,13 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Registration successful',
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ], 201);
     }
 
     /**
      * Login user and create token.
      *
-     * @param LoginRequest $request
-     * @return JsonResponse
      * @throws ValidationException
      */
     public function login(LoginRequest $request): JsonResponse
@@ -60,7 +54,7 @@ class AuthController extends Controller
         // Find user by normalized email
         $user = User::whereRaw('LOWER(email) = ?', [strtolower($email)])->first();
 
-        if (!$user || !Hash::check($validated['password'], $user->password)) {
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -72,15 +66,12 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login successful',
             'user' => $user,
-            'token' => $token
+            'token' => $token,
         ]);
     }
 
     /**
      * Logout user (revoke token).
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function logout(Request $request): JsonResponse
     {
@@ -100,15 +91,12 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'message' => 'Successfully logged out'
+            'message' => 'Successfully logged out',
         ]);
     }
 
     /**
      * Get authenticated user.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function user(Request $request): JsonResponse
     {
@@ -116,11 +104,10 @@ class AuthController extends Controller
         $bearerToken = $request->bearerToken();
 
         // Check if user exists and has a valid token
-        if (!$user || !$bearerToken ||
-            !$user->tokens()->where('token', hash('sha256', explode('|', $bearerToken)[1] ?? ''))->exists()) {
+        if (! $user || ! $bearerToken ||
+            ! $user->tokens()->where('token', hash('sha256', explode('|', $bearerToken)[1] ?? ''))->exists()) {
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
-
 
         return response()->json($user);
     }

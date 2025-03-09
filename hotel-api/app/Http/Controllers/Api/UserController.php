@@ -15,7 +15,6 @@ class UserController extends Controller
     /**
      * List all users with pagination and filters.
      *
-     * @param Request $request
      * @return JsonResponse
      *
      * Permissions:
@@ -32,7 +31,7 @@ class UserController extends Controller
         $user = $request->user();
 
         // Normal users cannot list other users
-        if (!$user->isAdmin() && !$user->isEmployee()) {
+        if (! $user->isAdmin() && ! $user->isEmployee()) {
             return response()->json(['message' => 'Unauthorized. Only admins and employees can list users.'], 403);
         }
 
@@ -58,9 +57,6 @@ class UserController extends Controller
      * Access levels:
      * - Employee: Can create 'user' role only
      * - Admin: Can create any role (user, employee, admin)
-     *
-     * @param AdminCreateUserRequest $request
-     * @return JsonResponse
      */
     public function store(AdminCreateUserRequest $request): JsonResponse
     {
@@ -82,15 +78,13 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User created successfully.',
-            'data' => $user
+            'data' => $user,
         ], 201);
     }
 
     /**
      * Show details of a specific user.
      *
-     * @param Request $request
-     * @param User $user
      * @return JsonResponse
      *
      * Permissions:
@@ -103,11 +97,11 @@ class UserController extends Controller
         $currentUser = $request->user();
 
         // Users can only view their own profile unless they're admin/employee
-        if (!$currentUser->isAdmin() &&
-            !$currentUser->isEmployee() &&
+        if (! $currentUser->isAdmin() &&
+            ! $currentUser->isEmployee() &&
             $currentUser->id !== $user->id) {
             return response()->json([
-                'message' => 'Unauthorized. You can only view your own profile.'
+                'message' => 'Unauthorized. You can only view your own profile.',
             ], 403);
         }
 
@@ -117,8 +111,6 @@ class UserController extends Controller
     /**
      * Update a user's profile.
      *
-     * @param UpdateUserRequest $request
-     * @param User $user
      * @return JsonResponse
      *
      * Permissions:
@@ -131,16 +123,16 @@ class UserController extends Controller
         $currentUser = $request->user();
 
         // Only allow self-update or admin update
-        if (!$currentUser->isAdmin() && $currentUser->id !== $user->id) {
+        if (! $currentUser->isAdmin() && $currentUser->id !== $user->id) {
             return response()->json([
-                'message' => 'Unauthorized. You can only update your own profile.'
+                'message' => 'Unauthorized. You can only update your own profile.',
             ], 403);
         }
 
         $validated = $request->validated();
 
         // Only admins can change roles
-        if (isset($validated['role']) && !$currentUser->isAdmin()) {
+        if (isset($validated['role']) && ! $currentUser->isAdmin()) {
             unset($validated['role']);
         }
 
@@ -153,15 +145,13 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'User updated successfully',
-            'data' => $user
+            'data' => $user,
         ]);
     }
 
     /**
      * Delete a user account.
      *
-     * @param Request $request
-     * @param User $user
      * @return JsonResponse
      *
      * Permissions:
@@ -175,23 +165,23 @@ class UserController extends Controller
         $currentUser = $request->user();
 
         // Users can only delete themselves unless they're admin
-        if (!$currentUser->isAdmin() && $currentUser->id !== $user->id) {
+        if (! $currentUser->isAdmin() && $currentUser->id !== $user->id) {
             return response()->json([
-                'message' => 'Unauthorized. You can only delete your own account.'
+                'message' => 'Unauthorized. You can only delete your own account.',
             ], 403);
         }
 
         // Prevent deleting the last admin
         if ($user->isAdmin() && User::where('role', 'admin')->count() === 1) {
             return response()->json([
-                'message' => 'Cannot delete the last admin user'
+                'message' => 'Cannot delete the last admin user',
             ], 400);
         }
 
         $user->delete();
 
         return response()->json([
-            'message' => 'User deleted successfully'
+            'message' => 'User deleted successfully',
         ]);
     }
 }

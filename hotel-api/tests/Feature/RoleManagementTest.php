@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Hotel;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -56,7 +56,7 @@ class RoleManagementTest extends TestCase
             'available_rooms' => 15,
             'is_available' => true,
             'amenities' => ['WiFi', 'Pool'],
-            'picture_list' => ['http://example.com/image1.jpg']
+            'picture_list' => ['http://example.com/image1.jpg'],
         ];
 
         $response = $this->actingAs($admin)
@@ -75,7 +75,7 @@ class RoleManagementTest extends TestCase
             'description' => 'Test Description',
             'price_per_night' => 100,
             'available_rooms' => 10,
-            'is_available' => true
+            'is_available' => true,
         ];
 
         $response = $this->actingAs($employee)
@@ -91,7 +91,7 @@ class RoleManagementTest extends TestCase
         $hotel = Hotel::factory()->create();
         $updateData = [
             'name' => 'Updated Hotel Name',
-            'price_per_night' => 150
+            'price_per_night' => 150,
         ];
 
         $response = $this->actingAs($admin)
@@ -106,7 +106,7 @@ class RoleManagementTest extends TestCase
         $employee = User::factory()->create(['role' => 'employee']);
         $hotel = Hotel::factory()->create();
         $updateData = [
-            'name' => 'Updated Hotel Name'
+            'name' => 'Updated Hotel Name',
         ];
 
         $response = $this->actingAs($employee)
@@ -128,8 +128,8 @@ class RoleManagementTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $user->id,
-                    'email' => $user->email
-                ]
+                    'email' => $user->email,
+                ],
             ]);
     }
 
@@ -157,8 +157,8 @@ class RoleManagementTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $user->id,
-                    'email' => $user->email
-                ]
+                    'email' => $user->email,
+                ],
             ]);
     }
 
@@ -174,8 +174,8 @@ class RoleManagementTest extends TestCase
             ->assertJson([
                 'data' => [
                     'id' => $user->id,
-                    'email' => $user->email
-                ]
+                    'email' => $user->email,
+                ],
             ]);
     }
 }

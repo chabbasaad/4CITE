@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Illuminate\Support\Str;
+use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
@@ -16,19 +16,19 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => bcrypt('password123'),
-            'role' => 'user'
+            'role' => 'user',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'user@example.com',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
                 'user',
-                'token'
+                'token',
             ]);
     }
 
@@ -37,12 +37,12 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => bcrypt('password123'),
-            'role' => 'user'
+            'role' => 'user',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'user@example.com',
-            'password' => 'wrongpassword'
+            'password' => 'wrongpassword',
         ]);
 
         $response->assertStatus(422)
@@ -53,7 +53,7 @@ class LoginTest extends TestCase
     {
         $response = $this->postJson('/api/auth/login', [
             'email' => 'nonexistent@example.com',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(422)
@@ -65,19 +65,19 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => bcrypt('password123'),
-            'role' => 'user'
+            'role' => 'user',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => '  user@example.com  ',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
                 'user',
-                'token'
+                'token',
             ]);
     }
 
@@ -85,7 +85,7 @@ class LoginTest extends TestCase
     {
         $response = $this->postJson('/api/auth/login', [
             'email' => 'invalid-email-format',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(422)
@@ -97,19 +97,19 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => bcrypt('password123'),
-            'role' => 'user'
+            'role' => 'user',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'USER@EXAMPLE.COM',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
                 'user',
-                'token'
+                'token',
             ]);
     }
 
@@ -118,12 +118,12 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => bcrypt('Password123'),
-            'role' => 'user'
+            'role' => 'user',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'user@example.com',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(422)
@@ -135,19 +135,19 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => bcrypt('password 123'),
-            'role' => 'user'
+            'role' => 'user',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'user@example.com',
-            'password' => 'password 123'
+            'password' => 'password 123',
         ]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
                 'user',
-                'token'
+                'token',
             ]);
     }
 
@@ -157,19 +157,19 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => bcrypt($longPassword),
-            'role' => 'user'
+            'role' => 'user',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'user@example.com',
-            'password' => $longPassword
+            'password' => $longPassword,
         ]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'message',
                 'user',
-                'token'
+                'token',
             ]);
     }
 
@@ -177,7 +177,7 @@ class LoginTest extends TestCase
     {
         $response = $this->postJson('/api/auth/login', [
             'email' => '',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(422)
@@ -188,7 +188,7 @@ class LoginTest extends TestCase
     {
         $response = $this->postJson('/api/auth/login', [
             'email' => 'user@example.com',
-            'password' => ''
+            'password' => '',
         ]);
 
         $response->assertStatus(422)
@@ -208,18 +208,18 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'email' => 'user@example.com',
             'password' => bcrypt('password123'),
-            'role' => 'user'
+            'role' => 'user',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'user@example.com',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $token = $response->json('token');
 
         // Try to access protected route
-        $this->withHeader('Authorization', 'Bearer ' . $token)
+        $this->withHeader('Authorization', 'Bearer '.$token)
             ->getJson('/api/auth/user')
             ->assertStatus(200)
             ->assertJson($user->toArray());

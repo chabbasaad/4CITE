@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class LogoutTest extends TestCase
 {
@@ -18,12 +17,12 @@ class LogoutTest extends TestCase
         $token = $user->createToken('auth_token')->plainTextToken;
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/auth/logout');
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Successfully logged out'
+                'message' => 'Successfully logged out',
             ]);
 
         // Verify token is deleted
@@ -40,7 +39,7 @@ class LogoutTest extends TestCase
         $this->assertEquals(2, $user->tokens()->count());
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token1,
+            'Authorization' => 'Bearer '.$token1,
         ])->postJson('/api/auth/logout');
 
         $response->assertStatus(200);
@@ -55,12 +54,12 @@ class LogoutTest extends TestCase
 
         // First, logout
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/auth/logout');
 
         // Then try to access a protected route with the same token
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->getJson('/api/auth/user');
 
         $response->assertStatus(401);
@@ -92,7 +91,7 @@ class LogoutTest extends TestCase
         $user->tokens()->delete();
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/auth/logout');
 
         $response->assertStatus(401);
@@ -106,23 +105,23 @@ class LogoutTest extends TestCase
 
         // First logout
         $firstResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/auth/logout');
 
         $firstResponse->assertStatus(200)
             ->assertJson([
-                'message' => 'Successfully logged out'
+                'message' => 'Successfully logged out',
             ]);
 
         // Second logout with same token
         $secondResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer '.$token,
         ])->postJson('/api/auth/logout');
 
         // The API allows multiple logout attempts and returns 200
         $secondResponse->assertStatus(200)
             ->assertJson([
-                'message' => 'Successfully logged out'
+                'message' => 'Successfully logged out',
             ]);
 
         // Verify no tokens exist
@@ -138,23 +137,23 @@ class LogoutTest extends TestCase
 
         // First logout with token1
         $firstResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token1,
+            'Authorization' => 'Bearer '.$token1,
         ])->postJson('/api/auth/logout');
 
         $firstResponse->assertStatus(200)
             ->assertJson([
-                'message' => 'Successfully logged out'
+                'message' => 'Successfully logged out',
             ]);
 
         // Second logout with token2
         $secondResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token2,
+            'Authorization' => 'Bearer '.$token2,
         ])->postJson('/api/auth/logout');
 
         // The API allows multiple logout attempts and returns 200
         $secondResponse->assertStatus(200)
             ->assertJson([
-                'message' => 'Successfully logged out'
+                'message' => 'Successfully logged out',
             ]);
 
         // Verify no tokens exist
@@ -170,7 +169,7 @@ class LogoutTest extends TestCase
 
         // Logout from one session
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token1,
+            'Authorization' => 'Bearer '.$token1,
         ])->postJson('/api/auth/logout');
 
         $response->assertStatus(200);

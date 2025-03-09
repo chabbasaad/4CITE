@@ -10,7 +10,7 @@ class CustomUserProvider extends EloquentUserProvider
     public function validateCredentials(Authenticatable $user, array $credentials): bool
     {
         // Check if account is active
-        if (!$user->is_active) {
+        if (! $user->is_active) {
             return false;
         }
 

@@ -47,7 +47,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::in(['user', 'employee', 'admin']),
                 // Only admins can change roles
                 function ($attribute, $value, $fail) {
-                    if ($value !== $this->user()->role && !$this->user()->isAdmin()) {
+                    if ($value !== $this->user()->role && ! $this->user()->isAdmin()) {
                         $fail('You are not authorized to change roles.');
                     }
                 },

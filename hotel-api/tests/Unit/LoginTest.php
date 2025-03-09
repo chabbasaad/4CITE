@@ -4,9 +4,9 @@ namespace Tests\Unit;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
+use Tests\TestCase;
 
 class LoginTest extends TestCase
 {
@@ -16,7 +16,7 @@ class LoginTest extends TestCase
     {
         $password = 'password123';
         $user = User::factory()->create([
-            'password' => Hash::make($password)
+            'password' => Hash::make($password),
         ]);
 
         $this->assertTrue(Hash::check($password, $user->password));
@@ -27,7 +27,7 @@ class LoginTest extends TestCase
     {
         $password = 'Password123';
         $user = User::factory()->create([
-            'password' => Hash::make($password)
+            'password' => Hash::make($password),
         ]);
 
         $this->assertTrue(Hash::check($password, $user->password));
@@ -38,7 +38,7 @@ class LoginTest extends TestCase
     public function test_email_case_insensitive_lookup()
     {
         $user = User::factory()->create([
-            'email' => 'user@example.com'
+            'email' => 'user@example.com',
         ]);
 
         $foundUser = User::whereRaw('LOWER(email) = ?', [strtolower('USER@EXAMPLE.COM')])->first();
@@ -71,7 +71,7 @@ class LoginTest extends TestCase
             'user@example.com',
             'user.name@example.com',
             'user+label@example.com',
-            'user@subdomain.example.com'
+            'user@subdomain.example.com',
         ];
 
         $invalidEmails = [
@@ -80,7 +80,7 @@ class LoginTest extends TestCase
             '@example.com',
             'user@.com',
             'user@example.',
-            'user space@example.com'
+            'user space@example.com',
         ];
 
         foreach ($validEmails as $email) {
@@ -135,7 +135,7 @@ class LoginTest extends TestCase
             ' password123',
             'password 123',
             'password123 ',
-            '  password  123  '
+            '  password  123  ',
         ];
 
         foreach ($passwordsWithSpaces as $password) {
@@ -149,7 +149,7 @@ class LoginTest extends TestCase
         $trimmedEmail = trim($email);
 
         $user = User::factory()->create([
-            'email' => $trimmedEmail
+            'email' => $trimmedEmail,
         ]);
 
         $this->assertEquals('user@example.com', $user->email);

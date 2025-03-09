@@ -41,8 +41,8 @@ class AdminCreateUserRequest extends FormRequest
                     if ($user->isEmployee() && $value !== 'user') {
                         $fail('Employees can only create user accounts.');
                     }
-                }
-            ]
+                },
+            ],
         ];
     }
 
@@ -58,7 +58,7 @@ class AdminCreateUserRequest extends FormRequest
             'password.min' => 'The password must be at least 8 characters',
             'password.confirmed' => 'The password confirmation does not match',
             'email.unique' => 'This email is already registered',
-            'pseudo.unique' => 'This pseudo is already taken'
+            'pseudo.unique' => 'This pseudo is already taken',
         ];
     }
 }

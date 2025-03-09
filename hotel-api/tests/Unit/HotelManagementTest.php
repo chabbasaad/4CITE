@@ -2,13 +2,13 @@
 
 namespace Tests\Unit;
 
+use App\Models\Booking;
 use App\Models\Hotel;
 use App\Models\User;
-use App\Models\Booking;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Tests\TestCase;
 
 class HotelManagementTest extends TestCase
 {
@@ -26,7 +26,7 @@ class HotelManagementTest extends TestCase
             'available_rooms' => 10,
             'is_available' => true,
             'amenities' => ['WiFi', 'Pool'],
-            'picture_list' => ['http://example.com/image1.jpg']
+            'picture_list' => ['http://example.com/image1.jpg'],
         ]);
 
         $this->assertEquals('Test Hotel', $hotel->name);
@@ -56,9 +56,9 @@ class HotelManagementTest extends TestCase
         Hotel::factory()->create(['name' => 'Mountain Lodge']);
         Hotel::factory()->create(['name' => 'Luxury Hotel']);
 
-        $results = Hotel::where(function($query) {
+        $results = Hotel::where(function ($query) {
             $query->where('name', 'like', '%Luxury%')
-                  ->orWhere('description', 'like', '%Luxury%');
+                ->orWhere('description', 'like', '%Luxury%');
         })->get();
 
         $this->assertEquals(2, $results->count());
@@ -87,7 +87,7 @@ class HotelManagementTest extends TestCase
         $results = Hotel::where('is_available', true)->get();
 
         $this->assertEquals(2, $results->count());
-        $this->assertTrue($results->every(fn($hotel) => $hotel->is_available));
+        $this->assertTrue($results->every(fn ($hotel) => $hotel->is_available));
     }
 
     public function test_combined_search_and_filters()
@@ -96,28 +96,28 @@ class HotelManagementTest extends TestCase
         Hotel::factory()->create([
             'name' => 'Beach Resort',
             'price_per_night' => 250,
-            'is_available' => true
+            'is_available' => true,
         ]);
         Hotel::factory()->create([
             'name' => 'Beach Hotel',
             'price_per_night' => 150,
-            'is_available' => false
+            'is_available' => false,
         ]);
         Hotel::factory()->create([
             'name' => 'Beach Palace',
             'price_per_night' => 450,
-            'is_available' => true
+            'is_available' => true,
         ]);
         Hotel::factory()->create([
             'name' => 'Mountain Lodge',
             'price_per_night' => 250,
-            'is_available' => true
+            'is_available' => true,
         ]);
 
         $results = Hotel::query()
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('name', 'like', '%Beach%')
-                      ->orWhere('description', 'like', '%Beach%');
+                    ->orWhere('description', 'like', '%Beach%');
             })
             ->whereBetween('price_per_night', [200, 400])
             ->where('is_available', true)
@@ -139,18 +139,18 @@ class HotelManagementTest extends TestCase
         $results = Hotel::where('location', 'like', '%Beach%')->get();
 
         $this->assertEquals(2, $results->count());
-        $this->assertTrue($results->every(fn($hotel) => str_contains($hotel->location, 'Beach')));
+        $this->assertTrue($results->every(fn ($hotel) => str_contains($hotel->location, 'Beach')));
     }
 
     public function test_search_in_description()
     {
         Hotel::factory()->create([
             'name' => 'Mountain Hotel',
-            'description' => 'Luxury accommodation with beach view'
+            'description' => 'Luxury accommodation with beach view',
         ]);
         Hotel::factory()->create([
             'name' => 'City Hotel',
-            'description' => 'Standard accommodation'
+            'description' => 'Standard accommodation',
         ]);
 
         $results = Hotel::where('description', 'like', '%Luxury%')->get();
@@ -193,14 +193,14 @@ class HotelManagementTest extends TestCase
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
 
-        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
             'description' => 'Test Description',
             'price_per_night' => -100,
             'available_rooms' => 10,
-            'is_available' => true
+            'is_available' => true,
         ]);
 
         $validator = \Illuminate\Support\Facades\Validator::make(
@@ -217,14 +217,14 @@ class HotelManagementTest extends TestCase
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
 
-        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
             'description' => 'Test Description',
             'price_per_night' => 100,
             'available_rooms' => -1,
-            'is_available' => true
+            'is_available' => true,
         ]);
 
         $validator = \Illuminate\Support\Facades\Validator::make(
@@ -241,7 +241,7 @@ class HotelManagementTest extends TestCase
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
 
-        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
@@ -249,7 +249,7 @@ class HotelManagementTest extends TestCase
             'price_per_night' => 100,
             'total_rooms' => 10,
             'available_rooms' => 20,
-            'is_available' => true
+            'is_available' => true,
         ]);
 
         $validator = \Illuminate\Support\Facades\Validator::make(
@@ -280,7 +280,7 @@ class HotelManagementTest extends TestCase
         $hotel = Hotel::factory()->create();
         Booking::factory()->create([
             'hotel_id' => $hotel->id,
-            'status' => 'confirmed'
+            'status' => 'confirmed',
         ]);
 
         $this->assertTrue($hotel->bookings()->exists());
@@ -290,7 +290,7 @@ class HotelManagementTest extends TestCase
     {
         $hotel = Hotel::factory()->create();
         Booking::factory()->count(3)->create([
-            'hotel_id' => $hotel->id
+            'hotel_id' => $hotel->id,
         ]);
 
         $this->assertEquals(3, $hotel->bookings()->count());
@@ -327,7 +327,7 @@ class HotelManagementTest extends TestCase
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
 
-        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
@@ -335,7 +335,7 @@ class HotelManagementTest extends TestCase
             'price_per_night' => -100,
             'total_rooms' => 20,
             'available_rooms' => 15,
-            'is_available' => true
+            'is_available' => true,
         ]);
 
         $validator = \Illuminate\Support\Facades\Validator::make(
@@ -352,7 +352,7 @@ class HotelManagementTest extends TestCase
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
 
-        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
@@ -360,7 +360,7 @@ class HotelManagementTest extends TestCase
             'price_per_night' => 100,
             'total_rooms' => -10,
             'available_rooms' => 5,
-            'is_available' => true
+            'is_available' => true,
         ]);
 
         $validator = \Illuminate\Support\Facades\Validator::make(
@@ -377,7 +377,7 @@ class HotelManagementTest extends TestCase
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
 
-        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
@@ -385,7 +385,7 @@ class HotelManagementTest extends TestCase
             'price_per_night' => 100,
             'total_rooms' => 20,
             'available_rooms' => -5,
-            'is_available' => true
+            'is_available' => true,
         ]);
 
         $validator = \Illuminate\Support\Facades\Validator::make(
@@ -402,7 +402,7 @@ class HotelManagementTest extends TestCase
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
 
-        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
@@ -410,7 +410,7 @@ class HotelManagementTest extends TestCase
             'price_per_night' => 100,
             'total_rooms' => 10,
             'available_rooms' => 20,
-            'is_available' => true
+            'is_available' => true,
         ]);
 
         $validator = \Illuminate\Support\Facades\Validator::make(
@@ -425,7 +425,7 @@ class HotelManagementTest extends TestCase
 
     public function test_zero_price_validation()
     {
-        $request = new Request();
+        $request = new Request;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
@@ -435,7 +435,7 @@ class HotelManagementTest extends TestCase
             'available_rooms' => 5,
             'is_available' => true,
             'amenities' => ['wifi', 'parking'],
-            'picture_list' => ['image1.jpg']
+            'picture_list' => ['image1.jpg'],
         ]);
 
         $request->setMethod('POST');
@@ -443,7 +443,7 @@ class HotelManagementTest extends TestCase
         $rules = [
             'price_per_night' => ['required', 'numeric', 'gt:0'],
             'total_rooms' => ['required', 'integer', 'gt:0'],
-            'available_rooms' => ['required', 'integer', 'gte:0', 'lte:total_rooms']
+            'available_rooms' => ['required', 'integer', 'gte:0', 'lte:total_rooms'],
         ];
 
         $validator = Validator::make(
@@ -459,7 +459,7 @@ class HotelManagementTest extends TestCase
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
 
-        $request = new \App\Http\Requests\Hotel\CreateHotelRequest();
+        $request = new \App\Http\Requests\Hotel\CreateHotelRequest;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
@@ -467,7 +467,7 @@ class HotelManagementTest extends TestCase
             'price_per_night' => 100,
             'total_rooms' => 0,
             'available_rooms' => 0,
-            'is_available' => true
+            'is_available' => true,
         ]);
 
         $validator = \Illuminate\Support\Facades\Validator::make(
@@ -482,7 +482,7 @@ class HotelManagementTest extends TestCase
 
     public function test_price_decimal_validation()
     {
-        $request = new Request();
+        $request = new Request;
         $request->merge([
             'name' => 'Test Hotel',
             'location' => 'Test Location',
@@ -492,7 +492,7 @@ class HotelManagementTest extends TestCase
             'available_rooms' => 5,
             'is_available' => true,
             'amenities' => ['wifi', 'parking'],
-            'picture_list' => ['image1.jpg']
+            'picture_list' => ['image1.jpg'],
         ]);
 
         $request->setMethod('POST');
@@ -500,7 +500,7 @@ class HotelManagementTest extends TestCase
         $rules = [
             'price_per_night' => ['required', 'numeric', 'gt:0', 'regex:/^\d+(\.\d{1,2})?$/'],
             'total_rooms' => ['required', 'integer', 'gt:0'],
-            'available_rooms' => ['required', 'integer', 'gte:0', 'lte:total_rooms']
+            'available_rooms' => ['required', 'integer', 'gte:0', 'lte:total_rooms'],
         ];
 
         $validator = Validator::make(

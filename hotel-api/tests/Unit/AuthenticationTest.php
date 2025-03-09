@@ -5,9 +5,9 @@ namespace Tests\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Tests\TestCase;
-use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Str;
+use Laravel\Sanctum\PersonalAccessToken;
+use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
@@ -20,7 +20,7 @@ class AuthenticationTest extends TestCase
             'email' => 'saad.chabba@example.com',
             'password' => Hash::make('Password123!'),
             'pseudo' => 'Saadchabba',
-            'role' => 'user'
+            'role' => 'user',
         ];
 
         $user = User::create($userData);
@@ -70,7 +70,7 @@ class AuthenticationTest extends TestCase
     {
         $password = 'Password123!';
         $user = User::factory()->create([
-            'password' => Hash::make($password)
+            'password' => Hash::make($password),
         ]);
 
         $this->assertTrue(Hash::check($password, $user->password));
@@ -180,7 +180,7 @@ class AuthenticationTest extends TestCase
     {
         $shortPassword = 'short';
         $user = User::factory()->make([
-            'password' => Hash::make($shortPassword)
+            'password' => Hash::make($shortPassword),
         ]);
 
         $this->assertTrue(strlen($shortPassword) < 8);
@@ -188,11 +188,11 @@ class AuthenticationTest extends TestCase
 
     public function test_user_email_maximum_length()
     {
-        $longEmail = Str::random(255) . '@example.com';
+        $longEmail = Str::random(255).'@example.com';
 
         try {
             User::factory()->create([
-                'email' => $longEmail
+                'email' => $longEmail,
             ]);
             $this->fail('Expected validation to fail for long email');
         } catch (\Exception $e) {
@@ -203,7 +203,7 @@ class AuthenticationTest extends TestCase
     public function test_user_pseudo_format()
     {
         $user = User::factory()->create([
-            'pseudo' => 'valid_pseudo123'
+            'pseudo' => 'valid_pseudo123',
         ]);
 
         $this->assertMatchesRegularExpression('/^[a-zA-Z0-9_]+$/', $user->pseudo);
@@ -212,7 +212,7 @@ class AuthenticationTest extends TestCase
     public function test_user_role_default_value_on_creation()
     {
         $user = User::factory()->create([
-            'role' => 'user' // Set explicit default value instead of null
+            'role' => 'user', // Set explicit default value instead of null
         ]);
 
         $this->assertEquals('user', $user->role);

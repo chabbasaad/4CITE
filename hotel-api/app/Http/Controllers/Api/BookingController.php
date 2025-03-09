@@ -7,17 +7,14 @@ use App\Http\Requests\Booking\CreateBookingRequest;
 use App\Http\Requests\Booking\UpdateBookingRequest;
 use App\Models\Booking;
 use App\Models\Hotel;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class BookingController extends Controller
 {
     /**
      * List bookings with filters.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
@@ -26,7 +23,7 @@ class BookingController extends Controller
 
         // If regular user, only show own bookings
         // If employee/admin, show all bookings
-        if (!$user->isStaff()) {
+        if (! $user->isStaff()) {
             $query->where('user_id', $user->id);
         } else {
             // Staff can search by:
@@ -34,7 +31,7 @@ class BookingController extends Controller
             // - User email/name/pseudo
             // - Hotel name/location
             if ($request->search) {
-                $query->where(function($q) use ($request) {
+                $query->where(function ($q) use ($request) {
                     // Search by booking ID
                     if (is_numeric($request->search)) {
                         $q->orWhere('id', $request->search);
@@ -86,9 +83,6 @@ class BookingController extends Controller
 
     /**
      * Store a newly created booking.
-     *
-     * @param CreateBookingRequest $request
-     * @return JsonResponse
      */
     public function store(CreateBookingRequest $request): JsonResponse
     {
@@ -113,38 +107,31 @@ class BookingController extends Controller
 
         return response()->json([
             'message' => 'Booking created successfully',
-            'data' => $booking
+            'data' => $booking,
         ], 201);
     }
 
     /**
      * Display the specified booking.
-     *
-     * @param Request $request
-     * @param Booking $booking
-     * @return JsonResponse
      */
     public function show(Request $request, Booking $booking): JsonResponse
     {
         $user = $request->user();
 
         // Check if user can view this booking
-        if (!$user->isStaff() && $booking->user_id !== $user->id) {
+        if (! $user->isStaff() && $booking->user_id !== $user->id) {
             return response()->json([
-                'message' => 'You are not authorized to view this booking'
+                'message' => 'You are not authorized to view this booking',
             ], 403);
         }
 
         $booking->load(['hotel', 'user']);
+
         return response()->json($booking);
     }
 
     /**
      * Update the specified booking.
-     *
-     * @param UpdateBookingRequest $request
-     * @param Booking $booking
-     * @return JsonResponse
      */
     public function update(UpdateBookingRequest $request, Booking $booking): JsonResponse
     {
@@ -168,38 +155,34 @@ class BookingController extends Controller
 
         return response()->json([
             'message' => 'Booking updated successfully',
-            'data' => $booking->fresh()
+            'data' => $booking->fresh(),
         ]);
     }
 
     /**
      * Remove the specified booking.
-     *
-     * @param Request $request
-     * @param Booking $booking
-     * @return JsonResponse
      */
     public function destroy(Request $request, Booking $booking): JsonResponse
     {
         $user = $request->user();
 
         // Check if user can delete this booking
-        if (!$user->isAdmin() && $booking->user_id !== $user->id) {
+        if (! $user->isAdmin() && $booking->user_id !== $user->id) {
             return response()->json([
-                'message' => 'You are not authorized to delete this booking'
+                'message' => 'You are not authorized to delete this booking',
             ], 403);
         }
 
         // Check if booking can be cancelled (e.g., not too close to check-in date)
         // Only apply this restriction to non-staff users
-        if (!$user->isStaff()) {
+        if (! $user->isStaff()) {
             $checkIn = new \DateTime($booking->check_in_date);
-            $now = new \DateTime();
+            $now = new \DateTime;
             $daysUntilCheckIn = $now->diff($checkIn)->days;
 
             if ($daysUntilCheckIn < 2) {
                 return response()->json([
-                    'message' => 'Bookings can only be cancelled at least 2 days before check-in'
+                    'message' => 'Bookings can only be cancelled at least 2 days before check-in',
                 ], 400);
             }
         }
@@ -207,7 +190,7 @@ class BookingController extends Controller
         $booking->delete();
 
         return response()->json([
-            'message' => 'Booking cancelled successfully'
+            'message' => 'Booking cancelled successfully',
         ]);
     }
 }

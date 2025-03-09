@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Hotel;
 use App\Models\Booking;
+use App\Models\Hotel;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Carbon\Carbon;
 
 class BookingManagementTest extends TestCase
 {
@@ -78,12 +78,12 @@ class BookingManagementTest extends TestCase
         Booking::factory()->create([
             'user_id' => $user->id,
             'check_in_date' => '2024-04-15',
-            'check_out_date' => '2024-04-20'
+            'check_out_date' => '2024-04-20',
         ]);
         Booking::factory()->create([
             'user_id' => $user->id,
             'check_in_date' => '2024-05-01',
-            'check_out_date' => '2024-05-05'
+            'check_out_date' => '2024-05-05',
         ]);
 
         $response = $this->actingAs($user)
@@ -105,7 +105,7 @@ class BookingManagementTest extends TestCase
             'check_out_date' => Carbon::tomorrow()->addDays(5)->format('Y-m-d'),
             'guest_names' => ['John Doe', 'Jane Doe'],
             'special_requests' => 'Early check-in requested',
-            'contact_phone' => '+1234567890'
+            'contact_phone' => '+1234567890',
         ];
 
         $response = $this->actingAs($user)
@@ -113,7 +113,7 @@ class BookingManagementTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJson([
-                'message' => 'Booking created successfully'
+                'message' => 'Booking created successfully',
             ]);
     }
 
@@ -126,7 +126,7 @@ class BookingManagementTest extends TestCase
             'hotel_id' => $hotel->id,
             'check_in_date' => '2024-04-20',
             'check_out_date' => '2024-04-15', // Check-out before check-in
-            'guest_names' => ['John Doe']
+            'guest_names' => ['John Doe'],
         ];
 
         $response = $this->actingAs($user)
@@ -140,7 +140,7 @@ class BookingManagementTest extends TestCase
         $user = User::factory()->create(['role' => 'user']);
         $hotel = Hotel::factory()->create([
             'is_available' => true,
-            'available_rooms' => 1 // Only one room available
+            'available_rooms' => 1, // Only one room available
         ]);
 
         $bookingData = [
@@ -148,7 +148,7 @@ class BookingManagementTest extends TestCase
             'check_in_date' => '2024-04-15',
             'check_out_date' => '2024-04-20',
             'guest_names' => array_fill(0, 10, 'Guest Name'), // Too many guests
-            'contact_phone' => '+1234567890'
+            'contact_phone' => '+1234567890',
         ];
 
         $response = $this->actingAs($user)
@@ -169,7 +169,7 @@ class BookingManagementTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'id' => $booking->id,
-                'user_id' => $user->id
+                'user_id' => $user->id,
             ]);
     }
 
@@ -183,7 +183,7 @@ class BookingManagementTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'id' => $booking->id
+                'id' => $booking->id,
             ]);
     }
 
@@ -206,7 +206,7 @@ class BookingManagementTest extends TestCase
         $booking = Booking::factory()->create(['user_id' => $user->id]);
 
         $updateData = [
-            'special_requests' => 'Updated special requests'
+            'special_requests' => 'Updated special requests',
         ];
 
         $response = $this->actingAs($user)
@@ -222,7 +222,7 @@ class BookingManagementTest extends TestCase
         $booking = Booking::factory()->create();
 
         $updateData = [
-            'status' => 'confirmed'
+            'status' => 'confirmed',
         ];
 
         $response = $this->actingAs($admin)
@@ -240,7 +240,7 @@ class BookingManagementTest extends TestCase
 
         $response = $this->actingAs($user)
             ->putJson("/api/bookings/{$booking->id}", [
-                'special_requests' => 'Updated special requests'
+                'special_requests' => 'Updated special requests',
             ]);
 
         $response->assertStatus(403);
@@ -252,7 +252,7 @@ class BookingManagementTest extends TestCase
         $user = User::factory()->create(['role' => 'user']);
         $booking = Booking::factory()->create([
             'user_id' => $user->id,
-            'check_in_date' => Carbon::now()->addDays(5)
+            'check_in_date' => Carbon::now()->addDays(5),
         ]);
 
         $response = $this->actingAs($user)
@@ -260,7 +260,7 @@ class BookingManagementTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Booking cancelled successfully'
+                'message' => 'Booking cancelled successfully',
             ]);
     }
 
@@ -269,7 +269,7 @@ class BookingManagementTest extends TestCase
         $user = User::factory()->create(['role' => 'user']);
         $booking = Booking::factory()->create([
             'user_id' => $user->id,
-            'check_in_date' => Carbon::now()->addHours(47)
+            'check_in_date' => Carbon::now()->addHours(47),
         ]);
 
         $response = $this->actingAs($user)
@@ -277,7 +277,7 @@ class BookingManagementTest extends TestCase
 
         $response->assertStatus(400)
             ->assertJson([
-                'message' => 'Bookings can only be cancelled at least 2 days before check-in'
+                'message' => 'Bookings can only be cancelled at least 2 days before check-in',
             ]);
     }
 
@@ -285,7 +285,7 @@ class BookingManagementTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $booking = Booking::factory()->create([
-            'check_in_date' => Carbon::now()->addHours(1)
+            'check_in_date' => Carbon::now()->addHours(1),
         ]);
 
         $response = $this->actingAs($admin)
@@ -293,7 +293,7 @@ class BookingManagementTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Booking cancelled successfully'
+                'message' => 'Booking cancelled successfully',
             ]);
     }
 
@@ -303,7 +303,7 @@ class BookingManagementTest extends TestCase
         $otherUser = User::factory()->create(['role' => 'user']);
         $booking = Booking::factory()->create([
             'user_id' => $otherUser->id,
-            'check_in_date' => Carbon::now()->addDays(5)
+            'check_in_date' => Carbon::now()->addDays(5),
         ]);
 
         $response = $this->actingAs($user)
@@ -356,12 +356,12 @@ class BookingManagementTest extends TestCase
         // Create bookings in May
         Booking::factory()->count(2)->create([
             'check_in_date' => '2024-05-15',
-            'check_out_date' => '2024-05-20'
+            'check_out_date' => '2024-05-20',
         ]);
         // Create bookings outside May
         Booking::factory()->create([
             'check_in_date' => '2024-04-15',
-            'check_out_date' => '2024-04-20'
+            'check_out_date' => '2024-04-20',
         ]);
 
         $response = $this->actingAs($admin)
@@ -400,19 +400,19 @@ class BookingManagementTest extends TestCase
             'user_id' => $user->id,
             'status' => 'confirmed',
             'check_in_date' => '2024-04-15',
-            'check_out_date' => '2024-04-20'
+            'check_out_date' => '2024-04-20',
         ]);
 
         // Create non-matching bookings
         Booking::factory()->create([
             'user_id' => $user->id,
             'status' => 'cancelled',
-            'check_in_date' => '2024-04-15'
+            'check_in_date' => '2024-04-15',
         ]);
         Booking::factory()->create([
             'user_id' => $user->id,
             'status' => 'confirmed',
-            'check_in_date' => '2024-05-15'
+            'check_in_date' => '2024-05-15',
         ]);
 
         $response = $this->actingAs($admin)

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class Booking extends Model
 {
@@ -20,7 +20,7 @@ class Booking extends Model
         'status',
         'special_requests',
         'contact_phone',
-        'total_price'
+        'total_price',
     ];
 
     protected $casts = [
@@ -68,6 +68,7 @@ class Booking extends Model
     {
         $now = Carbon::now();
         $hoursUntilCheckIn = $now->diffInHours($this->check_in_date, false);
+
         return $hoursUntilCheckIn >= 48;
     }
 

@@ -24,7 +24,7 @@ class Hotel extends Model
         'is_available',
         'total_rooms',
         'amenities',
-        'picture_list'
+        'picture_list',
     ];
 
     /**
@@ -38,7 +38,7 @@ class Hotel extends Model
         'total_rooms' => 'integer',
         'is_available' => 'boolean',
         'amenities' => 'array',
-        'picture_list' => 'array'
+        'picture_list' => 'array',
     ];
 
     /**
@@ -68,6 +68,7 @@ class Hotel extends Model
         if ($max !== null) {
             $query->where('price_per_night', '<=', $max);
         }
+
         return $query;
     }
 
@@ -83,6 +84,7 @@ class Hotel extends Model
                     ->orWhere('description', 'like', "%{$search}%");
             });
         }
+
         return $query;
     }
 }

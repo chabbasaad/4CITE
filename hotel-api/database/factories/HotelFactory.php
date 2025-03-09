@@ -22,8 +22,9 @@ class HotelFactory extends Factory
     public function definition()
     {
         $total_rooms = $this->faker->numberBetween(10, 100);
+
         return [
-            'name' => $this->faker->company() . ' Hotel',
+            'name' => $this->faker->company().' Hotel',
             'location' => $this->faker->city(),
             'description' => $this->faker->paragraph(),
             'price_per_night' => $this->faker->numberBetween(100, 1000),
@@ -49,6 +50,7 @@ class HotelFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $total_rooms = $attributes['total_rooms'] ?? $this->faker->numberBetween(10, 100);
+
             return [
                 'is_available' => true,
                 'total_rooms' => $total_rooms,
