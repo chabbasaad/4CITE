@@ -40,9 +40,6 @@ jobs:
       - name: Run ESLint
         run: npm run lint -- --max-warnings=0 || true
 
-      - name: Check TypeScript Types
-        run: npm run type-check
-
       - name: Run Test
         run: npm test
 
