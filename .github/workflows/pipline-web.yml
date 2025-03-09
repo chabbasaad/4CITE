@@ -45,6 +45,8 @@ jobs:
 
   security:
     needs: test
+    # Only run on push to master or manual trigger, not on pull requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -70,6 +72,8 @@ jobs:
 
   build:
     needs: security
+    # Only run on push to master or manual trigger, not on pull requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -78,17 +82,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
-      - name: Setup 
+
+      - name: Setup
         uses: actions/setup-node@v3
         with:
           node-version: 22
           cache: 'npm'
           cache-dependency-path: './hotel-web/package-lock.json'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build React app
         run: npm run build || true
 
@@ -97,9 +101,11 @@ jobs:
         with:
           name: build
           path: hotel-web/dist
-          
+
   deploy:
     needs: build
+    # Only run on push to master or manual trigger, not on pull requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment: production
     steps:
