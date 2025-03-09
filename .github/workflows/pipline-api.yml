@@ -6,6 +6,12 @@ on:
     paths:
       - 'hotel-api/**'
       - '.github/workflows/**'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'hotel-api/**'
+      - '.github/workflows/**'
+    types: [opened, synchronize, reopened]
 
 jobs:
   test:
