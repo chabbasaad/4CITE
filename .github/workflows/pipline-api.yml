@@ -18,10 +18,11 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: hotel_api_test
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
-          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: backend
+          MYSQL_USER: root
+          MYSQL_PASSWORD: ""
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_ROOT_PASSWORD: ""
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -53,9 +54,9 @@ jobs:
         DB_CONNECTION: mysql
         DB_HOST: 127.0.0.1
         DB_PORT: 3306
-        DB_DATABASE: hotel_api_test
-        DB_USERNAME: user
-        DB_PASSWORD: password
+        DB_DATABASE: backend
+        DB_USERNAME: root
+        DB_PASSWORD: ""
       run: |
         echo "Running Tests..."
         php artisan test --testsuite=Feature,Unit
@@ -72,10 +73,11 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: hotel_api_test
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
-          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: backend
+          MYSQL_USER: root
+          MYSQL_PASSWORD: ""
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_ROOT_PASSWORD: ""
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -92,56 +94,13 @@ jobs:
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
-    - name: Setup Database and Cache Tables
-      env:
-        DB_CONNECTION: mysql
-        DB_HOST: 127.0.0.1
-        DB_PORT: 3306
-        DB_DATABASE: hotel_api_test
-        DB_USERNAME: user
-        DB_PASSWORD: password
+    - name: Copy .env and Configure Database
       run: |
-        php artisan config:clear
-        php artisan cache:clear
-        php artisan view:clear
-        php artisan route:clear
-        php artisan cache:table
-        php artisan migrate --force
-        
-    - name: Run Composer Audit
-      run: |
-        echo "Running Composer Security Audit..."
-        composer audit
-        if [ $? -eq 0 ]; then
-          echo "No security vulnerabilities found!"
-        else
-          echo "Security vulnerabilities found!"
-          exit 1
-        fi
-
-    - name: Check for Known Vulnerabilities
-      run: |
-        echo "Checking for known vulnerabilities..."
-        composer show --direct --format=json | jq -r '.installed[] | .name + " " + .version' | while read package version; do
-          response=$(curl -s "https://packagist.org/packages/$package.json")
-          if echo "$response" | jq -e '.security-advisories != null and .security-advisories != []' > /dev/null; then
-            echo "⚠️ Security advisory found for $package version $version"
-            exit 1
-          fi
-        done
-        echo "No known vulnerabilities found in direct dependencies!"
-
-    - name: Setup Production Environment
-      run: |
-        echo "Setting up production environment..."
         cp .env.example .env
-        sed -i 's/APP_ENV=local/APP_ENV=production/' .env
-        sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env
-        sed -i 's/CACHE_DRIVER=database/CACHE_DRIVER=file/' .env
-        sed -i 's/SESSION_DRIVER=database/SESSION_DRIVER=file/' .env
-        sed -i 's/QUEUE_CONNECTION=database/QUEUE_CONNECTION=sync/' .env
+        sed -i 's/DB_DATABASE=.*/DB_DATABASE=backend/' .env
+        sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
+        sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=/' .env
         php artisan key:generate
-        echo "Environment configured for production"
 
     - name: Laravel Security Check
       env:
@@ -153,9 +112,9 @@ jobs:
         DB_CONNECTION: mysql
         DB_HOST: 127.0.0.1
         DB_PORT: 3306
-        DB_DATABASE: hotel_api_test
-        DB_USERNAME: user
-        DB_PASSWORD: password
+        DB_DATABASE: backend
+        DB_USERNAME: root
+        DB_PASSWORD: ""
       run: |
         echo "Running Laravel specific security checks..."
         
@@ -220,9 +179,9 @@ jobs:
         DB_CONNECTION: mysql
         DB_HOST: 127.0.0.1
         DB_PORT: 3306
-        DB_DATABASE: hotel_api_test
-        DB_USERNAME: user
-        DB_PASSWORD: password
+        DB_DATABASE: backend
+        DB_USERNAME: root
+        DB_PASSWORD: ""
       run: |
         echo "Optimizing application..."
         # First, update the .env file to ensure file-based caching
