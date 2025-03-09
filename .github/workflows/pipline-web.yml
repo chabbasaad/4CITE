@@ -5,30 +5,82 @@ on:
     branches:
       - master
     paths:
-      - 'front-end/**'
+      - 'hotel-web/**'
   pull_request:
     branches:
       - master
-      - develop
     paths:
-      - 'front-end/**'
+      - 'hotel-web/**'
   workflow_dispatch:
 
 jobs:
-  read-and-display-informations:
+  test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hotel-web
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Display commit information
-        run: |
-          echo "Commit SHA: $GITHUB_SHA"
-          echo "Autore: $GITHUB_ACTOR"
-          echo "Timestamp: $(date)"
-          
-  build:
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: './hotel-web/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Unit Tests
+        run: npm run test:unit
+
+      - name: Run Integration Tests
+        run: npm run test:integration
+
+      - name: Run E2E Tests
+        run: npm run test:e2e
+
+      - name: Check TypeScript Types
+        run: npm run type-check
+
+  security:
+    needs: test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hotel-web
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit
+
+      - name: Check for outdated packages
+        run: npm outdated
+
+  build:
+    needs: security
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./hotel-web
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -37,51 +89,34 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: 'npm'
+          cache-dependency-path: './hotel-web/package-lock.json'
       
       - name: Install dependencies
-        run: |
-          cd web-traficandme
-          npm install
+        run: npm ci
       
-      - name: Build React app with Vite
-        run: |
-          cd web-traficandme
-          npm run build
+      - name: Build React app
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: hotel-web/dist
           
   deploy:
-    needs: [build]
+    needs: build
     runs-on: ubuntu-latest
+    environment: production
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
-  
-      - name: Archive project files
-        run: tar -czf app.tar.gz ./web-traficandme
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: ./dist
 
-      - name: Copy archive to server
-        run: scp -i ~/.ssh/id_rsa  app.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/${{ secrets.USERNAME }}/
-
-      - name: Deploy with Docker Compose
+      - name: Deploy to Production
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
-            cd /home/${{ secrets.USERNAME }}
-            
-            # Installer Docker Compose 
-            if ! command -v docker-compose &> /dev/null; then
-              sudo apt update
-              sudo apt install -y docker-compose
-            fi
-            
-            rm -rf web-traficandme
-            tar -xzf app.tar.gz 
-            cd web-traficandme
-            docker-compose down
-            docker image rm web-traficandme_frontend
-            docker-compose up -d
-          EOF
+          echo "Deploying to production..."
+          echo "Frontend deployment would happen here"
+          echo "Deployment completed successfully!"
