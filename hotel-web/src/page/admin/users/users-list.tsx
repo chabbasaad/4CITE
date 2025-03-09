@@ -17,11 +17,11 @@ export default function UsersList() {
     }, [fetchUsers]);
 
     if (loading) {
-        return <p className="text-center text-gray-700 mt-4">Chargement des utilisateurs...</p>;
+        return <p className="mt-15 text-center text-gray-700 mt-4">Chargement des utilisateurs...</p>;
     }
 
     if (!Array.isArray(users) || users.length === 0) {
-        return <p className="text-center text-gray-700 mt-4">Aucun utilisateur trouvé.</p>;
+        return <p className="mt-15 text-center text-gray-700 mt-4">Aucun utilisateur trouvé.</p>;
     }
 
     const handleUpdateClick = (id: number) => {
@@ -36,12 +36,12 @@ export default function UsersList() {
     };
 
     return (
-        <div className="flex flex-col px-4 sm:px-6 lg:px-8">
+        <div className="flex mt-15 flex-col px-4 sm:px-6 lg:px-8">
             <div className="sm:flex sm:items-center mb-4">
 
-                <div className="sm:flex-auto">
-                    <h1 className="text-lg font-semibold text-gray-900 mt-5">Liste des Utilisateurs</h1>
-                    <p className="mt-2 text-sm text-gray-700">
+                <div className="mt-5 sm:flex-auto">
+                    <h1 className=" ctext-lg font-semibold text-gray-900 mt-5">Liste des Utilisateurs</h1>
+                    <p className=" text-sm text-gray-700">
                         Voici la liste des utilisateurs enregistrés dans le système.
                     </p>
                 </div>

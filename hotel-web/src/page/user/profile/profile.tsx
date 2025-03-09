@@ -180,7 +180,6 @@ export default function Profile() {
                                     bookings.map((booking) => {
                                         // Trouver l'hôtel correspondant à booking.hotel_id
                                         const hotel = hotels.find((hotel) => hotel.id === booking.hotel_id);
-                                        console.log(hotel)
                                         return (
                                             <div key={booking.id} className="bg-white shadow-md rounded-lg p-6 mt-6">
                                                 <h3 className="text-lg font-semibold">{hotel ? hotel.name : "Hôtel inconnu"}</h3>

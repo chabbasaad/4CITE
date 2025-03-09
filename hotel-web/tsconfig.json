@@ -13,7 +13,11 @@
     "lib": ["ESNext", "DOM"],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": false,  // Désactiver pour permettre la génération des fichiers
+    "declaration": true,  // Générer les fichiers .d.ts
+    "declarationDir": "./dist/types",  // Répertoire où seront générés les fichiers .d.ts
+    "outDir": "./dist" , // Répertoire de sortie pour les fichiers compilés
+    "include": ["src/**/*.tsx"]
   },
   "references": [
     { "path": "./tsconfig.app.json" },
@@ -25,5 +29,11 @@
     "src/test/setup.d.ts",
     "cypress/**/*.ts",
     "cypress/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.test.tsx",   // Exclure les fichiers de test
+    "cypress/**/*.ts",     // Exclure les fichiers Cypress
+    "cypress/**/*.tsx"     // Exclure les fichiers Cypress
   ]
 }
