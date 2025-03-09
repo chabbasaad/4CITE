@@ -13,7 +13,10 @@
     "lib": ["ESNext", "DOM"],
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "declaration": true,       // Générer les fichiers .d.ts
+    "declarationDir": "./dist/types", // Le dossier où les fichiers .d.ts seront placés
+    "outDir": "./dist"
   },
   "references": [
     { "path": "./tsconfig.app.json" },
