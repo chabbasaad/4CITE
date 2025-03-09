@@ -3,9 +3,10 @@ import { toast } from "react-toastify";
 import { BookingFetchResponseData} from "../model/booking/booking-fetch";
 import {BookingCreateRequestData, BookingCreateResponseData} from "../model/booking/booking-create";
 import {BookingUpdateRequestData, BookingUpdateResponseData} from "../model/booking/booking-update";
+import {testEnv} from "../../../env.ts";
 
-const apiUrl = "http://89.168.20.112:8000/api";
-const API_URL = `${apiUrl}/bookings`;
+const apiUrl = process.env.VITE_API_URL;
+const API_URL = `http://89.168.20.112:8000/api/bookings`;
 
 const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("user_token")}`,

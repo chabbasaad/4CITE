@@ -10,6 +10,8 @@ import {
 import { BookingCreateRequestData, BookingCreateResponseData } from "../../model/booking/booking-create";
 import { BookingUpdateRequestData, BookingUpdateResponseData } from "../../model/booking/booking-update";
 import { BookingFetchResponseData } from "../../model/booking/booking-fetch";
+import {testEnv} from "../../../../env.ts";
+
 
 // Mock de react-toastify
 jest.mock("react-toastify", () => ({
@@ -20,8 +22,8 @@ jest.mock("react-toastify", () => ({
 }));
 
 const mock = new MockAdapter(axios);
-const apiUrl = "http://89.168.20.112:8000/api";
-const API_URL = `${apiUrl}/bookings`;
+
+const API_URL =  `${testEnv.VITE_API_URL}/bookings`;
 
 describe("API Booking Tests", () => {
     afterEach(() => {

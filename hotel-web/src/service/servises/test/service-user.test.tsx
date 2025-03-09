@@ -11,6 +11,7 @@ import {
 } from "../service-user";
 import {UserFetchResponseData} from "../../model/user/user-fetch";
 import {UserLoginResponseData, UserRegisterResponseData} from "../../model/user/user-connexion";
+import {testEnv} from "../../../../env";
 
 jest.mock("react-toastify", () => ({
     toast: {
@@ -19,8 +20,15 @@ jest.mock("react-toastify", () => ({
     },
 }));
 
+Object.defineProperty(global, "importMeta", {
+    value: {
+        env: testEnv,
+    },
+});
+
 const mock = new MockAdapter(axios);
-const API_URL = "http://89.168.20.112:8000/api/";
+
+const API_URL =  `${testEnv.VITE_API_URL}/`;
 
 describe("API User Tests", () => {
     afterEach(() => {

@@ -3,9 +3,10 @@ import { toast } from "react-toastify";
 import {HotelUpdateRequestData, HotelUpdateResponseData} from "../model/hotel/hotel-update";
 import {HotelCreateRequestData, HotelCreateResponseData} from "../model/hotel/hotel-create";
 import {HotelFetchResponseData, HotelFetchsResponseData} from "../model/hotel/hotel-fetch";
+import {testEnv} from "../../../env.ts";
 
-const apiUrl = "http://89.168.20.112:8000/api";
-const API_URL = `${apiUrl}/hotels`;
+const apiUrl = process.env.VITE_API_URL;
+const API_URL = `${testEnv.VITE_API_URL}/hotels`;
 
 const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("user_token")}`,

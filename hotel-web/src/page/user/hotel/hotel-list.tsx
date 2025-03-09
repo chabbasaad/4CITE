@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import {toast} from "react-toastify";
 import useHotelStore from "../../../service/stores/hotel-store";
 import {useEffect} from "react";
+import {toast} from "react-toastify";
 
 export default function HotelList() {
     const { hotels, loading, fetchHotels } = useHotelStore();

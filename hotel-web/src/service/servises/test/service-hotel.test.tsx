@@ -10,6 +10,7 @@ import {
 } from "../service-hotel";
 import {HotelCreateRequestData, HotelCreateResponseData} from "../../model/hotel/hotel-create";
 import {HotelUpdateRequestData, HotelUpdateResponseData} from "../../model/hotel/hotel-update";
+import {testEnv} from "../../../../env";
 
 // Mock de react-toastify
 jest.mock("react-toastify", () => ({
@@ -20,8 +21,8 @@ jest.mock("react-toastify", () => ({
 }));
 
 const mock = new MockAdapter(axios);
-const apiUrl = "http://89.168.20.112:8000/api";
-const API_URL = `${apiUrl}/hotels`;
+
+const API_URL =  `${testEnv.VITE_API_URL}/hotels`;
 
 describe("API Hotel Tests", () => {
     afterEach(() => {

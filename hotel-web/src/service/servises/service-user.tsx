@@ -9,9 +9,11 @@ import {
     UserRegisterResponseData,
     UserRequest
 } from "../model/user/user-connexion";
+import {testEnv} from "../../../env.ts";
 
-const apiUrl =  "http://89.168.20.112:8000/api";
-const API_URL = `${apiUrl}/`;
+
+const apiUrl = process.env.VITE_API_URL;
+const API_URL = `${testEnv.VITE_API_URL}/`;
 
 const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("user_token")}`,

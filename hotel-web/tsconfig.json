@@ -1,16 +1,18 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "allowJs": true,
-    "jsx": "react-jsx",
-    "target": "ESNext",
-    "strict": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": ["ESNext", "DOM"]
+    "module": "esnext",                    // Ensure this is set to "esnext"
+    "moduleResolution": "node",            // "node" is fine for module resolution
+    "allowSyntheticDefaultImports": true,  // Allow synthetic default imports for compatibility
+    "esModuleInterop": true,               // Ensure interop with non-ES modules
+    "allowJs": true,                       // If you need JS support, keep it as true
+    "jsx": "react-jsx",                    // Set JSX mode for React 17 JSX Transform
+    "target": "ESNext",                    // Allow ESNext syntax features
+    "strict": true,                        // Enforce strict type-checking
+    "skipLibCheck": true,                  // Skip library check for faster builds
+    "forceConsistentCasingInFileNames": true, // Enforce consistent casing in file names
+    "lib": ["ESNext", "DOM"],              // Include DOM and ESNext lib for better type-checking
+    "resolveJsonModule": true,         // If you're using JSON files in your project
+    "allowImportingTsExtensions": true
   },
   "references": [
     { "path": "./tsconfig.app.json" },
@@ -19,6 +21,8 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/test/setup.d.ts"  // Assure-toi que ce fichier est inclus
+    "src/test/setup.d.ts",
+    "cypress/**/*.ts",
+    "cypress/**/*.tsx"
   ]
 }
