@@ -10,6 +10,6 @@ export interface BookingUpdateRequestData {
 }
 
 export interface BookingUpdateResponseData{
-    "message": number,
+    "message": string,
     "data": Booking,
 }

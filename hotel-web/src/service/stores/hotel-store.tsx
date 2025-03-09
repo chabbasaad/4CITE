@@ -8,7 +8,7 @@ import {
 } from "../servises/service-hotel.tsx";
 import {HotelUpdateRequestData} from "../model/hotel/hotel-update.tsx";
 import {HotelCreateRequestData} from "../model/hotel/hotel-create.tsx";
-import {Hotel} from "../model/model-hotel.tsx";
+import {Hotel} from "../model/hotel/hotel.tsx";
 
 interface HotelState {
     hotels: Hotel[];
@@ -30,7 +30,8 @@ const useHotelStore = create<HotelState>((set) => ({
     fetchHotels: async () => {
         set({ loading: true });
         try {
-            const hotels = await fetchHotels();
+            const response = await fetchHotels();
+            const hotels = response.data;
             set({ hotels });
         } catch (error) {
             console.error("Erreur de chargement:", error);
@@ -42,7 +43,8 @@ const useHotelStore = create<HotelState>((set) => ({
     fetchHotel: async (id) => {
         set({ loading: true });
         try {
-            const hotel = await fetchHotel(id);
+            const response = await fetchHotel(id);
+            const hotel = response.data;
             set({ hotel });
         } catch (error) {
             console.error("Erreur de chargement:", error);
@@ -64,7 +66,9 @@ const useHotelStore = create<HotelState>((set) => ({
         }
     },
 
-    updateHotel: async (id, params) => {
+    updateHotel: async (id, params
+
+    ) => {
         set({ loading: true });
         try {
             const response  = await updateHotel(id, params);

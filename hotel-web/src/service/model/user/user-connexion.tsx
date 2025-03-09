@@ -1,4 +1,4 @@
-import {User} from "./user/user.tsx";
+import {User} from "./user.tsx";
 
 export interface UserRequest {
     id: number;

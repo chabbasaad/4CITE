@@ -24,6 +24,7 @@ export default function HotelOverview() {
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        e.preventDefault();
         const { name, value, type } = e.target;
         setHotelData({
             ...hotelData,
@@ -31,7 +32,8 @@ export default function HotelOverview() {
         });
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         await createBooking(hotelData);
         setHotelData({
             hotel_id: id ? Number(id) : 0,

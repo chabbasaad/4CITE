@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import {createUser, deleteUser, fetchUsers, login, updateUser} from "../servises/service-user.tsx";
-import {User} from "../model/user/user.tsx";
-import {UserCreateRequestData} from "../model/user/user-create.tsx";
-import {UserUpdateRequestData, UserUpdateResponseData} from "../model/user/user-update.tsx";
-import {UserLogin, UserLoginResponseData} from "../model/model-user.tsx";
+import {createUser, deleteUser, fetchUsers, login, updateUser} from "../servises/service-user";
+import {User} from "../model/user/user";
+import {UserCreateRequestData} from "../model/user/user-create";
+import {UserUpdateRequestData, UserUpdateResponseData} from "../model/user/user-update";
+import {UserLogin, UserLoginResponseData} from "../model/user/user-connexion.tsx";
 
 interface UserState {
     users: User[];

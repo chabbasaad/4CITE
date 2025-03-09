@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {toast} from "react-toastify";
-import useUserStore from "../../service/stores/user-store.tsx";
+import useUserStore from "../../service/stores/user-store";
 
 export default function Login({ closeModal }: { closeModal: () => void }) {
     const [email, setEmail] = useState("");
@@ -79,7 +79,7 @@ export default function Login({ closeModal }: { closeModal: () => void }) {
                                 type="submit"
                                 className="w-full rounded-md bg-gray-950 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                Sign in
+                                Connexion
                             </button>
                         </div>
                     </form>

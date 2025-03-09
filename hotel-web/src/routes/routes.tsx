@@ -3,7 +3,7 @@ import AuthGuard from "./auth-guard.tsx";
 import Home from "../page/public/home/home.tsx";
 import Profile from "../page/user/profile/profile.tsx";
 import HotelOverview from "../page/user/hotel/hotel-overview.tsx";
-import About from "../page/public/nous/about.tsx";
+import About from "../page/public/about/about.tsx";
 import AuthGuardAdmin from "./auth-guard-admin.tsx";
 import HotelsList from "../page/admin/hotel/hotels-list.tsx";
 import UsersList from "../page/admin/users/users-list.tsx";

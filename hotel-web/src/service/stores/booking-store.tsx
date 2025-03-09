@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import {Booking} from "../model/booking/booking.tsx";
 import {createBooking, deleteBooking, fetchBookings, updateBooking} from "../servises/service-booking.tsx";
-import {BookingFetchRequestData} from "../model/booking/booking-fetch.tsx";
 import {BookingCreateRequestData} from "../model/booking/booking-create.tsx";
 import {BookingUpdateRequestData} from "../model/booking/booking-update.tsx";
 
@@ -9,7 +8,7 @@ interface BookingState {
     bookings: Booking[];
     booking: Booking | null;
     loading: boolean;
-    fetchBookings: (params?: BookingFetchRequestData) => Promise<void>;
+    fetchBookings: () => Promise<void>;
     createBooking : (params: BookingCreateRequestData) => Promise<void>;
     updateBooking : (id: number, params :BookingUpdateRequestData)=> Promise<void>;
     deleteBooking: (id: number) => Promise<void>;
@@ -20,9 +19,9 @@ const useBookingStore = create<BookingState>((set) => ({
     booking: null,
     loading : false,
 
-    fetchBookings: async (params ) => {
+    fetchBookings: async ( ) => {
         try {
-            const response = await fetchBookings(params);
+            const response = await fetchBookings();
             const bookings = response.data
             set({ bookings });
         } catch (error) {

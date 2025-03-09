@@ -39,6 +39,7 @@ export default function BookingUpdate({ id }: { id: number }) {
     }, [id, hotels]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        e.preventDefault();
         const { name, value, type } = e.target;
         setHotelData({
             ...hotelData,

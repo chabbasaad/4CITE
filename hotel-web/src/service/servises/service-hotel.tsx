@@ -1,12 +1,10 @@
-import axios from "axios";
-import {
-    Hotel,
-} from "../model/model-hotel.tsx";
+import axios, {AxiosError} from "axios";
 import { toast } from "react-toastify";
-import {HotelUpdateRequestData, HotelUpdateResponseData} from "../model/hotel/hotel-update.tsx";
-import {HotelCreateRequestData, HotelCreateResponseData} from "../model/hotel/hotel-create.tsx";
+import {HotelUpdateRequestData, HotelUpdateResponseData} from "../model/hotel/hotel-update";
+import {HotelCreateRequestData, HotelCreateResponseData} from "../model/hotel/hotel-create";
+import {HotelFetchResponseData, HotelFetchsResponseData} from "../model/hotel/hotel-fetch";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = "http://89.168.20.112:8000/api";
 const API_URL = `${apiUrl}/hotels`;
 
 const getAuthHeaders = () => ({
@@ -14,26 +12,31 @@ const getAuthHeaders = () => ({
     "Content-Type": "application/json",
 });
 
-export const fetchHotels = async (): Promise<Hotel[]> => {
+export const fetchHotels = async (): Promise<HotelFetchsResponseData> => {
     try {
-        const response = await axios.get<Hotel[]>(API_URL,{ headers: getAuthHeaders() });
-        return response.data.data;
+        const response = await axios.get<HotelFetchsResponseData>(API_URL,{ headers: getAuthHeaders() });
+        return response.data;
     } catch (error) {
-        if (error instanceof Error) {
-            console.error("Erreur:", error);
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
     }
 };
 
-export const fetchHotel = async (id: number): Promise<Hotel> => {
+export const fetchHotel = async (id: number): Promise<HotelFetchResponseData> => {
     try {
-        const response = await axios.get<Hotel>(`${API_URL}/${id}`, { headers: getAuthHeaders() });
-        return response.data.data;
+        const response = await axios.get<HotelFetchResponseData>(`${API_URL}/${id}`, { headers: getAuthHeaders() });
+        return response.data;
     } catch (error) {
-        if (error instanceof Error) {
-            toast.error(`Error: ${error.message || "Unknown error"}`);
-            console.error("Erreur:", error);
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
     }
@@ -45,9 +48,11 @@ export const createHotel = async (params: HotelCreateRequestData): Promise<Hotel
         toast.success(response.data.message);
         return response.data;
     } catch (error) {
-        if (error instanceof Error) {
-            toast.error(`Error: ${error.message || "Unknown error"}`);
-            console.error("Erreur:", error);
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
     }
@@ -59,9 +64,11 @@ export const updateHotel = async (id: number, params: HotelUpdateRequestData): P
         toast.success(response.data.message);
         return response.data;
     } catch (error) {
-        if (error instanceof Error) {
-            toast.error(`Error: ${error.message || "Unknown error"}`);
-            console.error("Erreur:", error);
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
     }
@@ -72,9 +79,11 @@ export const deleteHotel = async (id: number): Promise<void> => {
         const response = await axios.delete(`${API_URL}/${id}`, { headers: getAuthHeaders() });
         toast.success(response.data.message);
     } catch (error) {
-        if (error instanceof Error) {
-            toast.error(`Error: ${error.message || "Unknown error"}`);
-            console.error("Erreur:", error);
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
     }

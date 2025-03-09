@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import useBookingStore from "../../../service/stores/booking-store.tsx"; // Supposons que vous avez un store booking-store.tsx
-import { BookingUpdateRequestData } from "../../../service/model/booking/booking-update.tsx"; // Le modèle pour la mise à jour de la réservation
+import useBookingStore from "../../../service/stores/booking-store";
+import { BookingUpdateRequestData } from "../../../service/model/booking/booking-update";
 
 export default function BookingUpdate({ id ,setIsOpenUpdate}: { id: number,setIsOpenUpdate: (open: boolean) => void }) {
     const { bookings, loading, updateBooking } = useBookingStore();
     const [bookingData, setBookingData] = useState<BookingUpdateRequestData>({
         check_in_date: "",
         check_out_date: "",
-        status: "pending", // L'état par défaut peut être "pending" ou autre selon votre logique
+        status: "pending",
         special_requests: "",
         guest_names: [],
         contact_phone: "",

@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import { toast } from "react-toastify";
 import useBookingStore from "../../../service/stores/booking-store.tsx";
 
 export default function BookingList() {
-    const { bookings, loading, fetchBookings, deleteBooking } = useBookingStore();
+    const { bookings, loading, fetchBookings } = useBookingStore();
 
     useEffect(() => {
         fetchBookings().catch(() => toast.error("Erreur lors du chargement des réservations."));

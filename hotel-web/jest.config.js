@@ -5,6 +5,9 @@ export default {
     moduleNameMapper: {
         "^@/(.*)$": "<rootDir>/src/$1",
     },
+    globals: {
+        "import.meta.env.VITE_API_URL": "http://localhost:5000",
+    },
     setupFilesAfterEnv: ["<rootDir>/src/test/setup.ts"],
     transform: {
         "^.+\\.(ts|tsx)$": [

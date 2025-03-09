@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {register} from "../../service/servises/service-user.tsx"; // Importer le hook de navigation
+import {register} from "../../service/servises/service-user";
 
 export default function Register({ closeModal }: { closeModal: () => void }) {
     const [name, setName] = useState("");
@@ -44,7 +44,7 @@ export default function Register({ closeModal }: { closeModal: () => void }) {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
-                                Name
+                                Nom
                             </label>
                             <div className="mt-2">
                                 <input
@@ -114,7 +114,7 @@ export default function Register({ closeModal }: { closeModal: () => void }) {
 
                         <div>
                             <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                                password confirmation
+                                Password confirmation
                             </label>
                             <div className="mt-2">
                                 <input
@@ -135,7 +135,7 @@ export default function Register({ closeModal }: { closeModal: () => void }) {
                                 type="submit"
                                 className="flex w-full justify-center rounded-md bg-gray-950 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
-                                Sign Up
+                                S'inscrire
                             </button>
                         </div>
                     </form>

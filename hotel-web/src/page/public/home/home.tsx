@@ -1,5 +1,5 @@
-import Footer from "../../../components/footer/footer.tsx";
-import HotelList from "../../user/hotel/hotel-list.tsx";
+import Footer from "../../../components/footer/footer";
+import HotelList from "../../user/hotel/hotel-list";
 
 export default function Home() {
     return (
@@ -7,6 +7,7 @@ export default function Home() {
             <div
                 className="relative bg-cover bg-center "
                 style={{backgroundImage: 'url("/about/hotel4.jpg")'}}
+                data-testid="background-image"
             >
                 <div className="absolute inset-0 bg-black opacity-50"></div>
 

@@ -1,15 +1,16 @@
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import {toast} from "react-toastify";
+import {UserCreateRequestData, UserCreateResponseData} from "../model/user/user-create";
+import {UserFetchResponseData} from "../model/user/user-fetch";
+import {UserUpdateRequestData, UserUpdateResponseData} from "../model/user/user-update";
 import {
     UserLogin,
     UserLoginResponseData,
-    UserRegisterResponseData, UserRequest,
-} from "../model/model-user.tsx";
-import {UserCreateRequestData, UserCreateResponseData} from "../model/user/user-create.tsx";
-import {UserFetchResponseData} from "../model/user/user-fetch.tsx";
-import {UserUpdateRequestData, UserUpdateResponseData} from "../model/user/user-update.tsx";
+    UserRegisterResponseData,
+    UserRequest
+} from "../model/user/user-connexion";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl =  "http://89.168.20.112:8000/api";
 const API_URL = `${apiUrl}/`;
 
 const getAuthHeaders = () => ({
@@ -23,9 +24,11 @@ export const register = async (params: Omit<UserRequest, "id">): Promise<UserReg
         toast.success(response.data.message);
         return response.data;
     }catch (error) {
-        if (error instanceof Error) {
-            toast.error(`Error: ${error.response.data.message || "Unknown error"}`);
-            console.error("Erreur:", error);
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
 
@@ -37,27 +40,31 @@ export const login = async (param: Omit<UserLogin, "id">): Promise<UserLoginResp
          const response = await axios.post<UserLoginResponseData>(API_URL + `auth/login`,param)
          return response.data;
         } catch (error) {
-            if (error instanceof Error) {
-                toast.error(`Error: ${error.response.data.message || "Unknown error"}`);
-                console.error("Erreur:", error);
-            }
-            throw error;
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
+        }
+        throw error;
         }
 };
 
 export const fetchUsers = async (): Promise<UserFetchResponseData> => {
     try {
         const response = await axios.get<UserFetchResponseData>(`${API_URL}users`, { headers: getAuthHeaders() });
-        console.log(response)
         return response.data;
     } catch (error) {
-        if (error instanceof Error) {
-            toast.error(`${error.response.data.message || "Unknown error"}`);
-            console.error("Erreur:", error);
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
     }
 };
+
 
 export const createUser = async (params : UserCreateRequestData): Promise<UserCreateResponseData> => {
     try {
@@ -65,9 +72,11 @@ export const createUser = async (params : UserCreateRequestData): Promise<UserCr
         toast.success(response.data.message);
         return response.data;
     } catch (error) {
-        if (error instanceof Error) {
-            toast.error(`${error.response.data.message || "Unknown error"}`);
-            console.error("Erreur:", error);
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
     }
@@ -80,11 +89,12 @@ export const updateUser = async (id: number, params: UserUpdateRequestData): Pro
         toast.success(response.data.message);
         return response.data;
 
-    }catch (error: unknown) {
-
-        if (error instanceof Error) {
-            toast.error(error.message);
-            console.error("Erreur:", error);
+    }catch (error) {
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
 
@@ -96,9 +106,11 @@ export const deleteUser = async (id: number): Promise<void> => {
         const response = await axios.delete(`${API_URL}users/${id}`, { headers: getAuthHeaders() });
         toast.success(response.data.message);
     } catch (error) {
-        if (error instanceof Error) {
-            toast.error(error.message);
-            console.error("Erreur:", error);
+        if (error instanceof AxiosError && error.response) {
+            const errorMessage = error.response.data?.message || "Une erreur est survenue";
+            toast.error(errorMessage);
+        } else {
+            toast.error("Erreur inconnue");
         }
         throw error;
     }

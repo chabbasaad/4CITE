@@ -10,6 +10,6 @@ export interface BookingCreateRequestData{
 }
 
 export interface BookingCreateResponseData{
-    "message": number,
+    "message": string,
     "data": Booking,
 }
