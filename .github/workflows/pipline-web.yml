@@ -44,7 +44,9 @@ jobs:
         run: npm test
 
       - name: Run App for Cypress
-        run: npm run dev
+        run: |
+          nohup npm run dev & 
+          sleep 10  # Donne le temps à l'app de démarrer
         
       - name: Run Cypress
         run: npm run cypress:run
