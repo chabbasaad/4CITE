@@ -54,7 +54,7 @@ jobs:
   security:
     needs: test
     # Only run on push to master or manual trigger, not on pull requests
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -102,7 +102,7 @@ jobs:
         run: npm ci
 
       - name: Build React app
-        run: npm run build || true
+        run: npm run build 
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
