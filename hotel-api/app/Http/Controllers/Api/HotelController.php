@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 class HotelController extends Controller
 {
     /**
-     * List all hotels with pagination, sorting, and filtering.
+     * List all hotels with sorting, and filtering.
      *
      * @param Request $request
      * @return JsonResponse
