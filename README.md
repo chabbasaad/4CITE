@@ -20,6 +20,18 @@ A comprehensive hotel booking system built with Laravel and React, featuring use
 - Node.js >= 18.x
 - npm >= 9.x
 
+## 📁 Project Structure
+```
+project-root/
+├── hotel-api/          # Backend Laravel Application (Docker)
+│   ├── Dockerfile
+│   ├── docker/
+│   │   └── nginx/     # Nginx configuration
+│   └── ...
+└── hotel-web/         # Frontend React Application (Local)
+    └── ...
+```
+
 ## 🚀 Installation Guide
 
 ### Backend Setup (Docker)
@@ -27,10 +39,10 @@ A comprehensive hotel booking system built with Laravel and React, featuring use
 1. **Clone Repository**
    ```bash
    git clone https://github.com/chabbasaad/4CITE.git
-   cd <project-folder>
+   cd 4CITE
    ```
 
-2. **Configure Backend Environment**
+2. **Configure Backend**
    ```bash
    cd hotel-api
    ```
@@ -40,16 +52,13 @@ A comprehensive hotel booking system built with Laravel and React, featuring use
    docker-compose up -d --build
    ```
 
-
-
-
-   This command will:
-   - Build and start all Docker containers
-   - Automatically create the database
-   - Run all migrations
-   - Seed the database with initial data
+   > **Note:** Starting the services will take some time (5-8 minutes)
    
-   > Note: All database setup is handled automatically through a startup script. No manual migration commands are needed.
+   This command handles the complete setup:
+   - Builds and starts all Docker containers
+   - Automatically creates the database
+   - Runs all migrations through a startup script
+   - Seeds the database with initial data
 
 ### Frontend Setup (Local)
 
@@ -68,35 +77,50 @@ A comprehensive hotel booking system built with Laravel and React, featuring use
    npm run dev
    ```
 
-## 🌐 Access Points
+## 🔑 Default Login Credentials
 
+### Admin Account:
+```
+Email: admin@example.com
+Password: password123
+```
+
+### Sample Employee Account:
+```
+Email: employee1@example.com
+Password: password123
+```
+
+### Sample User Account:
+```
+Email: user1@example.com
+Password: password123
+```
+
+### Seeded Data Includes:
+- Sample Hotels with descriptions and images
+- Room categories and pricing
+- Example bookings
+- User roles and permissions
+
+## 🌐 Services & Access Points
+
+### Backend Services (Docker)
+- **Laravel API:** PHP-FPM service running Laravel application
+- **Nginx:** Web server for the backend API
+- **MySQL:** Database server
+
+### Frontend Service (Local)
+- **Vite Dev Server:** Local development server for React application
+
+### Access Points
 - **Frontend Application:** `http://localhost:5173`
 - **Backend API:** `http://localhost:8000`
 - **API Documentation:** `http://localhost:8000/docs/api`
 
-## 🐳 Docker Management Commands (Backend Only)
-
-```bash
-# Start containers
-docker-compose up -d
-
-# Stop containers
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# Rebuild containers
-docker-compose up -d --build
-
-# Run artisan commands
-docker-compose exec app php artisan <command>
-```
-
 ## 🧪 Testing Guide
 
 ### Backend Testing (Docker)
-
 ```bash
 # Run all tests
 docker-compose exec app php artisan test
@@ -107,49 +131,76 @@ docker-compose exec app php artisan test --testsuite=Feature
 ```
 
 ### Frontend Testing (Local)
-
 ```bash
-# Navigate to frontend directory
-cd hotel-web
-
 # Run tests
 npm test
 
-# Run tests with coverage
-npm test -- --coverage
+# Run Cypress tests in headless mode
+npm run cypress:run
 
-# Run tests in watch mode
-npm test -- --watch
+# Open Cypress Test Runner (GUI)
+npm run cypress:open
 ```
 
-## 🎨 Frontend Development Scripts
+## 🔧 Troubleshooting
 
+### Backend Issues (Docker)
 ```bash
-# Start development server
-npm run dev
+# Fix Permission Issues
+docker-compose exec app chmod -R 777 storage bootstrap/cache
 
-# Build for production
-npm run build
-
-# Run linting
-npm run lint
-
-# Preview production build
-npm run preview
+# Reset Environment
+docker-compose down -v
+docker-compose up -d --build
 ```
 
-### Frontend Dependencies
+### Frontend Issues (Local)
+```bash
+# Node Modules Issues
+rm -rf node_modules
+npm install
 
-- React v19.0.0
-- TypeScript
-- Tailwind CSS v4.0.9
-- Headless UI
-- Hero Icons
-- Framer Motion
-- Zustand (State Management)
+# Port Conflicts
+# Edit vite.config.ts to change port if 5173 is in use
+```
+
+## 📚 API Documentation with Scramble
+
+Our project uses Scramble to automatically generate OpenAPI (Swagger) documentation for all API endpoints.
+
+### Features
+- Automatic OpenAPI 3.1.0 specification generation
+- Interactive API documentation UI using Stoplight Elements
+- Real-time documentation updates based on code changes
+- Authentication endpoints documentation
+- Request/Response schema documentation
+
+### Accessing Documentation
+```
+http://localhost:8000/docs/api
+```
+
+## 🔄 GitHub Workflow & CI/CD Pipeline
+
+### Pull Request Rules
+- Mandatory Pull Requests for all new features
+- At least one developer review required
+- All conversations must be resolved
+- CI pipeline must pass all tests
+
+### CI/CD Pipeline Stages
+1. **Pull Request Stage:**
+   - Runs all unit and feature tests
+   - Verifies code review requirements
+   - Checks for resolved conversations
+
+2. **Main Branch Stage:**
+   - Comprehensive test suite execution
+   - Security vulnerability scanning
+   - Application build process
+   - Deployment simulation
 
 ## ✨ Core Features
-
 - User Authentication System
 - Hotel Management Interface
 - Advanced Booking System
