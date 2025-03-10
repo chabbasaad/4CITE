@@ -31,7 +31,7 @@ export default function HotelList() {
                                 key={hotel.id}
                                 className="group relative rounded-lg border p-4 shadow-lg cursor-pointer"
                                 onClick={() => {
-                                    localStorage.setItem('selectedHotelId', hotel.id);
+                                    localStorage.setItem('selectedHotel',JSON.stringify(hotel));
                                     navigate(`/hotel/${hotel.id}`);
                                 }}
                             >

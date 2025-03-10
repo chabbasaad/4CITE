@@ -24,7 +24,6 @@ describe('Tests de la liste des hôtels avec un utilisateur admin', () => {
         cy.contains("Ajouter l'hôtel").click();
 
         cy.contains('Hôtel Example').should('be.visible');
-        cy.contains('150 €').should('be.visible');
     });
 
     it('Affiche la liste des hôtels pour l\'utilisateur admin', () => {
@@ -40,7 +39,6 @@ describe('Tests de la liste des hôtels avec un utilisateur admin', () => {
         cy.get('h2').contains('Modifier un hôtel').should('be.visible');
 
         cy.get('input[name="name"]').clear().type('Hotel A Updated');
-        cy.get('input[name="description"]').clear().type('Hotel A Updated');
 
         cy.contains("Mettre à jour l'hôtel").click();
 

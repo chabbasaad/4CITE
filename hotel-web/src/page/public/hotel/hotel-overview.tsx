@@ -13,7 +13,6 @@ export default function HotelOverview() {
     const { id } = useParams();
     const { hotels, fetchHotel } = useHotelStore();
     const { createBooking } = useBookingStore();
-    const hotelId = localStorage.getItem('selectedHotelId');
 
     const [hotelData, setHotelData] = useState<BookingCreateRequestData>({
         hotel_id: id ? Number(id) : 0,
@@ -71,12 +70,12 @@ export default function HotelOverview() {
 
     useEffect(() => {
         if (id) {
-            fetchHotel(Number(hotelId)).catch(() => toast.error("Erreur lors du chargement de l'hôtel."));
+            fetchHotel(Number(id)).catch(() => toast.error("Erreur lors du chargement de l'hôtel."));
         }
     }, [id, fetchHotel]);
 
 
-    const hotel = hotels.find(h => h.id === Number(hotelId));
+    const hotel = hotels.find(h => h.id === Number(id));
 
     if (!hotel) {
         return <p className="text-center text-gray-500 mt-4">Hôtel introuvable.</p>;
@@ -99,9 +98,9 @@ export default function HotelOverview() {
                                 >
                                     <span className="sr-only">View image {index + 1}</span>
                                     <span className="absolute inset-0 overflow-hidden rounded-md">
-                                        <img 
-                                            src={image} 
-                                            alt="" 
+                                        <img
+                                            src={image}
+                                            alt=""
                                             className="h-full w-full object-cover object-center"
                                         />
                                     </span>
