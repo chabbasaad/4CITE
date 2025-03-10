@@ -6,10 +6,60 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
+
+    private $testUser;
+    private $testPassword = 'TestPassword123!';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // This runs before each test method
+        $this->testUser = User::factory()->create([
+            'email' => 'setup.test@example.com',
+            'password' => bcrypt($this->testPassword)
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        // This runs after each test method
+        $this->testUser = null;
+        parent::tearDown();
+    }
+
+    public function test_using_setup_user()
+    {
+        $response = $this->postJson('/api/auth/login', [
+            'email' => 'setup.test@example.com',
+            'password' => $this->testPassword
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'message',
+                'user',
+                'token'
+            ]);
+    }
+
+    public function test_with_mocked_hash_check()
+    {
+        Hash::shouldReceive('check')
+            ->once()
+            ->andReturn(true);
+
+        $response = $this->postJson('/api/auth/login', [
+            'email' => $this->testUser->email,
+            'password' => 'any_password_will_work'
+        ]);
+
+        $response->assertStatus(200);
+    }
 
     public function test_successful_registration()
     {

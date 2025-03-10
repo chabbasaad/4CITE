@@ -12,6 +12,45 @@ class HotelManagementTest extends TestCase
 {
     use RefreshDatabase;
 
+    private $testAdmin;
+    private $testEmployee;
+    private $testUser;
+    private $testHotel;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create test users with different roles
+        $this->testAdmin = User::factory()->create(['role' => 'admin']);
+        $this->testEmployee = User::factory()->create(['role' => 'employee']);
+        $this->testUser = User::factory()->create(['role' => 'user']);
+
+        // Create a test hotel with standard attributes
+        $this->testHotel = Hotel::factory()->create([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => 100,
+            'total_rooms' => 20,
+            'available_rooms' => 15,
+            'is_available' => true,
+            'amenities' => ['WiFi', 'Pool'],
+            'picture_list' => ['http://example.com/image1.jpg']
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up test data
+        $this->testHotel = null;
+        $this->testAdmin = null;
+        $this->testEmployee = null;
+        $this->testUser = null;
+
+        parent::tearDown();
+    }
+
     // Hotel Listing Tests
     public function test_visitor_can_view_all_hotels()
     {
@@ -20,7 +59,7 @@ class HotelManagementTest extends TestCase
         $response = $this->getJson('/api/hotels');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3, 'data');
+            ->assertJsonCount(4, 'data');
     }
 
     public function test_user_can_filter_hotels_by_location()
@@ -46,10 +85,10 @@ class HotelManagementTest extends TestCase
         $response = $this->getJson('/api/hotels?sort_by=price_per_night&direction=asc');
 
         $response->assertStatus(200)
-            ->assertJsonCount(3, 'data');
+            ->assertJsonCount(4, 'data');
 
         $prices = collect($response->json('data'))->pluck('price_per_night')->toArray();
-        $this->assertEquals([100, 200, 300], $prices);
+        $this->assertEquals([100, 100, 200, 300], $prices);
     }
 
     public function test_employee_can_view_hotels_with_booking_info()
@@ -316,8 +355,9 @@ class HotelManagementTest extends TestCase
         $response = $this->getJson('/api/hotels?min_price=100&max_price=300');
 
         $response->assertStatus(200)
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.name', 'Comfort Hotel');
+            ->assertJsonCount(2, 'data')
+            ->assertJsonPath('data.0.price_per_night', fn($price) => $price >= 100 && $price <= 300)
+            ->assertJsonPath('data.1.price_per_night', fn($price) => $price >= 100 && $price <= 300);
     }
 
     public function test_user_can_filter_hotels_by_availability()
@@ -329,9 +369,10 @@ class HotelManagementTest extends TestCase
         $response = $this->getJson('/api/hotels?available=1');
 
         $response->assertStatus(200)
-            ->assertJsonCount(2, 'data')
+            ->assertJsonCount(3, 'data')
             ->assertJsonPath('data.0.is_available', true)
-            ->assertJsonPath('data.1.is_available', true);
+            ->assertJsonPath('data.1.is_available', true)
+            ->assertJsonPath('data.2.is_available', true);
     }
 
     public function test_user_can_combine_search_and_filters()

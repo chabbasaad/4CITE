@@ -11,8 +11,68 @@ class LogoutTest extends TestCase
 {
     use RefreshDatabase;
 
+    private $testUser;
+    private $testAdmin;
+    private $testEmployee;
+    private $testToken;
+    private $testAdminToken;
+    private $testEmployeeToken;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create test users with different roles
+        $this->testUser = User::factory()->create([
+            'email' => 'testuser@example.com',
+            'role' => 'user'
+        ]);
+
+        $this->testAdmin = User::factory()->create([
+            'email' => 'testadmin@example.com',
+            'role' => 'admin'
+        ]);
+
+        $this->testEmployee = User::factory()->create([
+            'email' => 'testemployee@example.com',
+            'role' => 'employee'
+        ]);
+
+        // Create tokens for each user
+        $this->testToken = $this->testUser->createToken('auth_token')->plainTextToken;
+        $this->testAdminToken = $this->testAdmin->createToken('auth_token')->plainTextToken;
+        $this->testEmployeeToken = $this->testEmployee->createToken('auth_token')->plainTextToken;
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up all tokens
+        if ($this->testUser) {
+            $this->testUser->tokens()->delete();
+        }
+        if ($this->testAdmin) {
+            $this->testAdmin->tokens()->delete();
+        }
+        if ($this->testEmployee) {
+            $this->testEmployee->tokens()->delete();
+        }
+
+        // Clean up test data
+        $this->testUser = null;
+        $this->testAdmin = null;
+        $this->testEmployee = null;
+        $this->testToken = null;
+        $this->testAdminToken = null;
+        $this->testEmployeeToken = null;
+
+        parent::tearDown();
+    }
+
     public function test_successful_logout()
     {
+        // Clean up tokens from setup
+        PersonalAccessToken::query()->delete();
+
         // Create and authenticate a user
         $user = User::factory()->create();
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -32,6 +92,9 @@ class LogoutTest extends TestCase
 
     public function test_logout_deletes_all_tokens()
     {
+        // Clean up tokens from setup
+        PersonalAccessToken::query()->delete();
+
         // Create a user with multiple tokens
         $user = User::factory()->create();
         $token1 = $user->createToken('token1')->plainTextToken;

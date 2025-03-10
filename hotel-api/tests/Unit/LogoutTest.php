@@ -11,6 +11,55 @@ class LogoutTest extends TestCase
 {
     use RefreshDatabase;
 
+    private $testUser;
+    private $testAdmin;
+    private $testEmployee;
+    private $testToken;
+    private $testAdminToken;
+    private $testEmployeeToken;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create test users with different roles
+        $this->testUser = User::factory()->create([
+            'email' => 'testuser@example.com',
+            'role' => 'user'
+        ]);
+
+        $this->testAdmin = User::factory()->create([
+            'email' => 'testadmin@example.com',
+            'role' => 'admin'
+        ]);
+
+        $this->testEmployee = User::factory()->create([
+            'email' => 'testemployee@example.com',
+            'role' => 'employee'
+        ]);
+
+        // Create tokens for each user with different abilities
+        $this->testToken = $this->testUser->createToken('auth_token', ['user'])->accessToken;
+        $this->testAdminToken = $this->testAdmin->createToken('auth_token', ['admin'])->accessToken;
+        $this->testEmployeeToken = $this->testEmployee->createToken('auth_token', ['employee'])->accessToken;
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up all tokens
+        PersonalAccessToken::query()->delete();
+
+        // Clean up test data
+        $this->testUser = null;
+        $this->testAdmin = null;
+        $this->testEmployee = null;
+        $this->testToken = null;
+        $this->testAdminToken = null;
+        $this->testEmployeeToken = null;
+
+        parent::tearDown();
+    }
+
     public function test_token_deletion()
     {
         $user = User::factory()->create();
@@ -72,6 +121,9 @@ class LogoutTest extends TestCase
 
     public function test_user_tokens_deletion_on_user_deletion()
     {
+        // Clean up tokens from setup
+        PersonalAccessToken::query()->delete();
+
         $user = User::factory()->create();
 
         // Create multiple tokens
@@ -87,6 +139,9 @@ class LogoutTest extends TestCase
 
     public function test_token_creation_after_logout()
     {
+        // Clean up tokens from setup
+        PersonalAccessToken::query()->delete();
+
         $user = User::factory()->create();
 
         // Create and delete token (simulating logout)
@@ -102,6 +157,9 @@ class LogoutTest extends TestCase
 
     public function test_token_abilities_after_recreation()
     {
+        // Clean up tokens from setup
+        PersonalAccessToken::query()->delete();
+
         $user = User::factory()->create();
 
         // Create token with abilities
@@ -119,6 +177,9 @@ class LogoutTest extends TestCase
 
     public function test_concurrent_token_deletions()
     {
+        // Clean up tokens from setup
+        PersonalAccessToken::query()->delete();
+
         $user = User::factory()->create();
 
         // Create multiple tokens
@@ -138,6 +199,9 @@ class LogoutTest extends TestCase
 
     public function test_token_deletion_idempotency()
     {
+        // Clean up tokens from setup
+        PersonalAccessToken::query()->delete();
+
         $user = User::factory()->create();
         $token = $user->createToken('auth_token');
 

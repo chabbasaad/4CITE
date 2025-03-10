@@ -14,6 +14,62 @@ class HotelManagementTest extends TestCase
 {
     use RefreshDatabase;
 
+    private $testHotel;
+    private $testAdmin;
+    private $testEmployee;
+    private $testUser;
+    private $testRequest;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create test users with different roles
+        $this->testAdmin = User::factory()->create(['role' => 'admin']);
+        $this->testEmployee = User::factory()->create(['role' => 'employee']);
+        $this->testUser = User::factory()->create(['role' => 'user']);
+
+        // Create a test hotel with standard attributes
+        $this->testHotel = Hotel::factory()->create([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => 100,
+            'total_rooms' => 20,
+            'available_rooms' => 15,
+            'is_available' => true,
+            'amenities' => ['WiFi', 'Pool'],
+            'picture_list' => ['http://example.com/image1.jpg']
+        ]);
+
+        // Create a standard test request
+        $this->testRequest = new Request();
+        $this->testRequest->merge([
+            'name' => 'Test Hotel',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'price_per_night' => 100,
+            'total_rooms' => 20,
+            'available_rooms' => 15,
+            'is_available' => true,
+            'amenities' => ['WiFi', 'Pool'],
+            'picture_list' => ['http://example.com/image1.jpg']
+        ]);
+        $this->testRequest->setMethod('POST');
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up test data
+        $this->testHotel = null;
+        $this->testAdmin = null;
+        $this->testEmployee = null;
+        $this->testUser = null;
+        $this->testRequest = null;
+
+        parent::tearDown();
+    }
+
     // Hotel Model Tests
     public function test_hotel_has_required_attributes()
     {
@@ -74,8 +130,8 @@ class HotelManagementTest extends TestCase
 
         $results = Hotel::whereBetween('price_per_night', [100, 300])->get();
 
-        $this->assertEquals(1, $results->count());
-        $this->assertEquals('Comfort Hotel', $results->first()->name);
+        $this->assertEquals(2, $results->count()); // Comfort Hotel + testHotel (price 100)
+        $this->assertTrue($results->pluck('price_per_night')->every(fn($price) => $price >= 100 && $price <= 300));
     }
 
     public function test_hotel_filter_by_availability()
@@ -86,7 +142,7 @@ class HotelManagementTest extends TestCase
 
         $results = Hotel::where('is_available', true)->get();
 
-        $this->assertEquals(2, $results->count());
+        $this->assertEquals(3, $results->count()); // 2 new available hotels + testHotel
         $this->assertTrue($results->every(fn($hotel) => $hotel->is_available));
     }
 
@@ -166,8 +222,8 @@ class HotelManagementTest extends TestCase
         Hotel::factory()->create(['is_available' => true]);
 
         $availableHotels = Hotel::where('is_available', true)->get();
-        $this->assertEquals(1, $availableHotels->count());
-        $this->assertTrue($availableHotels->first()->is_available);
+        $this->assertEquals(2, $availableHotels->count()); // New available hotel + testHotel
+        $this->assertTrue($availableHotels->every(fn($hotel) => $hotel->is_available));
     }
 
     public function test_hotel_can_be_booked()
@@ -319,7 +375,7 @@ class HotelManagementTest extends TestCase
             ->get();
 
         $this->assertTrue($hotels->first()->is_available);
-        $this->assertEquals(10, $hotels->first()->available_rooms);
+        $this->assertEquals(15, $hotels->first()->available_rooms); // testHotel has 15 available rooms
         $this->assertFalse($hotels->last()->is_available);
     }
 

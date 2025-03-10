@@ -13,46 +13,88 @@ class BookingManagementTest extends TestCase
 {
     use RefreshDatabase;
 
-    // Booking Listing Tests
+    private $testUser;
+    private $testAdmin;
+    private $testHotel;
+    private $testBooking;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create test users
+        $this->testUser = User::factory()->create(['role' => 'user']);
+        $this->testAdmin = User::factory()->create(['role' => 'admin']);
+
+        // Create test hotel
+        $this->testHotel = Hotel::factory()->create([
+            'is_available' => true,
+            'name' => 'Test Hotel'
+        ]);
+
+        // Create a test booking
+        $this->testBooking = Booking::factory()->create([
+            'user_id' => $this->testUser->id,
+            'hotel_id' => $this->testHotel->id,
+            'check_in_date' => Carbon::tomorrow(),
+            'check_out_date' => Carbon::tomorrow()->addDays(3),
+            'status' => 'confirmed'
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up test data
+        $this->testBooking = null;
+        $this->testHotel = null;
+        $this->testUser = null;
+        $this->testAdmin = null;
+
+        parent::tearDown();
+    }
+
+
     public function test_user_can_view_own_bookings()
     {
-        $user = User::factory()->create(['role' => 'user']);
-        $otherUser = User::factory()->create(['role' => 'user']);
 
-        // Create bookings for both users
-        $userBookings = Booking::factory()->count(3)->create(['user_id' => $user->id]);
+        $userBookings = Booking::factory()->count(2)->create(['user_id' => $this->testUser->id]);
+
+
+        $otherUser = User::factory()->create(['role' => 'user']);
         Booking::factory()->count(2)->create(['user_id' => $otherUser->id]);
 
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($this->testUser)
             ->getJson('/api/bookings');
 
         $response->assertStatus(200)
             ->assertJsonCount(3, 'data')
-            ->assertJsonPath('data.0.user_id', $user->id);
+            ->assertJsonPath('data.0.user_id', $this->testUser->id);
     }
 
     public function test_admin_can_view_all_bookings()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+
         Booking::factory()->count(5)->create();
 
-        $response = $this->actingAs($admin)
+        $response = $this->actingAs($this->testAdmin)
             ->getJson('/api/bookings');
 
         $response->assertStatus(200)
-            ->assertJsonCount(5, 'data');
+            ->assertJsonCount(6, 'data');
     }
 
     public function test_employee_can_view_all_bookings()
     {
         $employee = User::factory()->create(['role' => 'employee']);
+
+
         Booking::factory()->count(5)->create();
 
         $response = $this->actingAs($employee)
             ->getJson('/api/bookings');
 
         $response->assertStatus(200)
-            ->assertJsonCount(5, 'data');
+            ->assertJsonCount(6, 'data');
     }
 
     public function test_admin_can_filter_bookings_by_user_email()

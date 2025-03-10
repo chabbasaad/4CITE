@@ -5,6 +5,10 @@ namespace Tests\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Auth\Events\Registered;
 use Tests\TestCase;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Str;
@@ -12,6 +16,83 @@ use Illuminate\Support\Str;
 class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
+
+    private $testUserData;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Setup test data before each test
+        $this->testUserData = [
+            'name' => 'Test Setup User',
+            'email' => 'setup.test@example.com',
+            'password' => Hash::make('Password123!'),
+            'pseudo' => 'setuptest',
+            'role' => 'user'
+        ];
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+    }
+
+    public function test_with_mocked_event_dispatcher()
+    {
+
+        Event::fake();
+
+
+        $user = User::create($this->testUserData);
+
+        event(new Registered($user));
+
+
+        Event::assertDispatched(Registered::class);
+    }
+
+    public function test_with_partial_mock()
+    {
+
+        $user = User::create($this->testUserData);
+
+        // Create a spy on the User model
+        $spy = $this->spy(User::class);
+
+
+        $foundUser = User::where('email', $this->testUserData['email'])->first();
+
+        // Verify we got the correct user
+        $this->assertEquals($user->id, $foundUser->id);
+        $this->assertEquals($this->testUserData['email'], $foundUser->email);
+    }
+
+    public function test_with_fake_notification()
+    {
+        Notification::fake();
+
+        // Create a user
+        $user = User::create($this->testUserData);
+
+        // Assert no notifications were sent
+        Notification::assertNothingSent();
+    }
+
+    public function test_with_mocked_cache()
+    {
+        Cache::shouldReceive('remember')
+            ->once()
+            ->andReturn(collect([]));
+
+        // Try to get user from cache
+        $user = User::create($this->testUserData);
+        $cachedUser = Cache::remember('user.'.$user->id, 60, function() use ($user) {
+            return $user;
+        });
+
+        $this->assertNotNull($cachedUser);
+    }
 
     public function test_can_create_user()
     {

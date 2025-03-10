@@ -13,6 +13,52 @@ class BookingManagementTest extends TestCase
 {
     use RefreshDatabase;
 
+    private $testUser;
+    private $testHotel;
+    private $testBooking;
+    private $testBookingData;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create base test data
+        $this->testUser = User::factory()->create([
+            'email' => 'test.user@example.com',
+            'role' => 'user'
+        ]);
+
+        $this->testHotel = Hotel::factory()->create([
+            'name' => 'Test Hotel Unit',
+            'is_available' => true
+        ]);
+
+        // Prepare booking data
+        $this->testBookingData = [
+            'user_id' => $this->testUser->id,
+            'hotel_id' => $this->testHotel->id,
+            'check_in_date' => Carbon::tomorrow(),
+            'check_out_date' => Carbon::tomorrow()->addDays(3),
+            'guest_names' => ['John Doe', 'Jane Doe'],
+            'status' => 'confirmed',
+            'special_requests' => 'Early check-in'
+        ];
+
+        // Create test booking
+        $this->testBooking = Booking::factory()->create($this->testBookingData);
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up test data
+        $this->testBooking = null;
+        $this->testBookingData = null;
+        $this->testHotel = null;
+        $this->testUser = null;
+
+        parent::tearDown();
+    }
+
     // Model Relationship Tests
     public function test_booking_belongs_to_user()
     {

@@ -12,6 +12,51 @@ class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
+    private $testUser;
+    private $testAdmin;
+    private $testEmployee;
+    private $defaultPassword;
+    private $defaultEmail;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultPassword = 'password123';
+        $this->defaultEmail = 'testuser@example.com';
+
+        // Create test users with different roles
+        $this->testUser = User::factory()->create([
+            'email' => $this->defaultEmail,
+            'password' => Hash::make($this->defaultPassword),
+            'role' => 'user'
+        ]);
+
+        $this->testAdmin = User::factory()->create([
+            'email' => 'testadmin@example.com',
+            'password' => Hash::make($this->defaultPassword),
+            'role' => 'admin'
+        ]);
+
+        $this->testEmployee = User::factory()->create([
+            'email' => 'testemployee@example.com',
+            'password' => Hash::make($this->defaultPassword),
+            'role' => 'employee'
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        // Clean up test data
+        $this->testUser = null;
+        $this->testAdmin = null;
+        $this->testEmployee = null;
+        $this->defaultPassword = null;
+        $this->defaultEmail = null;
+
+        parent::tearDown();
+    }
+
     public function test_password_verification()
     {
         $password = 'password123';
