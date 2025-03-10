@@ -1,7 +1,14 @@
 describe('About Page', () => {
     beforeEach(() => {
         // Visit the About page (assuming it's hosted locally or on a staging environment)
-        cy.visit('/about');
+        cy.visit('/nous');
+    });
+
+    it('should load images correctly', () => {
+        cy.get('img[alt="Chambre de luxe"]').should('be.visible').and('have.attr', 'src').should('not.be.empty');
+        cy.get('img[alt="Hall d\'entrée"]').should('be.visible').and('have.attr', 'src').should('not.be.empty');
+        cy.get('img[alt="Piscine"]').should('be.visible').and('have.attr', 'src').should('not.be.empty');
+        cy.get('img[alt="Restaurant"]').should('be.visible').and('have.attr', 'src').should('not.be.empty');
     });
 
     it('should load the About page correctly', () => {

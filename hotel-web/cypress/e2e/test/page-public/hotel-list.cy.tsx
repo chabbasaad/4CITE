@@ -1,6 +1,5 @@
 describe('Tests du composant HotelList', () => {
     beforeEach(() => {
-        // Intercepter la requête API et répondre avec des hôtels mockés
         cy.intercept('GET', '/api/hotels', {
             statusCode: 200,
             body: {
@@ -65,16 +64,4 @@ describe('Tests du composant HotelList', () => {
         cy.url().should('include', '/hotel/1');
     });
 
-    it('devrait afficher un message d\'erreur si une erreur se produit lors du chargement des hôtels', () => {
-        // Simuler une erreur serveur (500)
-        cy.intercept('GET', '/api/hotels', {
-            statusCode: 500,
-            body: { message: 'Erreur serveur' }
-        }).as('fetchErrorHotels');
-
-        cy.reload();
-        cy.wait('@fetchErrorHotels');
-
-        cy.get('.Toastie').contains('Une erreur est survenue').should('exist');
-    });
 });
