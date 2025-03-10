@@ -102,7 +102,7 @@ jobs:
         run: npm ci
 
       - name: Build React app
-        run: npm run build || true
+        run: npm run build 
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
