@@ -42,6 +42,9 @@ jobs:
 
       - name: Run Test
         run: npm test
+
+      - name: Run App for Cypress
+        run: npm run dev
         
       - name: Run Cypress
         run: npm run cypress:run
