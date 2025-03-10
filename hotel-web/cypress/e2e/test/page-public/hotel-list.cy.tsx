@@ -51,7 +51,6 @@ describe('Tests du composant HotelList', () => {
         cy.contains('Hôtel de luxe').should('exist');
     });
 
-
     it('devrait afficher une liste d\'hôtels lorsque les données sont chargées', () => {
         cy.wait('@fetchHotels');
         cy.get('.group').should('have.length', 2);
