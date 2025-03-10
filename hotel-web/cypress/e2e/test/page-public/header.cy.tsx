@@ -104,4 +104,17 @@ describe('Composant Header (Visiteur)', () => {
         cy.get('body').click(0, 0);
         cy.get('div[role="dialog"]').should('not.exist');
     });
+
+    it('Affiche le bouton "Connexion" pour un visiteur', () => {
+        cy.contains('Connexion').should('be.visible');
+    });
+
+    it('Affiche le bouton "Inscription" pour un visiteur', () => {
+        cy.contains('Inscription').should('be.visible');
+    });
+
+    it('Vérifie la redirection vers la page de connexion pour un visiteur', () => {
+        cy.contains('Connexion').click();
+        cy.url().should('include', '/');
+    });
 });

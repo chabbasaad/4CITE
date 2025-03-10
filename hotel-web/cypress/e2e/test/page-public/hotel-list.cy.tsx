@@ -33,6 +33,25 @@ describe('Tests du composant HotelList', () => {
         cy.contains('Chargement en cours...').should('not.exist');
     });
 
+    it('devrait afficher les images des hôtels', () => {
+        cy.wait('@fetchHotels');
+        cy.get('.group').first().find('img').should('have.attr', 'src').and('match', /https:\/\/example\.com\/image\.jpg/);
+        cy.get('.group').eq(1).find('img').should('have.attr', 'src').and('match', /https:\/\/example\.com\/image2\.jpg/);
+    });
+
+    it('devrait afficher correctement les prix par nuit pour chaque hôtel', () => {
+        cy.wait('@fetchHotels');
+        cy.contains('100').should('exist');
+        cy.contains('200').should('exist');
+    });
+
+    it('devrait afficher les descriptions des hôtels', () => {
+        cy.wait('@fetchHotels');
+        cy.contains('Hôtel confortable').should('exist');
+        cy.contains('Hôtel de luxe').should('exist');
+    });
+
+
     it('devrait afficher une liste d\'hôtels lorsque les données sont chargées', () => {
         cy.wait('@fetchHotels');
         cy.get('.group').should('have.length', 2);
@@ -49,4 +68,5 @@ describe('Tests du composant HotelList', () => {
         cy.get('.group').first().click();
         cy.url().should('include', '/hotel/1');
     });
+
 });
