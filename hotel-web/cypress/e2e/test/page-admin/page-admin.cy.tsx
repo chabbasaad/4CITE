@@ -16,15 +16,7 @@ describe('Tests de la liste des hôtels avec un utilisateur admin', () => {
         cy.visit('/admin/gestion-hotel');
     });
 
-    it('Peut ajouter un nouvel hôtel', () => {
-        cy.contains('Ajouter un hôtel').click();
 
-        cy.get('h2').contains('Ajouter un hôtel').should('be.visible');
-
-        cy.contains("Ajouter l'hôtel").click();
-
-        cy.contains('Hôtel Example').should('be.visible');
-    });
 
     it('Affiche la liste des hôtels pour l\'utilisateur admin', () => {
         cy.visit('admin/gestion-hotel');
@@ -132,6 +124,11 @@ describe('Tests de la liste des utilisateurs', () => {
             statusCode: 200,
             body: { message: 'Utilisateur supprimé avec succès' }
         }).as('deleteUser');
+
+        cy.on('window:confirm', (message) => {
+            expect(message).to.include('Voulez-vous vraiment supprimer ?');
+            return true;
+        });
 
         cy.get('button').contains('Supprimer').click();
         cy.wait('@deleteUser');

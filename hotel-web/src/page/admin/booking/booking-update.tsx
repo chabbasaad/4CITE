@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import useHotelStore from "../../../service/stores/hotel-store.tsx";
-import { HotelUpdateRequestData } from "../../../service/model/hotel/hotel-update.tsx";
+import useHotelStore from "../../../service/stores/hotel-store";
+import { HotelUpdateRequestData } from "../../../service/model/hotel/hotel-update";
 
 export default function BookingUpdate({ id }: { id: number }) {
     const { hotels, loading, updateHotel } = useHotelStore();

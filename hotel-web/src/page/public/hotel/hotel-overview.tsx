@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import useHotelStore from "../../../service/stores/hotel-store.tsx";
+import useHotelStore from "../../../service/stores/hotel-store";
 import { toast } from "react-toastify";
 import { StarIcon } from '@heroicons/react/20/solid'
-import useBookingStore from "../../../service/stores/booking-store.tsx";
-import { BookingCreateRequestData } from "../../../service/model/booking/booking-create.tsx";
+import useBookingStore from "../../../service/stores/booking-store";
+import { BookingCreateRequestData } from "../../../service/model/booking/booking-create";
 import {Tab, TabGroup, TabList, TabPanel, TabPanels} from "@headlessui/react";
 
 const reviews = { href: '#', average: 4, totalCount: 117 }

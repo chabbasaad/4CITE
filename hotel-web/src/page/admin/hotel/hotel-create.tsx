@@ -1,6 +1,6 @@
 import { useState } from "react";
-import useHotelStore from "../../../service/stores/hotel-store.tsx";
-import {HotelCreateRequestData} from "../../../service/model/hotel/hotel-create.tsx";
+import useHotelStore from "../../../service/stores/hotel-store";
+import {HotelCreateRequestData} from "../../../service/model/hotel/hotel-create";
 
 export default function HotelCreate({  setIsOpenCreate }: { setIsOpenCreate: (open: boolean) => void }) {
     const { createHotel } = useHotelStore();

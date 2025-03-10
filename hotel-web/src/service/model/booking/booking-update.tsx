@@ -1,4 +1,4 @@
-import {Booking} from "./booking.tsx";
+import {Booking} from "./booking";
 
 export interface BookingUpdateRequestData {
     "check_in_date": string,

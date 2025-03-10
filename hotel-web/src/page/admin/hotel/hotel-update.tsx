@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useHotelStore from "../../../service/stores/hotel-store.tsx";
-import { HotelUpdateRequestData } from "../../../service/model/hotel/hotel-update.tsx";
+import { HotelUpdateRequestData } from "../../../service/model/hotel/hotel-update";
 
 export default function HotelUpdate({ id ,setIsOpenUpdate}: { id: number,setIsOpenUpdate: (open: boolean) => void }) {
     const { hotels, loading, updateHotel } = useHotelStore();
@@ -116,7 +116,7 @@ export default function HotelUpdate({ id ,setIsOpenUpdate}: { id: number,setIsOp
                         placeholder="Description"
                         value={hotelData.description}
                         onChange={handleChange}
-                        rows={4}
+
                         required
                         className="m-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                     />

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
-import useUserStore from "../../../service/stores/user-store.tsx";
+import useUserStore from "../../../service/stores/user-store";
 import { toast } from "react-toastify";
-import useBookingStore from "../../../service/stores/booking-store.tsx";
-import { Dialog } from "../../../components/kit-ui/dialog.tsx";
-import BookingUpdate from "../booking/booking-update.tsx";
+import useBookingStore from "../../../service/stores/booking-store";
+import { Dialog } from "../../../components/kit-ui/dialog";
+import BookingUpdate from "../booking/booking-update";
 import { ArchiveBoxIcon } from "@heroicons/react/16/solid";
-import { UserUpdateRequestData } from "../../../service/model/user/user-update.tsx";
-import useHotelStore from "../../../service/stores/hotel-store.tsx";
+import { UserUpdateRequestData } from "../../../service/model/user/user-update";
+import useHotelStore from "../../../service/stores/hotel-store";
 
 const secondaryNavigation = [
     { name: "General", href: "#", icon: UserCircleIcon },

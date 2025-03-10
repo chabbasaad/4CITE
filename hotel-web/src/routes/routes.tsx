@@ -1,14 +1,14 @@
 import { Routes, Route } from "react-router-dom";
-import AuthGuard from "./auth-guard.tsx";
-import Home from "../page/public/home/home.tsx";
-import Profile from "../page/user/profile/profile.tsx";
-import HotelOverview from "../page/public/hotel/hotel-overview.tsx";
-import About from "../page/public/about/about.tsx";
-import AuthGuardAdmin from "./auth-guard-admin.tsx";
-import HotelsList from "../page/admin/hotel/hotels-list.tsx";
-import UsersList from "../page/admin/users/users-list.tsx";
-import BookingList from "../page/admin/booking/booking-list.tsx";
-import HotelListFilter from "../page/public/hotel/hotel-list-filter.tsx";
+import AuthGuard from "./auth-guard";
+import Home from "../page/public/home/home";
+import Profile from "../page/user/profile/profile";
+import HotelOverview from "../page/public/hotel/hotel-overview";
+import About from "../page/public/about/about";
+import AuthGuardAdmin from "./auth-guard-admin";
+import HotelsList from "../page/admin/hotel/hotels-list";
+import UsersList from "../page/admin/users/users-list";
+import BookingList from "../page/admin/booking/booking-list";
+import HotelListFilter from "../page/public/hotel/hotel-list-filter";
 
 const AppRoutes = () => {
     return (

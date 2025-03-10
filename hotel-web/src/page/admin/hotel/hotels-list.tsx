@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import { toast } from "react-toastify";
-import useHotelStore from "../../../service/stores/hotel-store.tsx";
-import {Button} from "../../../components/kit-ui/button.tsx";
-import {Dialog} from "../../../components/kit-ui/dialog.tsx";
-import HotelUpdate from "./hotel-update.tsx";
-import HotelCreate from "./hotel-create.tsx";
+import useHotelStore from "../../../service/stores/hotel-store";
+import {Button} from "../../../components/kit-ui/button";
+import {Dialog} from "../../../components/kit-ui/dialog";
+import HotelUpdate from "./hotel-update";
+import HotelCreate from "./hotel-create";
 
 export default function HotelsList() {
     const { hotels, loading, fetchHotels, deleteHotel} = useHotelStore();

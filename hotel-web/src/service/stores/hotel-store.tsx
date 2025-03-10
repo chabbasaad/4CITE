@@ -5,10 +5,10 @@ import {
     createHotel,
     fetchHotels,
     fetchHotel
-} from "../servises/service-hotel.tsx";
-import {HotelUpdateRequestData} from "../model/hotel/hotel-update.tsx";
-import {HotelCreateRequestData} from "../model/hotel/hotel-create.tsx";
-import {Hotel} from "../model/hotel/hotel.tsx";
+} from "../servises/service-hotel";
+import {HotelUpdateRequestData} from "../model/hotel/hotel-update";
+import {HotelCreateRequestData} from "../model/hotel/hotel-create";
+import {Hotel} from "../model/hotel/hotel";
 
 interface HotelState {
     hotels: Hotel[];

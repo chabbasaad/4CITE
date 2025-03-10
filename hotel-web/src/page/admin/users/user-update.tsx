@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useUserStore from "../../../service/stores/user-store.tsx";
-import { UserUpdateRequestData } from "../../../service/model/user/user-update.tsx";
+import { UserUpdateRequestData } from "../../../service/model/user/user-update";
 
 export default function UserUpdate({ id, setIsOpenUpdate }: { id: number, setIsOpenUpdate: (open: boolean) => void }) {
     const { users, loading, updateUser } = useUserStore();
     const [userData, setUserData] = useState<UserUpdateRequestData>({
+        id: 1,
         name: "",
         pseudo: "",
         email: "",
@@ -19,6 +20,7 @@ export default function UserUpdate({ id, setIsOpenUpdate }: { id: number, setIsO
             const user = users.find((user) => user.id === Number(id));
             if (user) {
                 setUserData({
+                    id: 1,
                     name: user.name,
                     pseudo: user.pseudo,
                     email: user.email,

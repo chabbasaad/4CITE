@@ -1,8 +1,8 @@
 import React from 'react';
 import './App.css'
-import AppRoutes from "./routes/routes.tsx";
+import AppRoutes from "./routes/routes";
 import {BrowserRouter} from "react-router-dom";
-import Header from "./components/header/header.tsx";
+import Header from "./components/header/header";
 import { ToastContainer } from 'react-toastify';
 
 function App() {

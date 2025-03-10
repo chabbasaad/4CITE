@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Button } from "../../../components/kit-ui/button.tsx";
-import { Dialog } from "../../../components/kit-ui/dialog.tsx";
-import UserCreate from "./user-create.tsx";
-import useUserStore from "../../../service/stores/user-store.tsx";
-import UserUpdate from "./user-update.tsx";
+import { Button } from "../../../components/kit-ui/button";
+import { Dialog } from "../../../components/kit-ui/dialog";
+import UserCreate from "./user-create";
+import useUserStore from "../../../service/stores/user-store";
+import UserUpdate from "./user-update";
 
 export default function UsersList() {
     const { users, loading, fetchUsers, deleteUser } = useUserStore();
