@@ -30,7 +30,10 @@ export default function HotelList() {
                             <div
                                 key={hotel.id}
                                 className="group relative rounded-lg border p-4 shadow-lg cursor-pointer"
-                                onClick={() => navigate(`/hotel/${hotel.id}`)}
+                                onClick={() => {
+                                    localStorage.setItem('selectedHotelId', hotel.id);
+                                    navigate(`/hotel/${hotel.id}`);
+                                }}
                             >
                                 <img
                                     src={hotel.picture_list[0]}

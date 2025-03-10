@@ -13,6 +13,7 @@ export default function HotelOverview() {
     const { id } = useParams();
     const { hotels, fetchHotel } = useHotelStore();
     const { createBooking } = useBookingStore();
+    const hotelId = localStorage.getItem('selectedHotelId');
 
     const [hotelData, setHotelData] = useState<BookingCreateRequestData>({
         hotel_id: id ? Number(id) : 0,
@@ -22,6 +23,23 @@ export default function HotelOverview() {
         special_requests: "",
         guest_names: [""],
     });
+    const [paymentError, setPaymentError] = useState("");
+
+    const [paymentData, setPaymentData] = useState({
+        full_name: "",
+        card_number: "",
+        card_expiration: "",
+        cvv: "",
+    });
+
+    const handlePaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const { name, value } = e.target;
+        setPaymentData({
+            ...paymentData,
+            [name]: value,
+        });
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         e.preventDefault();
@@ -34,6 +52,12 @@ export default function HotelOverview() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!paymentData.full_name || !paymentData.card_number || !paymentData.card_expiration || !paymentData.cvv) {
+            setPaymentError("Tous les champs de paiement doivent être remplis.");
+            return;
+        }
+        setPaymentError("");
+
         await createBooking(hotelData);
         setHotelData({
             hotel_id: id ? Number(id) : 0,
@@ -47,11 +71,12 @@ export default function HotelOverview() {
 
     useEffect(() => {
         if (id) {
-            fetchHotel(Number(id)).catch(() => toast.error("Erreur lors du chargement de l'hôtel."));
+            fetchHotel(Number(hotelId)).catch(() => toast.error("Erreur lors du chargement de l'hôtel."));
         }
     }, [id, fetchHotel]);
 
-    const hotel = hotels.find(h => h.id === Number(id));
+
+    const hotel = hotels.find(h => h.id === Number(hotelId));
 
     if (!hotel) {
         return <p className="text-center text-gray-500 mt-4">Hôtel introuvable.</p>;
@@ -117,16 +142,6 @@ export default function HotelOverview() {
                     <h2 className="sr-only">Product information</h2>
                     <p className="text-3xl tracking-tight text-gray-900">{hotel.price_per_night} par nuit</p>
 
-                    <div className="mt-10">
-                        <h2 className="text-sm font-medium text-gray-900">Details</h2>
-
-                        <div className="mt-4 space-y-6">
-                            <p className="text-sm text-gray-600">
-                                Notre chambre d'hôtel est conçue pour offrir un confort optimal et une expérience
-                                inoubliable.
-                            </p>
-                        </div>
-                    </div>
 
                     <div className="mt-6">
                         <h3 className="sr-only">Reviews</h3>
@@ -224,6 +239,64 @@ export default function HotelOverview() {
                                         placeholder="Noms des invités (séparés par des virgules)"
                                     />
                                 </div>
+                                {/* Champs de paiement */}
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-900">Informations de paiement</h3>
+                                    <div>
+                                        <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">Nom sur la carte</label>
+                                        <input
+                                            id="full_name"
+                                            type="text"
+                                            name="full_name"
+                                            value={paymentData.full_name}
+                                            onChange={handlePaymentChange}
+                                            required
+                                            className="w-full p-2 border rounded"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="card_number" className="block text-sm font-medium text-gray-700">Numéro de carte</label>
+                                        <input
+                                            id="card_number"
+                                            type="text"
+                                            name="card_number"
+                                            value={paymentData.card_number}
+                                            onChange={handlePaymentChange}
+                                            required
+                                            className="w-full p-2 border rounded"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="card_expiration" className="block text-sm font-medium text-gray-700">Date d'expiration</label>
+                                        <input
+                                            id="card_expiration"
+                                            type="text"
+                                            name="card_expiration"
+                                            value={paymentData.card_expiration}
+                                            onChange={handlePaymentChange}
+                                            required
+                                            className="w-full p-2 border rounded"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="cvv" className="block text-sm font-medium text-gray-700">CVV</label>
+                                        <input
+                                            id="cvv"
+                                            type="text"
+                                            name="cvv"
+                                            value={paymentData.cvv}
+                                            onChange={handlePaymentChange}
+                                            required
+                                            className="w-full p-2 border rounded"
+                                        />
+                                    </div>
+                                </div>
+                                 {paymentError && (
+                                        <p className="text-red-500 text-sm mt-2">{paymentError}</p>
+                                    )}
 
                                 <button
                                     onClick={handleSubmit}
