@@ -42,6 +42,9 @@ jobs:
 
       - name: Run Test
         run: npm test
+        
+      - name: Run Cypress
+        run: npm cypress run
 
   security:
     needs: test
