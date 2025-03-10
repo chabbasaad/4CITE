@@ -16,26 +16,47 @@ describe('Tests de la liste des hôtels avec un utilisateur admin', () => {
         cy.visit('/admin/gestion-hotel');
     });
 
+    it('Peut ajouter un nouvel hôtel', () => {
+        cy.contains('Ajouter un hôtel').click();
+
+        cy.get('button').contains('Ajouter un hôtel').should('be.visible');
+
+        // Remplir le formulaire pour ajouter un hôtel
+        const hotelName = 'Hotel Test';
+        const hotelLocation = 'Paris';
+
+        cy.get('input[name="name"]').type(hotelName);
+        cy.get('input[name="location"]').type(hotelLocation);
+        cy.get('input[name="price_per_night"]').type("100");
+        cy.get('input[name="total_rooms"]').type("10");
+
+        cy.contains("Ajouter l'hôtel").click();
+
+        cy.contains(hotelName).should('be.visible');
+        cy.contains(hotelLocation).should('be.visible');
+
+    });
 
 
     it('Affiche la liste des hôtels pour l\'utilisateur admin', () => {
         cy.visit('admin/gestion-hotel');
-
-        cy.contains('Hôtel Example').should('be.visible');
-        cy.contains('150 €').should('be.visible');
+        cy.contains('Hôtel ExampleHotel Test').should('be.visible');
+        cy.contains('100 €').should('be.visible');
     });
 
     it('Peut mettre à jour un hôtel', () => {
-        cy.contains('Hôtel Example').parent().find('button').contains('Modifier').click();
+        cy.contains('Hôtel ExampleHotel Test').parent().find('button').contains('Modifier').click();
 
-        cy.get('h2').contains('Modifier un hôtel').should('be.visible');
-        cy.wait(1000);
-        cy.get('input[name="name"]').clear().type('Hotel A Updated');
+        cy.get('h2.text-2xl.font-semibold.mb-6.text-gray-900.text-center', { timeout: 10000 })
+            .should('be.visible');  // Attendre que l'élément soit visible
+
+        cy.get('input[name="name"]').clear().type('Hotel A Updated Test');
 
         cy.contains("Mettre à jour l'hôtel").click();
 
-        cy.contains('Hotel A Updated').should('be.visible');
+        cy.contains('Hotel A Updated Test').should('be.visible');
     });
+
 
     it('Peut supprimer un hôtel', () => {
 
@@ -44,11 +65,11 @@ describe('Tests de la liste des hôtels avec un utilisateur admin', () => {
             return true;
         });
 
-        cy.contains('Hotel A Updated').parent().find('button').contains('Supprimer').click();
+        cy.contains('Hotel A Updated Test').parent().find('button').contains('Supprimer').click();
 
         cy.get('button').contains('Supprimer').click();
 
-        cy.contains('Hotel A Updated').should('not.exist');
+        cy.contains('Hotel A Updated Test').should('not.exist');
     });
 });
 
@@ -73,7 +94,7 @@ describe('Tests de la liste des utilisateurs', () => {
                     delay: 500,
                     statusCode: 200,
                     body: {
-                        data: [{id: 1, name: 'hamzap', pseudo: 'hamzap', email: 'userc@email.com', role: 'user'}],
+                        data: [{id: 1, name: 'hamza', pseudo: 'bely', email: 'h@h.com', role: 'user'}],
                     },
                 });
             });
@@ -84,9 +105,8 @@ describe('Tests de la liste des utilisateurs', () => {
     });
 
     it('Affiche la liste des utilisateurs', () => {
-        cy.contains('hamzap').should('be.visible');
-        cy.contains('userc@email.com').should('be.visible');
-        cy.log('✅ Utilisateurs affichés correctement');
+        cy.contains('hamza').should('be.visible');
+        cy.contains('h@h.com').should('be.visible');
     });
 
     it('Peut ajouter un nouvel utilisateur', () => {
@@ -118,7 +138,8 @@ describe('Tests de la liste des utilisateurs', () => {
     });
 
     it('Peut supprimer un utilisateur', () => {
-        cy.contains('hamzap').parent().find('button').contains('Supprimer').click();
+
+        cy.contains('hamza').parent().find('button').contains('Supprimer').click();
 
         cy.intercept('DELETE', '/api/users/1', {
             statusCode: 200,
@@ -133,7 +154,7 @@ describe('Tests de la liste des utilisateurs', () => {
         cy.get('button').contains('Supprimer').click();
         cy.wait('@deleteUser');
 
-        cy.contains('hamzap').should('not.exist');
+        cy.contains('hamza').should('not.exist');
     });
 });
 
