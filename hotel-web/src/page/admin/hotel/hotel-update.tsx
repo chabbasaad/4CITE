@@ -111,7 +111,7 @@ export default function HotelUpdate({ id ,setIsOpenUpdate}: { id: number,setIsOp
 
                 <div>
                     <label className="block text-gray-700 font-medium">Description</label>
-                    <textarea
+                    <input
                         name="description"
                         placeholder="Description"
                         value={hotelData.description}

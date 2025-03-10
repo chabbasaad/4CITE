@@ -14,7 +14,6 @@ describe('Page d\'accueil', () => {
     });
 
     it('devrait afficher le bouton "Réserver maintenant"', () => {
-        // Vérifiez si le bouton "Réserver maintenant" est visible et fonctionnel
         cy.get('a').contains('Réserver maintenant').should('be.visible').and('have.attr', 'href').and('include', '#');
     });
 

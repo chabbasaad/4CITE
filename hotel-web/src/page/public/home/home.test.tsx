@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import Home from "./home";
-jest.mock("../../user/hotel/hotel-list", () => ({
+jest.mock("../hotel/hotel-list.tsx", () => ({
     __esModule: true,
     default: jest.fn(() => <div>HotelList Component</div>),
 }));

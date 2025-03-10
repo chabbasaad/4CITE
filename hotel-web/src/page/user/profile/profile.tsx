@@ -19,7 +19,7 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 }
 
 export default function Profile() {
-    const { updateUser } = useUserStore();
+    const { updateUser,deleteUser } = useUserStore();
     const { bookings, fetchBookings, deleteBooking } = useBookingStore();
     const { hotels, fetchHotels } = useHotelStore();
     const [user, setUser] = useState<{ id: number; name: string; pseudo: string; email: string } | null>(null);
@@ -33,6 +33,7 @@ export default function Profile() {
     };
 
     const [formData, setFormData] = useState<UserUpdateRequestData>({
+        id: 1,
         name: "",
         pseudo: "",
         email: "",
@@ -49,6 +50,7 @@ export default function Profile() {
             const parsedUser = JSON.parse(userData);
             setUser(parsedUser);
             setFormData({
+                id: parsedUser.id,
                 name: parsedUser.name,
                 role: "user",
                 pseudo: parsedUser.pseudo,
@@ -87,8 +89,18 @@ export default function Profile() {
         }
     };
 
-    console.log(hotels)
-    console.log(bookings)
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleDelete = async (id: number) => {
+        if (window.confirm("Voulez-vous vraiment supprimer ?")) {
+            await deleteUser(id);
+            localStorage.removeItem("user_token");
+            localStorage.removeItem("user_data");
+            window.location.reload();
+        }
+    };
 
     return (
         <>
@@ -137,7 +149,70 @@ export default function Profile() {
                                 <p className="mt-1 text-sm/6 text-gray-500">Modifiez vos informations personnelles.</p>
                                 {user ? (
                                     <dl className="mt-6 divide-y divide-gray-100 border-t border-gray-200 text-sm/6">
-                                        {/* Affichage des informations utilisateur */}
+                                        <div className="py-6 sm:flex">
+                                            <dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">Nom</dt>
+                                            <dd className="mt-1 sm:mt-0 sm:flex-auto">
+                                                {editMode ? (
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        value={formData.name}
+                                                        onChange={handleChange}
+                                                        className="border border-gray-300 p-2 rounded-md w-full"
+                                                    />
+                                                ) : (
+                                                    <span className="text-gray-900">{user.name}</span>
+                                                )}
+                                            </dd>
+                                        </div>
+                                        <div className="py-6 sm:flex">
+                                            <dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">Pseudo</dt>
+                                            <dd className="mt-1 sm:mt-0 sm:flex-auto">
+                                                {editMode ? (
+                                                    <input
+                                                        type="text"
+                                                        name="pseudo"
+                                                        value={formData.pseudo}
+                                                        onChange={handleChange}
+                                                        className="border border-gray-300 p-2 rounded-md w-full"
+                                                    />
+                                                ) : (
+                                                    <span className="text-gray-900">{user.pseudo}</span>
+                                                )}
+                                            </dd>
+                                        </div>
+                                        <div className="py-6 sm:flex">
+                                            <dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">Email</dt>
+                                            <dd className="mt-1 sm:mt-0 sm:flex-auto">
+                                                {editMode ? (
+                                                    <input
+                                                        type="email"
+                                                        name="email"
+                                                        value={formData.email}
+                                                        onChange={handleChange}
+                                                        className="border border-gray-300 p-2 rounded-md w-full"
+                                                    />
+                                                ) : (
+                                                    <span className="text-gray-900">{user.email}</span>
+                                                )}
+                                            </dd>
+                                        </div>
+                                        {editMode && (
+                                            <div className="py-6 sm:flex">
+                                                <dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">Nouveau
+                                                    mot de passe
+                                                </dt>
+                                                <dd className="mt-1 sm:mt-0 sm:flex-auto">
+                                                    <input
+                                                        type="password"
+                                                        name="password"
+                                                        value={formData.password}
+                                                        onChange={handleChange}
+                                                        className="border border-gray-300 p-2 rounded-md w-full"
+                                                    />
+                                                </dd>
+                                            </div>
+                                        )}
                                     </dl>
                                 ) : (
                                     <p className="text-sm/6 text-gray-500">Aucune information utilisateur trouvée.</p>
@@ -159,21 +234,32 @@ export default function Profile() {
                                             </button>
                                         </div>
                                     ) : (
-                                        <button
-                                            onClick={() => setEditMode(true)}
-                                            className="px-4 py-2 text-white bg-gray-950 rounded-md hover:bg-white hover:text-gray-950"
-                                        >
-                                            Modifier
-                                        </button>
+                                        <div >
+                                            <button
+                                                onClick={() => setEditMode(true)}
+                                                className="px-4 py-2 text-white bg-gray-950 rounded-md hover:bg-white hover:text-gray-950"
+                                            >
+                                                Modifier
+                                            </button>
+
+                                            <button
+                                                onClick={() => handleDelete(formData.id)}
+                                                className="px-4 ml-5 py-2 text-white bg-gray-950 rounded-md hover:bg-white hover:text-gray-950"
+                                            >
+                                                Suprrime votre compte
+                                            </button>
+                                        </div>
                                     )}
                                 </div>
+
                             </div>
                         )}
 
                         {currentNavigation === "Reservation" && (
                             <div>
                                 <h2 className="text-base/7 font-semibold text-gray-900">Vos Réservations</h2>
-                                <p className="mt-1 text-sm/6 text-gray-500">Ici, vous pouvez voir toutes vos réservations passées et futures.</p>
+                                <p className="mt-1 text-sm/6 text-gray-500">Ici, vous pouvez voir toutes vos
+                                    réservations passées et futures.</p>
                                 {bookings.length === 0 ? (
                                     <p className="mt-4 text-gray-900">Aucune réservation à afficher pour le moment.</p>
                                 ) : (

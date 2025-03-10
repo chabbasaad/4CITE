@@ -28,24 +28,14 @@ describe('Tests du composant HotelList', () => {
     });
 
     it('devrait afficher un message de chargement pendant que les hôtels se chargent', () => {
-        // Vérifie que le message de chargement est bien affiché
         cy.contains('Chargement en cours...').should('exist');
-
-        // Attends la réponse de l'API mockée
         cy.wait('@fetchHotels');
-
-        // Vérifie que le message de chargement disparaît
         cy.contains('Chargement en cours...').should('not.exist');
     });
 
-
     it('devrait afficher une liste d\'hôtels lorsque les données sont chargées', () => {
-        cy.wait('@fetchHotels'); // Attends que les hôtels soient chargés
-
-        // Vérifie qu'il y a bien 2 hôtels affichés
+        cy.wait('@fetchHotels');
         cy.get('.group').should('have.length', 2);
-
-        // Vérifie les informations affichées
         cy.contains('Hotel A').should('exist');
         cy.contains('Hotel B').should('exist');
         cy.contains('Paris').should('exist');
@@ -56,12 +46,7 @@ describe('Tests du composant HotelList', () => {
 
     it('devrait naviguer vers la page de détail de l\'hôtel lorsqu\'on clique sur un hôtel', () => {
         cy.wait('@fetchHotels');
-
-        // Cliquer sur le premier hôtel
         cy.get('.group').first().click();
-
-        // Vérifie la navigation
         cy.url().should('include', '/hotel/1');
     });
-
 });

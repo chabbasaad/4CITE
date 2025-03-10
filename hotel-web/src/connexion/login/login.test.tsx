@@ -2,7 +2,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { toast } from "react-toastify";
 import useUserStore from "../../service/stores/user-store";
-import Login from "./login.tsx";
+import Login from "./login";
 
 // Mocking the useUserStore and toast notifications
 jest.mock("../../service/stores/user-store");
