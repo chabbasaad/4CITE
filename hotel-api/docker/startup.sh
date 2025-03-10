@@ -30,6 +30,18 @@ php artisan migrate:fresh --force
 echo "Running seeders..."
 php artisan db:seed --force
 
+# Create storage directory if it doesn't exist
+echo "Preparing storage directory..."
+mkdir -p /app/storage
+chown -R www-data:www-data /app/storage
+
+# Generate test tokens and store them
+echo "Generating test tokens..."
+php artisan tokens:generate-test --env-format > /app/storage/test_tokens.env
+
+# Make sure the tokens file is readable
+chmod 644 /app/storage/test_tokens.env
+
 # Start PHP-FPM
 echo "Starting PHP-FPM..."
 php-fpm

@@ -47,9 +47,9 @@ class UserController extends Controller
             ->when($request->role, function ($query, $role) {
                 $query->where('role', $role);
             })
-            ->paginate($request->per_page ?? 10);
+            ->get();
 
-        return response()->json(['data' => $users->items()]);
+        return response()->json(['data' => $users]);
     }
 
     /**

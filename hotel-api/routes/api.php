@@ -22,7 +22,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 
     // Protected auth routes
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:api,sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/user', [AuthController::class, 'user']);
     });
@@ -60,7 +60,7 @@ Route::get('hotels/{hotel}', [HotelController::class, 'show']);
 | These routes require authentication (Bearer token)
 |
 */
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:api,sanctum')->group(function () {
     /*
     |--------------------------------------------------------------------------
     | User Management Routes

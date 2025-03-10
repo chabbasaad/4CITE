@@ -206,7 +206,11 @@ docker-compose down
 docker-compose logs -f
 
 # Run artisan commands
-docker-compose exec app php artisan list</pre>
+docker-compose exec app php artisan list
+
+# get generated tokens for Testing in Forntend
+docker compose exec app cat /app/storage/test_tokens.env
+</pre>
 
     <div style="border-left: 3px solid #9d00ff; padding-left: 20px; margin: 20px 0;">
         <h3 style="color: #9d00ff;">Frontend Commands (Local)</h3>

@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
+use App\Guards\StaticTokenGuard;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -41,5 +43,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('create_booking', fn(User $user) => true);
         Gate::define('view_own_bookings', fn(User $user) => true);
         Gate::define('view_all_bookings', fn(User $user) => $user->isStaff());
+
+        Auth::extend('static-token', function ($app, $name, array $config) {
+            return new StaticTokenGuard($app->make('request'));
+        });
     }
 }
