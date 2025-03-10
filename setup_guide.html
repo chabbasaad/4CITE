@@ -192,41 +192,7 @@ cd 4CITE</pre>
         <li><strong>API Documentation:</strong> <code>http://localhost:8000/docs/api</code></li>
     </ul>
 
-    <h2>6. Development Commands</h2>
-    
-    <h3>Backend Commands (Docker)</h3>
-    <pre>
-# Start all services
-docker-compose up -d
 
-# Stop all services
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# Run artisan commands
-docker-compose exec app php artisan list
-
-# get generated tokens for Testing in Forntend
-docker compose exec app cat /app/storage/test_tokens.env
-</pre>
-
-    <div style="border-left: 3px solid #9d00ff; padding-left: 20px; margin: 20px 0;">
-        <h3 style="color: #9d00ff;">Frontend Commands (Local)</h3>
-        <pre style="background: #2a1f3d;">
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Run tests
-npm test
-
-# Run linting
-npm run lint</pre>
-    </div>
 
     <h2>7. Testing Guide</h2>
     
@@ -249,13 +215,16 @@ docker-compose exec app php artisan test --testsuite=Feature</pre>
         <h3 style="color: #9d00ff;">Frontend Testing (Local)</h3>
         <pre style="background: #2a1f3d;">
 # Run tests
-npm test
+<pre style="background: #2a1f3d;">npm test</pre>
 
-# Run tests with coverage
-npm test -- --coverage
+#Runs all Cypress tests in headless mode 
+<pre style="background: #2a1f3d;">npm run cypress:run</pre>
 
-# Run tests in watch mode
-npm test -- --watch</pre>
+Opens the Cypress Test Runner (GUI) in an interactive mode.
+<pre style="background: #2a1f3d;">npm run cypress:open</pre>
+</pre>
+
+
     </div>
 
     <h2>8. Troubleshooting</h2>

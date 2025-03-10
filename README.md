@@ -41,10 +41,7 @@ A comprehensive hotel booking system built with Laravel and React, featuring use
    ```
 
 
-### get generated tokens for Testing in Forntend
-   ```bash
-      docker compose exec app cat /app/storage/test_tokens.env
-   ```
+
 
    This command will:
    - Build and start all Docker containers
