@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import useHotelStore from "../../../service/stores/hotel-store.tsx";
+import useHotelStore from "../../../service/stores/hotel-store";
 import { HotelUpdateRequestData } from "../../../service/model/hotel/hotel-update";
 
 export default function HotelUpdate({ id ,setIsOpenUpdate}: { id: number,setIsOpenUpdate: (open: boolean) => void }) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import useUserStore from "../../../service/stores/user-store.tsx";
+import useUserStore from "../../../service/stores/user-store";
 import { UserUpdateRequestData } from "../../../service/model/user/user-update";
 
 export default function UserUpdate({ id, setIsOpenUpdate }: { id: number, setIsOpenUpdate: (open: boolean) => void }) {

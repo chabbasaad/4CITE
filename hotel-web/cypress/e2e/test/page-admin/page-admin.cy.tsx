@@ -29,7 +29,7 @@ describe('Tests de la liste des hôtels avec un utilisateur admin', () => {
         cy.contains('Hôtel Example').parent().find('button').contains('Modifier').click();
 
         cy.get('h2').contains('Modifier un hôtel').should('be.visible');
-
+        cy.wait(1000);
         cy.get('input[name="name"]').clear().type('Hotel A Updated');
 
         cy.contains("Mettre à jour l'hôtel").click();

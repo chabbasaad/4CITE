@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import useHotelStore from "../../../service/stores/hotel-store.tsx";
+import useHotelStore from "../../../service/stores/hotel-store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 

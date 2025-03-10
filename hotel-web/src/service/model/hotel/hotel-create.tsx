@@ -1,4 +1,4 @@
-import {Hotel} from "./hotel.tsx";
+import {Hotel} from "./hotel";
 
 export interface HotelCreateRequestData {
     name: string;
