@@ -128,6 +128,19 @@ cd 4CITE</pre>
                 </ul>
                 <p style="color: #ffa634; margin-top: 10px;"><strong>Note:</strong> No manual migration or seeding commands are needed as everything is automated through the startup script.</p>
             </div>
+
+
+            <p style="color: #ffa634; margin-top: 10px;"><strong>Note:</strong> starting the services will take some time (5-8 minutes)</p>
+         
+            
+<img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/docker_build.png" alt="cypress_test" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
+
+<p style="color: #ffa634; margin-top: 10px;"><strong>Note:</strong> all the services are running on the same container</p>
+          
+
+<img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/dockerdesktop.png" alt="cypress_test" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
+
+
         </li>
     </ol>
 
@@ -207,7 +220,7 @@ docker-compose exec app php artisan test --testsuite=Feature</pre>
 
     <div style="background: #1a1a1a; padding: 15px; border-radius: 5px; margin-top: 15px;">
         <p style="color: #73ff33; margin-bottom: 10px;">Example Test Results:</p>
-        <img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/backend_testing.png" alt="Backend Test Results" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
+        <img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/backend_testing.png" alt="Backend Test Results" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
         <p style="color: #aaa; margin-top: 10px; font-size: 0.9em;">The test suite includes comprehensive tests for user management, permissions, and business logic validation.</p>
     </div>
 
@@ -217,11 +230,22 @@ docker-compose exec app php artisan test --testsuite=Feature</pre>
 # Run tests
 <pre style="background: #2a1f3d;">npm test</pre>
 
-#Runs all Cypress tests in headless mode 
+<p style="color: #ffa634; margin-top: 10px;"> the tests are working </p>
+
+<img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/npm_test.png" alt="cypress_test" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
+
+
+#Runs all Cypress tests in headless mode
 <pre style="background: #2a1f3d;">npm run cypress:run</pre>
+
+<img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/cypress_open.png" alt="cypress_test" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
+
 
 Opens the Cypress Test Runner (GUI) in an interactive mode.
 <pre style="background: #2a1f3d;">npm run cypress:open</pre>
+
+<img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/cypress_test.png" alt="cypress_test" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
+
 </pre>
 
 
@@ -265,9 +289,9 @@ npm install</pre>
 
         <div style="background: #1a1a1a; padding: 15px; border-radius: 5px; margin: 20px 0;">
             <p style="color: #ff7300; margin-bottom: 10px;">API Documentation Interface:</p>
-            <img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/scramble_swagger_api.png" alt="Scramble API Documentation Interface" style="width: 100%; border-radius: 5px; border: 1px solid #333; margin-bottom: 15px;"/>
+            <img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/scramble_swagger_api.png" alt="Scramble API Documentation Interface" style="width: 100%; border-radius: 5px; border: 1px solid #333; margin-bottom: 15px;"/>
             <p style="color: #ff7300; margin-bottom: 10px;">Response Example:</p>
-            <img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/response_example_scramble_docs_api.png" alt="API Response Example" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
+            <img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/response_example_scramble_docs_api.png" alt="API Response Example" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
         </div>
 
         <h3 style="color: #ff7300;">Accessing Documentation</h3>
@@ -284,6 +308,65 @@ npm install</pre>
             <li>Authentication flow documentation</li>
             <li>Schema definitions for all models</li>
             <li>Detailed error responses</li>
+        </ul>
+    </div>
+
+    <div style="border-left: 3px solid #ff3366; padding-left: 20px; margin: 20px 0;">
+        <h2 style="color: #ff3366;">GitHub Workflow & CI/CD Pipeline</h2>
+        
+        <h3 style="color: #ff3366;">Pull Request Rules</h3>
+        <p>We have implemented strict pull request rules to maintain code quality and ensure proper review processes:</p>
+        <ul>
+            <li><strong>Mandatory Pull Requests:</strong> All new features must be developed in separate branches and merged through pull requests</li>
+            <li><strong>Review Requirements:</strong> At least one developer review is required before merging</li>
+            <li><strong>Clean Conversations:</strong> All conversations must be resolved before merging is allowed</li>
+            <li><strong>Automated Checks:</strong> CI pipeline must pass all tests before merge is permitted</li>
+        </ul>
+
+        <div style="background: #1a1a1a; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <p style="color: #ff3366; margin-bottom: 10px;">Branch Protection Rules:</p>
+            
+        <img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/github1.png" alt="github1" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
+        <p style="color: #ff3366; margin-bottom: 10px;">Branch Protection Rules 2:</p>
+        <img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/github2.png" alt="Pull Request Review Process" style="width: 100%; border-radius: 5px; border: 1px solid #333; margin-bottom: 15px;"/>
+            
+
+            <p style="color: #ff3366; margin-bottom: 10px;">Pull Request Review Process:</p>
+            <img src="https://raw.githubusercontent.com/chabbasaad/4CITE/master/image_docs/github2.png" alt="Pull Request Review Process" style="width: 100%; border-radius: 5px; border: 1px solid #333; margin-bottom: 15px;"/>
+            
+            <p style="color: #ff3366; margin-bottom: 10px;">CI/CD Pipeline Results:</p>
+            <img src="[Your CI/CD Pipeline Screenshot]" alt="CI/CD Pipeline Results" style="width: 100%; border-radius: 5px; border: 1px solid #333;"/>
+        </div>
+
+        <h3 style="color: #ff3366;">CI/CD Pipeline Workflow</h3>
+        <p>Our pipeline consists of several stages that run automatically:</p>
+
+        <h3 style="color: #ff3366;">Pipeline Stages</h3>
+        <ol>
+            <li><strong>Pull Request Stage:</strong>
+                <ul>
+                    <li>Runs all unit and feature tests</li>
+                    <li>Verifies code review requirements</li>
+                    <li>Checks for resolved conversations</li>
+                </ul>
+            </li>
+            <li><strong>Main Branch Stage:</strong>
+                <ul>
+                    <li>Comprehensive test suite execution</li>
+                    <li>Security vulnerability scanning</li>
+                    <li>Application build process</li>
+                    <li>Deployment simulation</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3 style="color: #ff3366;">Best Practices</h3>
+        <ul>
+            <li>Create meaningful branch names (feature/, bugfix/, hotfix/)</li>
+            <li>Write descriptive pull request descriptions</li>
+            <li>Address review comments promptly</li>
+            <li>Keep pull requests focused and manageable in size</li>
+            <li>Ensure all tests pass locally before pushing</li>
         </ul>
     </div>
 
