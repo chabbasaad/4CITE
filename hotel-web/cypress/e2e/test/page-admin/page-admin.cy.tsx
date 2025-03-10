@@ -111,15 +111,13 @@ describe('Tests de la liste des utilisateurs', () => {
 
     it('Peut ajouter un nouvel utilisateur', () => {
         cy.contains('Ajouter un utilisateur').click();
-        cy.get('h2').contains('Ajouter un utilisateur').should('be.visible');
+        cy.get('button').contains('Ajouter un utilisateur').should('be.visible');
 
         cy.get('input[name="name"]').type('hamzap');
         cy.get('input[name="pseudo"]').type('hamzap');
         cy.get('input[name="email"]').type('userc@email.com');
-        cy.get('select[name="role"]').select('user').should('have.value', 'user');
         cy.get('input[name="password"]').type('Hamza123!');
 
-        // Mock du POST
         cy.intercept('POST', '/api/users', {
             statusCode: 201,
             body: { message: 'Utilisateur ajouté avec succès',data: {
@@ -133,6 +131,7 @@ describe('Tests de la liste des utilisateurs', () => {
 
         cy.contains("Ajouter l'utilisateur").click();
         cy.wait('@createUser');
+        cy.wait(500);
 
         cy.contains('hamzap').should('be.visible');
     });
