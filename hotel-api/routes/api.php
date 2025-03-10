@@ -112,4 +112,5 @@ Route::middleware('auth:api,sanctum')->group(function () {
     |
     */
     Route::apiResource('bookings', BookingController::class);
+    Route::post('bookings/{booking}/process-payment', [BookingController::class, 'processPayment']);
 });

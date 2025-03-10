@@ -1,6 +1,6 @@
 import {useEffect} from "react";
-import useBookingStore from "../../../service/stores/booking-store.tsx";
-import useHotelStore from "../../../service/stores/hotel-store.tsx";
+import useBookingStore from "../../../service/stores/booking-store";
+import useHotelStore from "../../../service/stores/hotel-store";
 
 export default function BookingList() {
     const { bookings, loading, fetchBookings } = useBookingStore();

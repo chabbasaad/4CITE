@@ -18,7 +18,7 @@ return new class extends Migration
             $table->dateTime('check_in_date');
             $table->dateTime('check_out_date');
             $table->integer('guests_count')->nullable();
-            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled', 'paid'])->default('pending');
             $table->text('special_requests')->nullable();
             $table->json('guest_names');
             $table->string('contact_phone')->nullable();

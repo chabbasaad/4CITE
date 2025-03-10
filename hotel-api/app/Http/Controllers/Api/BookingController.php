@@ -10,6 +10,7 @@ use App\Models\Hotel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -102,8 +103,8 @@ class BookingController extends Controller
         // Calculate total price
         $checkIn = Carbon::parse($validated['check_in_date']);
         $checkOut = Carbon::parse($validated['check_out_date']);
-        $nights = $checkIn->diffInDays($checkOut);
-        $validated['total_price'] = $hotel->price_per_night * $nights;
+        $nights = $checkOut->diffInDays($checkIn);
+        $validated['total_price'] = $hotel->price_per_night * max(1, $nights);
 
         // Set initial status and user
         $validated['status'] = 'pending';
@@ -209,5 +210,75 @@ class BookingController extends Controller
         return response()->json([
             'message' => 'Booking cancelled successfully'
         ]);
+    }
+
+    /**
+     * Process payment for a booking.
+     *
+     * @param Request $request
+     * @param Booking $booking
+     * @return JsonResponse
+     */
+    public function processPayment(Request $request, Booking $booking): JsonResponse
+    {
+        $user = $request->user();
+
+        // Check authorization first
+        if (!$user->isStaff() && $booking->user_id !== $user->id) {
+            return response()->json([
+                'message' => 'You are not authorized to process payment for this booking'
+            ], 403);
+        }
+
+        // Then check if booking is already paid
+        if ($booking->isPaid()) {
+            return response()->json([
+                'message' => 'Payment processing failed',
+                'error' => 'Booking is already paid'
+            ], 422);
+        }
+
+        // Then check if booking can be paid based on status
+        if (!in_array($booking->status, ['pending', 'confirmed'])) {
+            return response()->json([
+                'message' => 'Payment processing failed',
+                'error' => 'Booking cannot be paid in its current status'
+            ], 422);
+        }
+
+        // Validate payment details
+        $request->validate($booking->getPaymentValidationRules());
+
+        try {
+            // Simulate payment processing delay
+            sleep(1);
+
+            // Simulate successful payment
+            $transactionId = $booking->generateTransactionId();
+            $booking->markAsPaid($request->payment_method, $transactionId);
+
+            return response()->json([
+                'message' => 'Payment processed successfully',
+                'data' => [
+                    'booking_id' => $booking->id,
+                    'transaction_id' => $transactionId,
+                    'amount_paid' => $booking->getPaymentAmount(),
+                    'payment_method' => $request->payment_method,
+                    'status' => 'completed'
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Payment processing error: ' . $e->getMessage(), [
+                'booking_id' => $booking->id,
+                'user_id' => $user->id,
+                'payment_method' => $request->payment_method
+            ]);
+
+            return response()->json([
+                'message' => 'Payment processing failed',
+                'error' => 'An error occurred while processing the payment'
+            ], 500);
+        }
     }
 }

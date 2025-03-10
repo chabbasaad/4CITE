@@ -1,5 +1,5 @@
 import Footer from "../../../components/footer/footer";
-import HotelList from "../../user/hotel/hotel-list";
+import HotelList from "../hotel/hotel-list";
 
 export default function Home() {
     return (

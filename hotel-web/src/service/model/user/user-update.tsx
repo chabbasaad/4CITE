@@ -1,6 +1,7 @@
-import {User} from "./user.tsx";
+import {User} from "./user";
 
 export interface UserUpdateRequestData{
+    id : number
     name: string,
     pseudo: string,
     password: string

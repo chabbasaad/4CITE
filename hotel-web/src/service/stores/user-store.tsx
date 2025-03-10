@@ -3,7 +3,7 @@ import {createUser, deleteUser, fetchUsers, login, updateUser} from "../servises
 import {User} from "../model/user/user";
 import {UserCreateRequestData} from "../model/user/user-create";
 import {UserUpdateRequestData, UserUpdateResponseData} from "../model/user/user-update";
-import {UserLogin, UserLoginResponseData} from "../model/user/user-connexion.tsx";
+import {UserLogin, UserLoginResponseData} from "../model/user/user-connexion";
 
 interface UserState {
     users: User[];

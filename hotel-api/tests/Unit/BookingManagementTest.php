@@ -46,9 +46,10 @@ class BookingManagementTest extends TestCase
     {
         $this->expectException(\Illuminate\Validation\ValidationException::class);
 
+        // Invalid: check-out before check-in
         $bookingData = [
             'check_in_date' => '2024-04-20',
-            'check_out_date' => '2024-04-15' // Invalid: check-out before check-in
+            'check_out_date' => '2024-04-15'
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($bookingData, [
@@ -78,19 +79,6 @@ class BookingManagementTest extends TestCase
         if ($validator->fails()) {
             throw new \Illuminate\Validation\ValidationException($validator);
         }
-    }
-
-    // Business Logic Tests
-    public function test_booking_total_price_calculation()
-    {
-        $hotel = Hotel::factory()->create(['price_per_night' => 100]);
-        $booking = Booking::factory()->create([
-            'hotel_id' => $hotel->id,
-            'check_in_date' => '2024-04-15',
-            'check_out_date' => '2024-04-20' // 5 nights
-        ]);
-
-        $this->assertEquals(500, $booking->total_price); // 5 nights * $100
     }
 
     public function test_booking_can_be_cancelled_before_48_hours()

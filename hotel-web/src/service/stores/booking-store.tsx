@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import {Booking} from "../model/booking/booking.tsx";
-import {createBooking, deleteBooking, fetchBookings, updateBooking} from "../servises/service-booking.tsx";
-import {BookingCreateRequestData} from "../model/booking/booking-create.tsx";
-import {BookingUpdateRequestData} from "../model/booking/booking-update.tsx";
+import {Booking} from "../model/booking/booking";
+import {createBooking, deleteBooking, fetchBookings, updateBooking} from "../servises/service-booking";
+import {BookingCreateRequestData} from "../model/booking/booking-create";
+import {BookingUpdateRequestData} from "../model/booking/booking-update";
 
 interface BookingState {
     bookings: Booking[];

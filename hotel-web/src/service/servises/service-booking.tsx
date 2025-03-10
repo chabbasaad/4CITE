@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { BookingFetchResponseData} from "../model/booking/booking-fetch";
 import {BookingCreateRequestData, BookingCreateResponseData} from "../model/booking/booking-create";
 import {BookingUpdateRequestData, BookingUpdateResponseData} from "../model/booking/booking-update";
-import {testEnv} from "../../../env.ts";
+import {testEnv} from "../../../env";
 
 const API_URL = `${testEnv.VITE_API_URL}/bookings`;
 

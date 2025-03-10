@@ -655,6 +655,86 @@ Scenario: User attempts to cancel another user's booking
   And the booking should remain active
 ```
 
+### Feature: Payment Processing
+
+```gherkin
+Feature: Payment Processing
+
+Scenario: User successfully processes payment for their booking
+  Given a user is logged into the system
+  And they have a pending booking
+  When they submit valid payment details:
+    | payment_method | credit_card          |
+    | card_number   | 1234567890123456     |
+    | expiry_date   | 12/25                |
+    | cvv           | 123                  |
+  Then the payment should be processed successfully
+  And the booking status should be updated to 'paid'
+  And they should receive a payment confirmation with transaction details
+
+Scenario: User attempts to process payment with invalid payment method
+  Given a user is logged into the system
+  And they have a pending booking
+  When they submit payment details with an invalid payment method:
+    | payment_method | bitcoin |
+  Then they should see a validation error for payment method
+  And the booking should remain unpaid
+
+Scenario: User processes payment using PayPal
+  Given a user is logged into the system
+  And they have a pending booking
+  When they select PayPal as the payment method
+  Then they should not be required to provide card details
+  And the payment should be processed successfully
+
+Scenario: User attempts to process payment with invalid card details
+  Given a user is logged into the system
+  And they have a pending booking
+  When they submit payment with invalid card details:
+    | payment_method | credit_card |
+    | card_number   | 123         |
+    | expiry_date   | 13/25       |
+    | cvv           | 12          |
+  Then they should see validation errors for the card details
+  And the booking should remain unpaid
+
+Scenario: Staff member processes payment for any booking
+  Given a staff member is logged into the system
+  And there is a pending booking in the system
+  When they process payment for that booking
+  Then the payment should be processed successfully
+  And the booking status should be updated to 'paid'
+
+Scenario: User attempts to process payment for another user's booking
+  Given a user is logged into the system
+  When they attempt to process payment for another user's booking
+  Then they should see an access denied message
+  And the booking should remain unpaid
+
+Scenario: System generates unique transaction IDs
+  Given a user processes multiple bookings
+  When they make payments for different bookings
+  Then each payment should have a unique transaction ID
+  And the transaction IDs should follow the format 'TRX-timestamp-bookingId'
+
+Scenario: System records payment timestamp
+  Given a user processes a booking payment
+  When the payment is successful
+  Then the system should record the exact payment timestamp
+  And the paid_at field should be a valid datetime
+
+Scenario: Payment amount matches booking total price
+  Given a user has a booking with total price of 150.00
+  When they process the payment
+  Then the payment amount should be exactly 150.00
+
+Scenario: User attempts to pay for an already paid booking
+  Given a user has a booking that is already paid
+  When they attempt to process payment again
+  Then they should see an error message indicating the booking is already paid
+  And no additional payment should be processed
+```
+
 ## Search and Filtering
 
 ### Feature: Hotel Search

@@ -10,7 +10,7 @@ import {
 import { BookingCreateRequestData, BookingCreateResponseData } from "../../model/booking/booking-create";
 import { BookingUpdateRequestData, BookingUpdateResponseData } from "../../model/booking/booking-update";
 import { BookingFetchResponseData } from "../../model/booking/booking-fetch";
-import {testEnv} from "../../../../env.ts";
+import {testEnv} from "../../../../env";
 
 
 // Mock de react-toastify

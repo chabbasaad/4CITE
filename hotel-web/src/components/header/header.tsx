@@ -19,13 +19,20 @@ const navigation: NavigationItem[] = [
     { name: 'Nous', href: '/nous', current: false },
 ];
 
+const navigationEmployee: NavigationItem[] = [
+    { name: 'Accueil', href: '/', current: false },
+    { name: 'Hotel', href: '/hotel', current: false },
+    { name: 'Nous', href: '/nous', current: false },
+    { name: 'Gestion Reservation', href: '/admin/gestion-booking', current: false },
+];
+
 const navigationAdmin: NavigationItem[] = [
     { name: 'Accueil', href: '/', current: false },
     { name: 'Nous', href: '/nous', current: false },
     { name: 'Hotel', href: '/hotel', current: false },
-    { name: 'Gestion User', href: 'admin/gestion-users', current: false },
-    { name: 'Gestion Hotel', href: 'admin/gestion-hotel', current: false },
-    { name: 'Gestion Reservation', href: 'admin/gestion-booking', current: false },
+    { name: 'Gestion User', href: '/admin/gestion-users', current: false },
+    { name: 'Gestion Hotel', href: '/admin/gestion-hotel', current: false },
+    { name: 'Gestion Reservation', href: '/admin/gestion-booking', current: false },
 ];
 
 function classNames(...classes: (string | undefined | null | false)[]): string {
@@ -46,7 +53,8 @@ export default function Header() {
         window.location.reload();
     };
 
-    const navigationLinks = userRole === "admin" ? navigationAdmin : navigation;
+    // Détermine la navigation en fonction du rôle de l'utilisateur
+    const navigationLinks = userRole === "admin" ? navigationAdmin : userRole === "employee" ? navigationEmployee : navigation;
 
     return (
         <Disclosure>
@@ -107,19 +115,22 @@ export default function Header() {
                                         </MenuButton>
                                     </div>
                                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <MenuItem>
-                                            {({ active }) => (
-                                                <Link
-                                                    to="/profile"
-                                                    className={classNames(
-                                                        active ? 'bg-gray-100' : '',
-                                                        'block px-4 py-2 text-sm text-gray-700'
-                                                    )}
-                                                >
-                                                    Votre Profil
-                                                </Link>
-                                            )}
-                                        </MenuItem>
+                                        {/* Afficher "Voir Profil" uniquement si l'utilisateur n'est pas admin ou employé */}
+                                        {userRole !== "admin" && userRole !== "employee" && (
+                                            <MenuItem>
+                                                {({ active }) => (
+                                                    <Link
+                                                        to="/profile"
+                                                        className={classNames(
+                                                            active ? 'bg-gray-100' : '',
+                                                            'block px-4 py-2 text-sm text-gray-700'
+                                                        )}
+                                                    >
+                                                        Votre Profil
+                                                    </Link>
+                                                )}
+                                            </MenuItem>
+                                        )}
                                         <MenuItem>
                                             {({ active }) => (
                                                 <button

@@ -9,7 +9,7 @@ import {
     UserRegisterResponseData,
     UserRequest
 } from "../model/user/user-connexion";
-import {testEnv} from "../../../env.ts";
+import {testEnv} from "../../../env";
 
 
 const API_URL = `${testEnv.VITE_API_URL}/`;

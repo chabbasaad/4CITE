@@ -168,7 +168,7 @@ describe("API User Tests", () => {
         const mockResponse = { message: "Utilisateur mis à jour" };
         mock.onPut(`${API_URL}users/1`).reply(200, mockResponse);
 
-        const response = await updateUser(1, { name: "John Doe Updated",pseudo: "johnD",role: "user",password : "password", email : "email", password_confirmation : "password"});
+        const response = await updateUser(1, {id: 1 ,name: "John Doe Updated",pseudo: "johnD",role: "user",password : "password", email : "email", password_confirmation : "password"});
 
         expect(response).toEqual(mockResponse);
         expect(toast.success).toHaveBeenCalledWith("Utilisateur mis à jour");
@@ -178,6 +178,7 @@ describe("API User Tests", () => {
         mock.onPut(`${API_URL}users/1`).reply(400, { message: "Validation failed" });
 
         await expect(updateUser(1, {
+            id: 1,
             name: "",
             pseudo: "",
             email: "",

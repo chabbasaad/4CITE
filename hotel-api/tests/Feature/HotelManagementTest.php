@@ -62,17 +62,26 @@ class HotelManagementTest extends TestCase
             ->getJson('/api/hotels');
 
         $response->assertStatus(200)
-            ->assertJson([
+            ->assertJsonStructure([
                 'data' => [
-                    [
-                        'id' => $hotel->id,
+                    '*' => [
+                        'id',
+                        'name',
+                        'location',
+                        'description',
+                        'price_per_night',
                         'bookings' => [
-                            [
-                                'id' => $booking->id
+                            '*' => [
+                                'id',
+                                'user_id',
+                                'hotel_id',
+                                'check_in_date',
+                                'check_out_date'
                             ]
                         ]
                     ]
-                ]
+                ],
+                'meta'
             ]);
     }
 

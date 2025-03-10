@@ -1,0 +1,33 @@
+// cypress/fixtures/hotels.json
+[
+  {
+    "id": 1,
+    "name": "Hôtel Le Majestic",
+    "location": "Paris, France",
+    "price_per_night": 200,
+    "available": true,
+    "description": "Un hôtel 5 étoiles offrant une vue imprenable sur la ville lumière.",
+    "picture_list": ["/images/hotel1.jpg", "/images/hotel2.jpg"],
+    "amenities": ["Wi-Fi gratuit", "Piscine", "Spa", "Restaurant gastronomique"],
+    "is_available": true,
+    "total_rooms": 100,
+    "created_at": "2025-01-01T12:00:00Z",
+    "updated_at": "2025-03-10T12:00:00Z",
+    "available_rooms": 20
+  },
+  {
+    "id": 2,
+    "name": "Villa des Rêves",
+    "location": "Nice, France",
+    "price_per_night": 150,
+    "available": false,
+    "description": "Une villa pittoresque située près de la mer Méditerranée.",
+    "picture_list": ["/images/hotel3.jpg", "/images/hotel4.jpg"],
+    "amenities": ["Wi-Fi gratuit", "Plage privée", "Salle de sport", "Bar lounge"],
+    "is_available": false,
+    "total_rooms": 50,
+    "created_at": "2025-02-01T12:00:00Z",
+    "updated_at": "2025-03-05T12:00:00Z",
+    "available_rooms": 0
+  }
+]

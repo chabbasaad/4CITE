@@ -1,6 +1,6 @@
 import { useState } from "react";
-import useUserStore from "../../../service/stores/user-store.tsx";
-import { UserCreateRequestData } from "../../../service/model/user/user-create.tsx";
+import useUserStore from "../../../service/stores/user-store";
+import { UserCreateRequestData } from "../../../service/model/user/user-create";
 
 export default function UserCreate({ setIsOpenCreate }: {  setIsOpenCreate: (open: boolean) => void }) {
     const { createUser } = useUserStore();
