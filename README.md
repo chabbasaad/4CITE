@@ -62,6 +62,8 @@ project-root/
 
 ### Frontend Setup (Local)
 
+
+
 1. **Navigate to Frontend Directory**
    ```bash
    cd hotel-web
@@ -75,6 +77,14 @@ project-root/
 3. **Start Development Server**
    ```bash
    npm run dev
+   ```
+3. **change env variable .ts **
+   ```bash
+   remplace  VITE_API_URL: "http://89.168.20.112:8000/api"
+
+   by localhost
+   
+   VITE_API_URL: "http://localhost:8000/api"
    ```
 
 ## 🔑 Default Login Credentials
