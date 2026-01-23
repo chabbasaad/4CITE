@@ -1,8 +1,7 @@
 # Hotel Booking System Full Stack Application (LARAVEL / REACT)
 
 <div align="center">
-  <img src="https://newsroom.ionis-group.com/wp-content/uploads/2020/11/supinfo-logo-2020-blanc-png.png" alt="SUPINFO Logo" width="200"/>
-
+ 
   ### Project Team 4CITE
   **Backend Developer:** Saad Chabba  
   **Frontend Developer:** Hamza Belyahiaoui
